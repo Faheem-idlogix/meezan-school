@@ -63,11 +63,11 @@ class StudentController extends Controller
         };
         $data = Student::create($input);
 
-        $user['name'] = ($request->first_name . ' ' . $request->last_name);
-        $user['email'] = ($input['slug'] . '@meezan.edu.pk');
-        $user['password'] = bcrypt($request->first_name . $request->last_name.'123');
-        $user['user_type_id'] = '4';
-        $data1 = User::create($user);
+        // $user['name'] = ($request->first_name . ' ' . $request->last_name);
+        // $user['email'] = ($input['slug'] . '@meezan.edu.pk');
+        // $user['password'] = bcrypt($request->first_name . $request->last_name.'123');
+        // $user['user_type_id'] = '4';
+        // $data1 = User::create($user);
 
         return redirect()->route('Student.create')->with('success','Student add successfully');
     }
