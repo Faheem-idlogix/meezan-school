@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClassRoom;
 use App\Models\User;
 use App\Models\Student;
 use Illuminate\Support\Str;
@@ -15,7 +16,7 @@ class StudentController extends Controller
     public function index()
     {
         //
-        $student = Student::all();
+        $student = Student::with('classroom')->get();
         return view('admin.pages.student.index', compact('student'));
     }
 
@@ -25,7 +26,8 @@ class StudentController extends Controller
     public function create()
     {
         //
-        return view('admin.pages.student.create');
+        $class_room = ClassRoom::all();
+        return view('admin.pages.student.create', compact('class_room'));
     }
 
     /**
@@ -69,7 +71,7 @@ class StudentController extends Controller
         // $user['user_type_id'] = '4';
         // $data1 = User::create($user);
 
-        return redirect()->route('Student.create')->with('success','Student add successfully');
+        return redirect()->route('student.create')->with('success','Student add successfully');
     }
 
     /**
@@ -86,7 +88,8 @@ class StudentController extends Controller
     public function edit(Student $Student)
     {
         //
-        return view('admin.pages.student.edit', compact('Student'));
+        $class_room = ClassRoom::all();
+        return view('admin.pages.student.edit', compact('Student','class_room'));
 
 
     }
@@ -110,7 +113,7 @@ class StudentController extends Controller
         $data = $Student->update($input);
 
 
-        return redirect()->route('Student.create')->with('success','Student add successfully');
+        return redirect()->route('student.create')->with('success','Student add successfully');
     }
 
     /**
@@ -118,9 +121,7 @@ class StudentController extends Controller
      */
     public function destroy(Student $Student)
     {
-          $user = User::where('email', $Student->student_email)->first(); 
           $Student->delete();
-          $user->delete();
-          return redirect()->route('Student.index')->with('success','Conference Category deleted successfully');
+          return redirect()->route('student.index')->with('success','Conference Category deleted successfully');
     }
 }

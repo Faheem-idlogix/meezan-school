@@ -12,4 +12,6 @@ class Fee extends Model
     use SoftDeletes;
 
     use HasFactory;
+    protected $guarded = ['id'];
+
 }

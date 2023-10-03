@@ -13,7 +13,7 @@
       </nav>
     </div>
       <div class="col-lg-2">
-        <a href="{{ route('Session.create') }}" class="btn btn-primary">Add Session</a>
+        <a href="{{ route('session.create') }}" class="btn btn-primary">Add Session</a>
       </div>
     </div><!-- End Page Title -->
 
@@ -52,6 +52,7 @@
                   <tr>
                     <th >{{ $sr_no++ }}</th>
                     <td>{{ $item->session_name }}</td>
+                    
                     <td>
                       @if ($item->status == 1)
                       active
@@ -63,7 +64,7 @@
                     <td>{{ $item->end_date }}</td>
                     <td>  
                       <div class="btn-group">
-                      <form action="{{route('Session.destroy', $item)}}" method="post">
+                      <form action="{{route('session.destroy', $item)}}" method="post">
                        @method('delete')
                        @csrf
                      <button type="submit"><i class="bi bi-trash-fill"></i></button>

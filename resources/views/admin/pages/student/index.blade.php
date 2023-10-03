@@ -47,16 +47,16 @@
                         <td>{{ $item->student_name }}</td>
                         <td>{{ $item->father_name ?? '' }}</td>
                         <td>{{ $item->contact_no ?? '' }}</td>
-                        <td>{{ $item->class_room_id ?? ''}}</td>
+                        <td>{{ $item->classroom->class_name ?? ''}}</td>
                         <td >
                           <div class="btn-group">
-                           <form action="{{route('Student.destroy', $item)}}" method="post">
+                           <form action="{{route('student.destroy', $item)}}" method="post">
                             @method('delete')
                             @csrf
                           <button type="submit"><i class="bi bi-trash-fill"></i></button>
                           </form>
                           
-                          <a href="{{route('Student.edit', $item)}}"> <i class="bi bi-pencil-fill"></i></a>
+                          <a href="{{route('student.edit', $item)}}"> <i class="bi bi-pencil-fill"></i></a>
                           <a> <i class="bi bi-eye-fill"></i></a>
                           </div>
                         </td>

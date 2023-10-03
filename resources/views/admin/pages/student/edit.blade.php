@@ -27,7 +27,7 @@
               <h5 class="card-title">Student General Information</h5>
 
               <!-- General Form Elements -->
-              <form method="post" action="{{ route('Student.update', $Student) }}" enctype="multipart/form-data" novalidate>
+              <form method="post" action="{{ route('student.update', $Student) }}" enctype="multipart/form-data" novalidate>
                 @method('patch')
                 @csrf
                 <div class="row mb-3">
@@ -99,9 +99,9 @@
                           <strong>{{ $message }}</strong>
                       </span>
                   @enderror
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                      @foreach($class_room as $classroom)
+                      <option value="{{$classroom->id}}" @if($classroom->id == $Student->class_room_id) selected @endif >{{$classroom->class_name .' '. $classroom->section_name}}</option>
+                    @endforeach
                       </select>
                     </div>
                     <div class="col-lg-6">

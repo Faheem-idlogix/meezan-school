@@ -27,7 +27,7 @@
               <h5 class="card-title">Subjectn</h5>
 
               <!-- General Form Elements -->
-              <form action="{{ route('Subject.update', $Subject) }}" method="post">
+              <form action="{{ route('subject.update', $Subject) }}" method="post">
                 @method('patch')
 
                 @csrf

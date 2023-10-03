@@ -27,7 +27,7 @@
               <h5 class="card-title"> Session</h5>
 
               <!-- General Form Elements -->
-              <form action="{{ route('Session.store') }}" method="post">
+              <form action="{{ route('session.store') }}" method="post">
                 @csrf
                 <div class="row mb-3">
                 <div class="col-lg-6">

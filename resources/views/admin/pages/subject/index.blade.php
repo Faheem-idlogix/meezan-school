@@ -13,7 +13,7 @@
       </nav>
     </div>
       <div class="col-lg-2">
-        <a href="{{ route('Subject.create') }}" class="btn btn-primary">Add Subject</a>
+        <a href="{{ route('subject.create') }}" class="btn btn-primary">Add Subject</a>
       </div>
     </div><!-- End Page Title -->
 
@@ -52,13 +52,13 @@
                     <td>{{ $item->subject_name }}</td>
                     <td>
                     <div class="btn-group">
-                      <form action="{{route('Subject.destroy', $item)}}" method="post">
+                      <form action="{{route('subject.destroy', $item)}}" method="post">
                        @method('delete')
                        @csrf
                      <button type="submit"><i class="bi bi-trash-fill"></i></button>
                      </form>
                      
-                     <a href="{{route('Subject.edit', $item)}}"> <i class="bi bi-pencil-fill"></i></a>
+                     <a href="{{route('subject.edit', $item)}}"> <i class="bi bi-pencil-fill"></i></a>
                      </div>
                     </td>
                 

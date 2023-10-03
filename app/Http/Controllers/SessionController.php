@@ -41,7 +41,7 @@ class SessionController extends Controller
             'end_date' => 'required',            
             ]);
             $data = Session::create($input);
-            return redirect()->route('Session.create')->with('success','Session add successfully');
+            return redirect()->route('session.create')->with('success','Session add successfully');
 
 
         }
@@ -57,7 +57,7 @@ class SessionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Session $session)
+    public function edit(Session $Session)
     {
         //
     }
@@ -76,6 +76,6 @@ class SessionController extends Controller
     public function destroy(Session $Session)
     {
         $Session->delete();
-        return redirect()->route('Session.index')->with('success','Session deleted successfully');
+        return redirect()->route('session.index')->with('success','Session deleted successfully');
     }
 }

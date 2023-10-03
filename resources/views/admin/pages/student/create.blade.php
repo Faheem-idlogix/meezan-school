@@ -27,7 +27,7 @@
               <h5 class="card-title">Student General Information</h5>
 
               <!-- General Form Elements -->
-              <form method="post" action="{{ route('Student.store') }}" enctype="multipart/form-data" novalidate>
+              <form method="post" action="{{ route('student.store') }}" enctype="multipart/form-data" novalidate>
                 @csrf
                 <div class="row mb-3">
                 <div class="col-lg-6">
@@ -98,10 +98,9 @@
                           <strong>{{ $message }}</strong>
                       </span>
                   @enderror
-                        <option selected>Open this select menu</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                        @foreach($class_room as $classroom)
+                          <option value="{{$classroom->id}}">{{$classroom->class_name .' '. $classroom->section_name}}</option>
+                        @endforeach
                       </select>
                     </div>
                     <div class="col-lg-6">

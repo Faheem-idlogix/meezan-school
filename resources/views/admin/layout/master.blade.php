@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>World Sciences Conference</title>
+  <title>Meezan School System</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -163,21 +163,17 @@
         </a>
         <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="{{ route('Student.index') }}">
+            <a href="{{ route('student.index') }}">
               <i class="bi bi-circle"></i><span>All Students</span>
             </a>
           </li>
           
           <li>
-            <a href="{{ route('Student.create') }}">
+            <a href="{{ route('student.create') }}">
               <i class="bi bi-circle"></i><span>Add  Student</span>
             </a>
           </li>
-          <li>
-            <a href="#">
-              <i class="bi bi-circle"></i><span>Add Conference Files</span>
-            </a>
-          </li>
+         
           
          
         </ul>
@@ -189,18 +185,18 @@
         </a>
         <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="{{ route('Class.index') }}">
+            <a href="{{ route('class.index') }}">
               <i class="bi bi-circle"></i><span>All Classes</span>
             </a>
           </li>
         
-          <li>
-            <a href="{{ route('Subject.index') }}">
+          {{-- <li>
+            <a href="{{ route('subject.index') }}">
               <i class="bi bi-circle"></i><span>Subjects</span>
             </a>
-          </li>
+          </li> --}}
           <li>
-            <a href="{{ route('Session.index') }}">
+            <a href="{{ route('session.index') }}">
               <i class="bi bi-circle"></i><span>Session</span>
             </a>
           </li>
@@ -208,7 +204,7 @@
         </ul>
       </li><!-- End Forms Nav -->
 
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-people"></i><span>Teachers</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
@@ -224,7 +220,8 @@
             </a>
           </li>
         </ul>
-      </li><!-- End Tables Nav -->
+      </li> --}}
+      <!-- End Tables Nav -->
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
@@ -233,18 +230,14 @@
         <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="#">
-              <i class="bi bi-circle"></i><span>All Settings</span>
+              <i class="bi bi-circle"></i><span>Print Invoice</span>
             </a>
           </li>
-          <li>
-            <a href="#">
-              <i class="bi bi-circle"></i><span>Add Setting</span>
-            </a>
-          </li>
+        
         </ul>
       </li><!-- End Charts Nav -->
 
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#icon-nav" data-bs-toggle="collapse" href="#">
           <i class="bi bi-image"></i><span>Accounts</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
@@ -260,7 +253,7 @@
             </a>
           </li>
         </ul>
-      </li><!-- End Icons Nav -->
+      </li><!-- End Icons Nav --> --}}
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#icon-nav5" data-bs-toggle="collapse" href="#">
           <i class="bi bi-person-check"></i><span>Exam List</span><i class="bi bi-chevron-down ms-auto"></i>

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('class_name');
             $table->string('section_name')->nulllable();
-            $table->foreignId('teacher_id')->on('teachers');
             $table->foreignId('session_id')->on('sessions');
+            $table->string('status');
             $table->softDeletes();
             $table->timestamps();
         });

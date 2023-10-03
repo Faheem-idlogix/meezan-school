@@ -27,7 +27,7 @@
               <h5 class="card-title">Subjectn</h5>
 
               <!-- General Form Elements -->
-              <form action="{{ route('Subject.store') }}" method="post">
+              <form action="{{ route('subject.store') }}" method="post">
                 @csrf
                 <div class="row mb-3">
                 <div class="col-lg-6">

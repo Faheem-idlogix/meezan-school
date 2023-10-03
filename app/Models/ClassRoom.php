@@ -13,4 +13,13 @@ class ClassRoom extends Model
 
     use HasFactory;
     protected $guarded = ['id'];
+
+    public function session()
+    {
+        return $this->belongsTo(Session::class, 'session_id');
+    }
+    public function student()
+    {
+        return $this->hasMany(Student::class, 'id');
+    }
 }
