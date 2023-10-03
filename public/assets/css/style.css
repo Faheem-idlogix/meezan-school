@@ -21,6 +21,10 @@ button{
   color: green;
   margin-left: 10px;
 }
+.bi-printer{
+  color: rgb(32, 103, 218);
+  margin-left: 10px;
+}
 .bi-eye-fill{
   color:darkgoldenrod;
   margin-left: 10px;

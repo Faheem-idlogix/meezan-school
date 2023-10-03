@@ -229,7 +229,12 @@
         </a>
         <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="#">
+            <a href="{{ route('fee_voucher_create') }}">
+              <i class="bi bi-circle"></i><span>Create Invoice</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('fee_voucher') }}">
               <i class="bi bi-circle"></i><span>Print Invoice</span>
             </a>
           </li>
@@ -313,6 +318,15 @@
 
   <!-- Template Main JS File -->
   <script src="{{asset("assets/js/main.js")}}"></script>
+<script>
+    function validateNumber(input) {
+    var value = input.value;
+    if (!/^-?[0-9]+$/.test(value)) {
+      alert("Please enter an integer.");
+      input.value = "";
+    }
+  }
+  </script>
   @yield("script")
 </body>
 

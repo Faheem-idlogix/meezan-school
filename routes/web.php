@@ -7,6 +7,10 @@ use App\Http\Controllers\ClassRoomController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\ClassFeeVoucherController;
+use Illuminate\Support\Facades\Artisan;
+
+
 
 
 /*
@@ -37,6 +41,18 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('session', SessionController::class);
 
     Route::resource('class', ClassRoomController::class);
+
+    Route::get('fee_voucher', [ClassFeeVoucherController::class, 'index'])->name('fee_voucher');
+    Route::get('fee_voucher_create', [ClassFeeVoucherController::class, 'create'])->name('fee_voucher_create');
+    Route::post('store_fee_voucher', [ClassFeeVoucherController::class, 'store'])->name('store_fee_voucher');
+    Route::get('generate_fee_invoice/{id}', [ClassFeeVoucherController::class, 'generate_fee_voucher'])->name('generate_fee_invoice');
+
+    Route::get('/run-migrations', function () {
+        Artisan::call('migrate', ['--force' => true]);
+        return 'Migrations completed successfully.';
+    });
+
+
 
 
     Route::resource('subject', SubjectController::class);

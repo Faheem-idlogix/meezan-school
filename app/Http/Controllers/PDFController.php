@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
   
 use Illuminate\Http\Request;
+use App\Models\Student;
+
 use PDF;
   
 class PDFController extends Controller
@@ -42,7 +44,8 @@ class PDFController extends Controller
     public function generatePDFImage()
     {
         $data = ['title' => 'Welcome to ItSolutionStuff.com'];
-        $pdf = PDF::loadView('pdfImage', $data);
+        $student_fee = Student::all();
+        $pdf = PDF::loadView('admin.report.student_fee',  ['student_fee' => $student_fee]);
         $pdf->render();
     
         // Output the generated PDF to the browser or save it to a file

@@ -86,6 +86,13 @@
             font-size: 80%;
 
         }
+        /* CSS style for the horizontal line */
+        hr {
+            border: none; /* Remove the default border */
+            border-top: 2px solid #555; /* Set the desired line thickness and color */
+            margin: 50px 0; /* Add some space above and below the line */
+        }
+
     </style>
 </head>
 <body>
@@ -120,7 +127,7 @@
             <tr>
                 <td><strong>Father Name:</strong> 12345</td>
                 <td><strong>Exam Charges:</strong> 12345</td>
-                <td><strong>Discount:</strong> 12345</td>
+                <td><strong>Stationery Charges:</strong> 12345</td>
 
             </tr>
             <tr>
@@ -136,7 +143,9 @@
                          
         </div>
     </div>  
-  
+      <!-- Line break -->
+      <hr>
+
 
     <!-- Student Copy 1 -->
     <div class="challan">
@@ -165,7 +174,7 @@
             <tr>
                 <td><strong>Father Name:</strong> 12345</td>
                 <td><strong>Exam Charges:</strong> 12345</td>
-                <td><strong>Discount:</strong> 12345</td>
+                <td><strong>Stationery Charges:</strong> 12345</td>
 
             </tr>
             <tr>
@@ -215,7 +224,7 @@
 <tr>
     <td><strong>Father Name:</strong> 12345</td>
     <td><strong>Exam Charges:</strong> 12345</td>
-    <td><strong>Discount:</strong> 12345</td>
+    <td><strong>Stationery Charges:</strong> 12345</td>
 
 </tr>
 <tr>
@@ -260,7 +269,7 @@
         <tr>
             <td><strong>Father Name:</strong> 12345</td>
             <td><strong>Exam Charges:</strong> 12345</td>
-            <td><strong>Discount:</strong> 12345</td>
+            <td><strong>Stationery Charges:</strong> 12345</td>
 
         </tr>
         <tr>
