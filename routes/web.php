@@ -8,7 +8,6 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ClassFeeVoucherController;
-use Illuminate\Support\Facades\Artisan;
 
 
 
