@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\ClassRoom;
 use Illuminate\Http\Request;
+use App\Models\Student;
+use App\Models\StudentFee;
 
 class HomeController extends Controller
 {
@@ -24,7 +26,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-    
-        return view('admin.dashboard.dashboard');
+        $totalStudents = Student::count();
+        $classrooms = ClassRoom::count();
+        $currentMonth = date('Y-m');
+        $totalFee = StudentFee::whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$currentMonth])->sum('total_fee');
+        $students = StudentFee::with('student')->whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$currentMonth])->get();
+        return view('admin.dashboard.dashboard', compact('totalStudents', 'classrooms', 'totalFee', 'students'));
     }
 }

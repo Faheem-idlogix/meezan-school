@@ -4,11 +4,11 @@
 
     <div class="row col-lg-12 pagetitle">
         <div class="col-lg-10">
-      <h1>Voucher Data</h1>
+      <h1>Class Voucher Data</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item active">Vouchers</li>
+          <li class="breadcrumb-item active">Class Vouchers</li>
         </ol>
       </nav>
     </div>
@@ -36,6 +36,8 @@
                     <th scope="col">Name</th>
                     <th scope="col">Month</th>
                     <th scope="col">Class</th>
+                    <th scope="col">Fee</th>
+
                     <th scope="col">Action</th>
 
                   </tr>
@@ -44,13 +46,13 @@
                 $sr_no = 1 ;
                 @endphp
                 <tbody>
-                  @foreach ($class_fee_voucher as $item)
+                  @foreach ($studentFee as $item)
                   <tr>
                     <th >{{ $sr_no++ }}</th>
-                    <td>{{ $item->name }}</td>
-                    <td>{{ $item->month }}</td>
-
-                    <td>{{ $item->classroom->class_name }}</td>
+                    <td>{{ $item->student->student_name }}</td>
+                    <td>{{ $item->fee_month }}</td>
+                    <td>{{ $item->student->classroom->class_name ?? '' }}</td>
+                    <td>{{ $item->total_fee }}</td>
 
                   
                     <td>  
@@ -60,9 +62,7 @@
                        @csrf
                      <button type="submit"><i class="bi bi-trash-fill"></i></button>
                      </form>
-                     <a href="{{route('class_edit', $item->class_fee_voucher_id)}}"> <i class="bi bi-pencil-fill"></i></a>
-                     <a href="{{route('generate_fee_invoice', $item->class_fee_voucher_id)}}"> <i class="bi bi-printer"></i></a>
-                     <a href="{{route('class_fee', $item->class_fee_voucher_id)}}"> <i class="bi bi-eye-fill"></i></a>
+                     <a href="{{route('student_fee_edit', $item->student_fee_id)}}"> <i class="bi bi-pencil-fill"></i></a>
                      </div>
                     </td>
                   </tr>

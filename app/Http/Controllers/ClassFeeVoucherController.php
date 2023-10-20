@@ -43,9 +43,6 @@ class ClassFeeVoucherController extends Controller
     public function store(Request $request)
     {
         //
-
-  
-
         $class_name = ClassRoom::where('id', $request->class_room_id)->value('class_name');
         $section_name = ClassRoom::where('id', $request->class_room_id)->value('section_name');
         $students = Student::where('class_room_id', $request->class_room_id)->get();

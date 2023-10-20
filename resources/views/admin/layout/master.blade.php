@@ -230,12 +230,12 @@
         <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="{{ route('fee_voucher_create') }}">
-              <i class="bi bi-circle"></i><span>Create Invoice</span>
+              <i class="bi bi-circle"></i><span>Create Monthly Invoice</span>
             </a>
           </li>
           <li>
             <a href="{{ route('fee_voucher') }}">
-              <i class="bi bi-circle"></i><span>Print Invoice</span>
+              <i class="bi bi-circle"></i><span>Fee Invoices</span>
             </a>
           </li>
         
@@ -300,7 +300,7 @@
       <!-- You can delete the links only if you purchased the pro version. -->
       <!-- Licensing information: https://bootstrapmade.com/license/ -->
       <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-      Designed by <a href="#">Faheem Bilal</a>
+      Designed by <a href="#">Meezan School System</a>
     </div>
   </footer><!-- End Footer -->
 

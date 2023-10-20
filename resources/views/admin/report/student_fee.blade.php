@@ -54,9 +54,7 @@
             margin-top: 2px;
         }
         h3{
-            text-align: center;
-            
-
+            /* text-align: center; */
         }
         .fee-info {
             display: flex;
@@ -75,7 +73,6 @@
             font-size: 60%;
         }
         .address{
-            text-align: center;
             font-size: 70%;
 
         }
@@ -92,21 +89,75 @@
             border-top: 2px solid #555; /* Set the desired line thickness and color */
             margin: 50px 0; /* Add some space above and below the line */
         }
+        .container {
+                display: block;
+                width: 100%;
+            }
+            /* Apply styles to the table */
+            table.header {
+            border: none; /* Remove the border */
+            width: 95%;
+            margin: 0 auto; /* Center the table horizontally */
+
+            }
+
+            /* Apply styles to the table cells (th elements) */
+            table.header td {
+                border: none;
+            padding: 5px; /* Add padding for spacing */
+            }
+
+            /* Apply styles to the logo and info columns */
+            .logo {
+            width: 50px;
+            text-align: center; /* Center align the content within the cell */
+            }
+
+            .info {
+            text-align: left; /* Align the content to the left within the cell */
+            }
+
+            /* Apply styles to the school name */
+            .school-name {
+            font-size: 18px; /* Adjust the font size as needed */
+            margin-left: 100px; /* Remove default margin */
+            }
+
+            /* Apply styles to the address */
+            .address {
+            font-size: 12px; /* Adjust the font size as needed */
+            margin-left: 30px; /* Remove default margin */
+            margin-top: 10px;
+
+            }
+
+            
+            
+
+
 
     </style>
 </head>
 <body>
     <!-- School Copy -->
     @foreach ($data as $item)
+    
         
     <div class="challan">
       
-                    <div class="row col-md-12">
-                        <img src="{{ public_path('img/logo/school_logo.jpg') }}" style="width: 50px; height: 50px; margin-right: 20px;">
-                        <h3 class="school-name">Meezan School System</h3>
-                        <p class="address">Address: Chak no 149/9.L, Sahiwal . Contact No : 03457423031</p>
-                        <h4 class="heading">Fee Challan - School Copy</h4>
-                    </div>
+        <table class="header">
+            <tr class="col-md-6">
+              <td><img src="{{ public_path('img/logo/school_logo.jpg') }}" style="width: 50px; height: 50px;"> </td>
+              <td><h3 class="school-name">Meezan School System</h3>
+                <p class="address">Address: Chak no 149/9.L, Sahiwal . Contact No : 03457423031</p>
+    
+            </td>
+            </tr>
+          </table>
+          <div class="row col-md-12">
+
+         <h4 class="heading">Fee Challan - School Copy</h4>
+          </div>
         {{-- </div> --}}
         <!-- Fee Information -->
         <table class="fee-info-item">
@@ -144,19 +195,25 @@
             <p class="total"><span style="text-align: right; display: block;"><b>Total : {{$item->total_fee}}</b></span></p>
                          
         </div>
-    </div>  
       <!-- Line break -->
       <hr>
 
 
     <!-- Student Copy 1 -->
-    <div class="challan">
-        <div class="row col-md-12">
-            <img src="{{ public_path('img/logo/school_logo.jpg') }}" style="width: 50px; height: 50px; margin-right: 20px;">
-            <h3 class="school-name">Meezan School System</h3>
-            <p class="address">Address: Chak no 149/9.L, Sahiwal . Contact No : 03457423031</p>
-            <h4 class="heading">Fee Challan - Student Copy </h4>
-        </div>
+
+        <table class="header">
+            <tr class="col-md-6">
+            <td><img src="{{ public_path('img/logo/school_logo.jpg') }}" style="width: 50px; height: 50px;"> </td>
+            <td><h3 class="school-name">Meezan School System</h3>
+                <p class="address">Address: Chak no 149/9.L, Sahiwal . Contact No : 03457423031</p>
+
+            </td>
+            </tr>
+        </table>
+      <div class="row col-md-12">
+
+     <h4 class="heading">Fee Challan - School Copy</h4>
+      </div>
         <table class="fee-info-item">
             <tr>
                 <td class="fee-info-item">Voucher No: {{$item->voucher_no}}</td>
@@ -191,7 +248,7 @@
             <p class="note">Note: 20 PKR (if paid after due date) </p>
                          
         </div>
-        </div>
+    </div>
         @endforeach
 
 
