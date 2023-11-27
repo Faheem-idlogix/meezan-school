@@ -18,6 +18,9 @@
         <!-- Left side columns -->
         <div class="col-lg-12">
           <div class="row">
+            <div id="flash-messages-container" class="toast">
+              <!-- Flash messages will be dynamically inserted here -->
+          </div>
 
                <!-- Customers Card -->
                <div class="col-xxl-4 col-xl-12">
@@ -105,6 +108,10 @@
                         <th scope="col">Class</th>
                         <th scope="col">Fee</th>
                         <th scope="col">Status</th>
+                        <th scope="col">Recieved Fee</th>
+                        <th scope="col">Enter Amount</th>
+                        <th scope="col">Action</th>
+
                       </tr>
                     </thead>
                     @php
@@ -112,17 +119,29 @@
                     @endphp
                     <tbody>
                       @foreach ($students as $student)
-                      <tr>
+                      <tr id="row-{{ $student->student_fee_id }}">
                         <th scope="row"><a href="#">{{$sr_no++}}</a></th>
                         <td>{{$student->student->student_name}}</td>
                         <td>{{$student->student->classroom->class_name}}</td>
                         <td>{{$student->total_fee}}</td>
-                        <td>
+                        <td class="fee-status"style="color: white">
                            @if ($student->status == 'paid')
                           <span class="badge bg-success">{{ $student->status }}</span>
                           @elseif ($student->status == 'unpaid')
                               <span class="badge bg-danger">{{ $student->status }}</span>
+                              @elseif ($student->status == 'pending')
+                              <span class="badge bg-warning">{{ $student->status }}</span>
                           @endif
+                          {{$student->status}}
+                        </td>
+                        <td class="recieved_fee">{{$student->received_payment_fee ?? '' }}</td>
+                       <td> <input type="text" name="recieved_amount_fee" class="recieved-amount" data-student-id="{{$student->student_fee_id}}" oninput="validateNumber(this)"></td>
+                        <td>
+                          <div class="btn-group">
+                        <a  id='edit-fee' data-id="{{$student->student_fee_id}}"> <i class="bi bi-x-circle edit-fee"></i></a>
+                        <a  id='add-fee' data-id="{{$student->student_fee_id}}"> <i class="bi bi-check-circle add-fee"></i></a>
+                        <a  id='submit-fee' data-id="{{$student->student_fee_id}}"><i class="bi bi-check-circle-fill submit-fee"></i></a>
+                          </div>
                         </td>
                       </tr>
                       @endforeach
@@ -236,4 +255,68 @@
     </section>
 
   </main><!-- End #main -->
+@endsection
+@section('script')
+
+<script>
+      $(document).on('click', '#edit-fee', function(e) {
+          e.preventDefault();
+          var studentId = $(this).data('id');
+          //var fee = $('.recieved-amount[data-student-id="' + studentId + '"]').val();  
+          $.ajax({
+              url: "{{ route('edit_fee') }}",
+              type: 'post',
+              data: { id: studentId, _token: '{{ csrf_token() }}' },
+              success: function(response) {
+                $('#row-' + studentId + ' .recieved_fee').text(response.student.received_payment_fee);
+              $('#row-' + studentId + ' .fee-status').html(response.updatedStatusHTML);
+                  // Handle the success response, if needed
+              },
+              error: function(error) {
+                  // Handle the error response, if needed
+              }
+          });
+      });
+
+      $(document).on('click', '#add-fee', function(e) {
+          e.preventDefault();
+          var studentId = $(this).data('id');
+          var fee = $('.recieved-amount[data-student-id="' + studentId + '"]').val();  
+               
+          $.ajax({
+              url: "{{ route('add_fee') }}",
+              type: 'post',
+              data: { id: studentId, fee: fee, _token: '{{ csrf_token() }}' },
+              success: function(response) {
+              //  console.log(response);
+              $('#row-' + studentId + ' .recieved_fee').text(response.student.received_payment_fee);
+              $('#row-' + studentId + ' .fee-status').html(response.updatedStatusHTML);
+
+           
+              },
+              error: function(error) {
+                  // Handle the error response, if needed
+              }
+          });
+      });
+
+      $(document).on('click', '#submit-fee', function(e) {
+          e.preventDefault();
+          var studentId = $(this).data('id');
+         // var fee = $('.recieved-amount[data-student-id="' + studentId + '"]').val();  
+               
+          $.ajax({
+              url: "{{ route('add_full_fee') }}",
+              type: 'post',
+              data: { id: studentId, _token: '{{ csrf_token() }}' },
+              success: function(response) {
+              $('#row-' + studentId + ' .recieved_fee').text(response.student.received_payment_fee);
+              $('#row-' + studentId + ' .fee-status').html(response.updatedStatusHTML);
+              },
+              error: function(error) {
+                  // Handle the error response, if needed
+              }
+          });
+      });
+</script>
 @endsection

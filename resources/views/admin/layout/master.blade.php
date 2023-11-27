@@ -13,6 +13,13 @@
   <link rel="icon" type="image/x-icon" href="{{asset("WSTheme/WsImg/WSFavicon.png")}}" />
   <link href="{{asset("resources/css/app.css")}}" rel="stylesheet">
   <!-- <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon"> -->
+  {{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> --}}
+
+  <!-- Include Toastr CSS and JS files -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">

@@ -6,6 +6,7 @@ use App\Models\StudentFee;
 use App\Models\Student;
 use App\Models\ClassRoom;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\View;
 
 use Illuminate\Http\Request;
 
@@ -96,5 +97,62 @@ class StudentFeeController extends Controller
     public function destroy(StudentFee $studentFee)
     {
         //
+    }
+
+    public function add_fee(Request $request){
+        $studentFee = StudentFee::find($request->id);
+        $total_fee = $studentFee->total_fee;
+        $fee = intval($request->fee);
+        if($fee > $total_fee){
+            return response()->json([
+                'message' => 'Enter a valid Fee Amount must be equal or less than total fee',
+                'flash' => view('flash::message')->render(),
+        ]);
+        }
+        else if($request->fee != null && $request->fee != '' && $request->fee != '0'){
+            $student_fee = StudentFee::find($request->id);
+            $student_fee->received_payment_fee = $request->fee;
+            if($fee == $total_fee){
+            $student_fee->status = 'paid';
+            }
+            if($fee < $total_fee){
+                $student_fee->status = 'pending';
+            }
+             $fee_charges_left = $total_fee - $fee;
+            $student_fee->fee_charges_left = $fee_charges_left;
+            $student_fee->save();
+            $student_name = $student_fee->student->student_name;
+            $statusView = View::make('admin.pages.student_fee.status_view', ['status' => $student_fee->status, 'student' => $student_fee])->render();
+                return response()->json(['student' => $student_fee, 'updatedStatusHTML' => $statusView ]);
+        }
+        else{
+            return response()->json([
+                'message' => 'Please enter the Fee Amount',
+                'flash' => view('flash::message')->render(),
+        ]);
+        }
+    }
+
+    public function edit_fee(Request $request){
+        $student_fee = StudentFee::find($request->id);
+        $student_fee->received_payment_fee = null;
+        $student_fee->status = 'pending';
+        $student_fee->fee_charges_left = $student_fee->total_fee;
+        $student_fee->save();
+         $student_name = $student_fee->student->student_name;
+         $statusView = View::make('admin.pages.student_fee.status_view', ['status' => $student_fee->status, 'student' => $student_fee])->render();
+         return response()->json(['student' => $student_fee, 'updatedStatusHTML' => $statusView ]);
+
+    }
+    public function add_full_fee(Request $request){
+        $student_fee = StudentFee::find($request->id);
+        $student_fee->received_payment_fee = $student_fee->total_fee;
+        $student_fee->status = 'paid';
+        $student_fee->fee_charges_left = null;
+        $student_fee->save();
+        $student_name = $student_fee->student->student_name;
+        $statusView = View::make('admin.pages.student_fee.status_view', ['status' => $student_fee->status, 'student' => $student_fee])->render();
+        return response()->json(['student' => $student_fee, 'updatedStatusHTML' => $statusView ]);
+
     }
 }

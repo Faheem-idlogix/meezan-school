@@ -52,6 +52,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('class_fee/{id}', [StudentFeeController::class, 'index'])->name('class_fee');
     Route::get('student_fee_edit/{id}', [StudentFeeController::class, 'edit'])->name('student_fee_edit');
     Route::post('student_fee_updated/{id}', [StudentFeeController::class, 'update'])->name('student_fee_updated');
+    Route::post('add_fee', [StudentFeeController::class, 'add_fee'])->name('add_fee');
+    Route::post('edit_fee', [StudentFeeController::class, 'edit_fee'])->name('edit_fee');
+    Route::post('add_full_fee', [StudentFeeController::class, 'add_full_fee'])->name('add_full_fee');
 
     Route::get('/run-migrations', function () {
         Artisan::call('migrate', ['--force' => true]);

@@ -21,6 +21,18 @@ button{
   color: green;
   margin-left: 10px;
 }
+.bi-x-circle{
+  color: red;
+  margin-left: 10px;
+}
+.bi-check-circle{
+  color: green;
+  margin-left: 10px;
+}
+.bi-check-circle-fill{
+  color: green;
+  margin-left: 10px;
+}
 .bi-printer{
   color: rgb(32, 103, 218);
   margin-left: 10px;
