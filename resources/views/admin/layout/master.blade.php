@@ -242,7 +242,21 @@
           </li>
           <li>
             <a href="{{ route('fee_voucher') }}">
-              <i class="bi bi-circle"></i><span>Fee Invoices</span>
+              <i class="bi bi-circle"></i><span>Monthly Fee Invoices</span>
+            </a>
+          </li>
+        
+        </ul>
+      </li><!-- End Charts Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#charts-nav_attendance" data-bs-toggle="collapse" href="#">
+          <i class="bi  bi-gear"></i><span>Attendance</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="charts-nav_attendance" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ route('attendance') }}">
+              <i class="bi bi-circle"></i><span>Attendance</span>
             </a>
           </li>
         

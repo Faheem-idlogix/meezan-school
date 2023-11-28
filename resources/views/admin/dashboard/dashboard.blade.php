@@ -1,4 +1,20 @@
 @extends('admin.layout.master')
+@section('css')
+<style>
+  .bi-x-circle{
+  color: red;
+  margin-left: 10px;
+}
+.bi-check-circle{
+  color: green;
+  margin-left: 10px;
+}
+.bi-check-circle-fill{
+  color: green;
+  margin-left: 10px;
+}
+  </style>
+@endsection
 @section('content')
 <main id="main" class="main">
 
@@ -121,8 +137,8 @@
                       @foreach ($students as $student)
                       <tr id="row-{{ $student->student_fee_id }}">
                         <th scope="row"><a href="#">{{$sr_no++}}</a></th>
-                        <td>{{$student->student->student_name}}</td>
-                        <td>{{$student->student->classroom->class_name}}</td>
+                        <td>{{$student->student->student_name ?? ''}}</td>
+                        <td>{{$student->student->classroom->class_name ?? ''}}</td>
                         <td>{{$student->total_fee}}</td>
                         <td class="fee-status"style="color: white">
                            @if ($student->status == 'paid')

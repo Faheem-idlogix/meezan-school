@@ -9,6 +9,8 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ClassFeeVoucherController;
+use App\Http\Controllers\AttendanceController;
+
 
 
 
@@ -56,9 +58,22 @@ Route::middleware(['auth'])->group(function () {
     Route::post('edit_fee', [StudentFeeController::class, 'edit_fee'])->name('edit_fee');
     Route::post('add_full_fee', [StudentFeeController::class, 'add_full_fee'])->name('add_full_fee');
 
+    Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance');
+    Route::post('attendance_store', [AttendanceController::class, 'store'])->name('attendance_store');
+
     Route::get('/run-migrations', function () {
         Artisan::call('migrate', ['--force' => true]);
         return 'Migrations completed successfully.';
+    });
+
+    Route::get('/clear-config', function () {
+        Artisan::call('config:clear');
+        return 'Configuration cache cleared successfully.';
+    });
+    
+    Route::get('/clear-view', function () {
+        Artisan::call('view:clear');
+        return 'View cache cleared successfully.';
     });
 
 

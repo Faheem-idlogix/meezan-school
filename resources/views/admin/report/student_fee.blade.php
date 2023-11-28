@@ -212,7 +212,7 @@
         </table>
       <div class="row col-md-12">
 
-     <h4 class="heading">Fee Challan - School Copy</h4>
+     <h4 class="heading">Fee Challan - Student Copy</h4>
       </div>
         <table class="fee-info-item">
             <tr>
