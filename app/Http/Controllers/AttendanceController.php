@@ -18,6 +18,8 @@ class AttendanceController extends Controller
     {
         $classId = $request->get('classId') ?? '';
         $class_room = ClassRoom::all();
+        $date = date('Y-m-d');
+
         if($classId != ""){
             $class_id = $classId;
         }
@@ -25,11 +27,24 @@ class AttendanceController extends Controller
             $class_id = $class_room[0]->id;
         }
         $students = Student::where('class_room_id', $class_id)->get();
+        $attendanceData = [];
+        if ($class_id && $date) {
+            $attendanceRecords = Attendance::where('class_room_id', $class_id)
+                ->where('date', $date)
+                ->get();
+
+            foreach ($attendanceRecords as $attendanceRecord) {
+                $attendanceData[$attendanceRecord->student_id] = [
+                    'status' => $attendanceRecord->attendance,
+                ];
+            }
+        }
+
         if($classId != ""){
-            $studentView = View::make('admin.pages.attendance.student_render_file', ['students' => $students])->render();
+            $studentView = View::make('admin.pages.attendance.student_render_file', ['students' => $students, 'attendanceData' => $attendanceData])->render();
             return response()->json(['class_room' => $class_room, 'studentHtml' => $studentView]);
         } else{
-            return view('admin.pages.attendance.index', compact('class_room', 'students'));
+            return view('admin.pages.attendance.index', compact('class_room', 'students', 'attendanceData'));
         }
     }
 

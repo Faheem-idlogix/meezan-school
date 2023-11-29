@@ -51,7 +51,6 @@
                 </div>
             </div>
         </div>
-
         <div class="card">
           <div class="card-body">
             {{-- <h5 class="card-title">Table with stripped rows</h5> --}}
@@ -76,8 +75,33 @@
                   <th >{{$sr_no++}}</th>
                   <td>{{$student->student_name}}</td>
                   <td>{{$student->classroom->class_name}}</td>
-
-                  <td ><button type="button" value="1" data-id="{{$student->id}}" id="attendance-button" class="btn btn-danger">Absent</button></td>
+                 
+                  {{-- <button type="button" value="1" data-id="{{$student->id}}" id="attendance-button" class="btn btn-danger">Absent</button> --}}
+                  @if (isset($attendanceData[$student->id]))
+                 
+                  @if ($attendanceData[$student->id]['status'] == 1)
+                    <td >
+                      <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-success">Present</button>
+                    </td>
+                  @elseif ($attendanceData[$student->id]['status'] == 2)
+                    <td >
+                      <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-warning">Leave</button>
+                    </td>
+                  @elseif ($attendanceData[$student->id]['status'] == 3)
+                    <td >
+                      <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-danger">Absent</button>
+                    </td>
+                  @else
+                    <td >
+                      <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-danger">Absent</button>
+                    </td>
+                  @endif
+                @else
+                  <td >
+                    <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-danger">Absent</button>
+                  </td>
+                @endif
+                                     
                 </tr>
                 @endforeach
 
@@ -120,12 +144,28 @@
             });
         });
 
-        // $('#attendance-button').click(function () {
-        //      alert('h1');
-        // });
+        $('#date').change(function () {
+            var date = $(this).val();
+             alert(date);
+            // Make an AJAX request to get students based on the selected class
+            $.ajax({
+                url: '/attendance', // Replace with your route
+                type: 'GET',
+                data: {date: date},
+                success: function (data) {
+                    console.log(data);
+                    // Update the student dropdown with the new data
+                    $('#student-select').html(data.studentHtml);
+                },
+                error: function (error) {
+                    console.error('Error fetching students:', error);
+                }
+            });
+        });
 
         $(document).on('click', '#attendance-button', function(e) {
           e.preventDefault();
+          var clickedButton = $(this);
           var attendance = $(this).val();
           var studentId = $(this).data('id');
           var selectedClassId = $('#class-room-select').val();
@@ -144,10 +184,22 @@
                 data: data,
                 success: function (data) {
                     if(attendance == 1){
-                      $(this).removeClass('btn-danger');
-                      $(this).addClass('btn-success');
-                      $(this).val('2');
-                      $(this).text('Present');
+                      clickedButton.removeClass('btn-danger');
+                      clickedButton.addClass('btn-success');
+                      clickedButton.val('2');
+                      clickedButton.text('Present');
+                    }
+                    if(attendance == 2){
+                      clickedButton.removeClass('btn-success');
+                      clickedButton.addClass('btn-warning');
+                      clickedButton.val('3');
+                      clickedButton.text('Leave');
+                    }
+                    if(attendance == 3){
+                      clickedButton.removeClass('btn-warning');
+                      clickedButton.addClass('btn-danger');
+                      clickedButton.val('1');
+                      clickedButton.text('Absent');
                     }
                 },
                 error: function (error) {

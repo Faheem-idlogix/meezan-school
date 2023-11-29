@@ -3,7 +3,7 @@
     <tr>
       <th scope="col">#</th>
       <th scope="col">Name</th>
-      <th scope="col">Total present</th>
+      <th scope="col">Class</th>
       <th scope="col">Attendance</th>
     </tr>
   </thead>
@@ -15,8 +15,34 @@
     <tr id="row-{{ $student->id }}">
       <th >{{$sr_no++}}</th>
       <td>{{$student->student_name}}</td>
-      <td>28</td>
-      <td><button type="button" value="1" data-id="{{$student->id}}" id="attendance-button" class="btn btn-success">Present</button></td>
+      <td>{{$student->classroom->class_name}}</td>
+     
+      {{-- <button type="button" value="1" data-id="{{$student->id}}" id="attendance-button" class="btn btn-danger">Absent</button> --}}
+      @if (isset($attendanceData[$student->id]))
+     
+      @if ($attendanceData[$student->id]['status'] == 1)
+        <td >
+          <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-success">Present</button>
+        </td>
+      @elseif ($attendanceData[$student->id]['status'] == 2)
+        <td >
+          <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-warning">Leave</button>
+        </td>
+      @elseif ($attendanceData[$student->id]['status'] == 3)
+        <td >
+          <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-danger">Absent</button>
+        </td>
+      @else
+        <td >
+          <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-danger">Absent</button>
+        </td>
+      @endif
+    @else
+      <td >
+        <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-danger">Absent</button>
+      </td>
+    @endif
+                         
     </tr>
     @endforeach
 
