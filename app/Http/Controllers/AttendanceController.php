@@ -17,8 +17,14 @@ class AttendanceController extends Controller
     public function index(Request $request  )
     {
         $classId = $request->get('classId') ?? '';
+        $date = $request->get('date') ?? '';
         $class_room = ClassRoom::all();
-        $date = date('Y-m-d');
+        if($date != ""){
+            $date = $date;
+        }
+        else{
+            $date = date('Y-m-d');
+        }
 
         if($classId != ""){
             $class_id = $classId;

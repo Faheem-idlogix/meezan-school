@@ -43,6 +43,9 @@ class ClassFeeVoucherController extends Controller
     public function store(Request $request)
     {
         //
+        $currentDate = Carbon::now();
+        $lastMonthFormatted = $currentDate->subMonth()->format('F Y');
+
         $class_name = ClassRoom::where('id', $request->class_room_id)->value('class_name');
         $section_name = ClassRoom::where('id', $request->class_room_id)->value('section_name');
         $students = Student::where('class_room_id', $request->class_room_id)->get();
@@ -52,7 +55,6 @@ class ClassFeeVoucherController extends Controller
         $request->fine +
         $request->arrears +
         $request->academic_fee;
-
         $carbonDate = Carbon::parse($request->issue_date);
         $fee_month = $carbonDate->format('F Y'); 
         $fee_voucher_name =  $class_name.'-'.$section_name.' '. $fee_month;
@@ -65,28 +67,26 @@ class ClassFeeVoucherController extends Controller
 
         foreach ($students as $student){
             $student_fee = new StudentFee();
-             $student_fee->student_id = $student->id;
-             $student_fee->class_fee_voucher_id =  $class_fee_voucher_id;
-             $student_fee->voucher_no = StudentFee::generateUniqueVoucherNumber();
-             $student_fee->fee_month = $fee_month;
-             $student_fee->issue_date = $request->issue_date;
-             $student_fee->submit_date = $request->submit_date;
-             $student_fee->total_fee = $total_fee;
-             $student_fee->stationery_charges = $request->stationery_charges;
-             $student_fee->test_series_charges = $request->test_series_charges;
-             $student_fee->exam_charges = $request->exam_charges;
-             $student_fee->fine = $request->fine;
-             $student_fee->arrears = $request->arrears;
-             $student_fee->academic_fee = $request->academic_fee;
-             $student_fee->note = $request->note;
-             $student_fee->status = 'unpaid';
-             $student_fee->save();
+            $last_month_charges = StudentFee::where('student_id', $student->id)->where('fee_month', $lastMonthFormatted)->value('fee_charges_left') ?? 0;
+            $student_fee->student_id = $student->id;
+            $student_fee->class_fee_voucher_id =  $class_fee_voucher_id;
+            $student_fee->voucher_no = StudentFee::generateUniqueVoucherNumber();
+            $student_fee->fee_month = $fee_month;
+            $student_fee->issue_date = $request->issue_date;
+            $student_fee->submit_date = $request->submit_date;
+            $student_fee->total_fee = $total_fee + $last_month_charges;
+            $student_fee->stationery_charges = $request->stationery_charges;
+            $student_fee->test_series_charges = $request->test_series_charges;
+            $student_fee->exam_charges = $request->exam_charges;
+            $student_fee->fine = $request->fine;
+            $student_fee->arrears = $request->arrears;
+            $student_fee->academic_fee = $request->academic_fee + $last_month_charges;
+            $student_fee->note = $request->note;
+            $student_fee->status = 'unpaid';
+            $student_fee->save();
         }
 
-
-
-
-        return $request;
+        return redirect()->back()->with('success','Fee Voucher Created successfully');
     }
 
     /**

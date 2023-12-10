@@ -15,7 +15,12 @@
     <section class="section">
       <div class="row">
         <div class="col-lg-12">
-
+          @if (session('success'))
+          <div class="alert alert-success alert-dismissible border-0 fade show" role="alert">
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              {{ session('success') }}
+          </div>
+       @endif
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Generate Class fee Voucher</h5>

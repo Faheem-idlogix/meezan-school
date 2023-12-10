@@ -74,7 +74,7 @@
                 <tr id="row-{{ $student->id }}">
                   <th >{{$sr_no++}}</th>
                   <td>{{$student->student_name}}</td>
-                  <td>{{$student->classroom->class_name}}</td>
+                  <td>{{$student->classroom->class_name.' '.$student->classroom->section_name}}</td>
                  
                   {{-- <button type="button" value="1" data-id="{{$student->id}}" id="attendance-button" class="btn btn-danger">Absent</button> --}}
                   @if (isset($attendanceData[$student->id]))
@@ -127,12 +127,15 @@
         // When class selection changes
         $('#class-room-select').change(function () {
             var classId = $(this).val();
-             alert(classId);
-            // Make an AJAX request to get students based on the selected class
+            var date =  $('#date').val();           
+            var data = {
+            classId: classId,
+            date: date
+             };
             $.ajax({
                 url: '/attendance', // Replace with your route
                 type: 'GET',
-                data: {classId: classId},
+                data: data,
                 success: function (data) {
                     console.log(data);
                     // Update the student dropdown with the new data
@@ -146,12 +149,15 @@
 
         $('#date').change(function () {
             var date = $(this).val();
-             alert(date);
-            // Make an AJAX request to get students based on the selected class
+            var classId =  $('#class-room-select').val();  
+            var data = {
+            classId: classId,
+            date: date
+             };
             $.ajax({
                 url: '/attendance', // Replace with your route
                 type: 'GET',
-                data: {date: date},
+                data: data,
                 success: function (data) {
                     console.log(data);
                     // Update the student dropdown with the new data

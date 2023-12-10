@@ -15,7 +15,7 @@
     <tr id="row-{{ $student->id }}">
       <th >{{$sr_no++}}</th>
       <td>{{$student->student_name}}</td>
-      <td>{{$student->classroom->class_name}}</td>
+      <td>{{$student->classroom->class_name.' '.$student->classroom->section_name}}</td>
      
       {{-- <button type="button" value="1" data-id="{{$student->id}}" id="attendance-button" class="btn btn-danger">Absent</button> --}}
       @if (isset($attendanceData[$student->id]))
