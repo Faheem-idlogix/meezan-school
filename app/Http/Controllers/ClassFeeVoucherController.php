@@ -79,8 +79,8 @@ class ClassFeeVoucherController extends Controller
             $student_fee->test_series_charges = $request->test_series_charges;
             $student_fee->exam_charges = $request->exam_charges;
             $student_fee->fine = $request->fine;
-            $student_fee->arrears = $request->arrears;
-            $student_fee->academic_fee = $request->academic_fee + $last_month_charges;
+            $student_fee->arrears = $request->arrears  + $last_month_charges;
+            $student_fee->academic_fee = $request->academic_fee;
             $student_fee->note = $request->note;
             $student_fee->status = 'unpaid';
             $student_fee->save();
