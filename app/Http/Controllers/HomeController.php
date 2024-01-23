@@ -28,9 +28,11 @@ class HomeController extends Controller
     {
         $totalStudents = Student::count();
         $classrooms = ClassRoom::count();
-        $currentMonth = date('Y-m');
-        $totalFee = StudentFee::whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$currentMonth])->sum('total_fee');
-        $students = StudentFee::with('student')->whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$currentMonth])->get();
+        $currentMonth = date('F Y');
+        $totalFee = StudentFee::where("fee_month", $currentMonth)->sum('total_fee');
+        $students = StudentFee::with('student')->where("fee_month", $currentMonth)->get();
+       // $totalFee = StudentFee::whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$currentMonth])->sum('total_fee');
+       // $students = StudentFee::with('student')->whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$currentMonth])->get();
         return view('admin.dashboard.dashboard', compact('totalStudents', 'classrooms', 'totalFee', 'students'));
     }
 }
