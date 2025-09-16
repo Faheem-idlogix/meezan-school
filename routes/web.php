@@ -10,6 +10,8 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ClassFeeVoucherController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\Auth\LoginController;
+
 
 
 
@@ -32,9 +34,12 @@ Route::get('test', function () {
 Route::get('check', function () {
     return view('pdfImage');
 });
-Auth::routes();
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [LoginController::class, 'login']);
 
 Route::middleware(['auth'])->group(function () {
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
     Route::get('home', [HomeController::class, 'index'])->name('home');
     Route::get('/', [HomeController::class, 'index']);
     Route::post('class_update/{id}', [ClassRoomController::class, 'update'])->name('class_update');
