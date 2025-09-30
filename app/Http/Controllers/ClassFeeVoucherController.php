@@ -116,9 +116,12 @@ class ClassFeeVoucherController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ClassFeeVoucher $classFeeVoucher)
+    public function destroy(ClassFeeVoucher $classFeeVoucher, $id)
     {
         //
+        $classroom = classFeeVoucher::find($id);
+        $classroom->delete();
+        return redirect()->route('fee_voucher')->with('success','Voucher deleted successfully');
     }
 
     public function generate_fee_voucher($id){

@@ -54,6 +54,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('fee_voucher', [ClassFeeVoucherController::class, 'index'])->name('fee_voucher');
     Route::get('fee_voucher_create', [ClassFeeVoucherController::class, 'create'])->name('fee_voucher_create');
     Route::post('store_fee_voucher', [ClassFeeVoucherController::class, 'store'])->name('store_fee_voucher');
+    Route::delete('/voucher_destroy/{id}', [ClassFeeVoucherController::class, 'destroy'])->name('voucher_destroy');
+
     Route::get('generate_fee_invoice/{id}', [ClassFeeVoucherController::class, 'generate_fee_voucher'])->name('generate_fee_invoice');
 
     Route::get('class_fee/{id}', [StudentFeeController::class, 'index'])->name('class_fee');

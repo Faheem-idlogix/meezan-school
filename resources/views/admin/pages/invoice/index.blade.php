@@ -55,7 +55,7 @@
                   
                     <td>  
                       <div class="btn-group">
-                      <form action="{{route('class_destroy', $item->class_fee_voucher_id)}}" method="post">
+                      <form action="{{route('voucher_destroy', $item->class_fee_voucher_id)}}" method="post">
                        @method('delete')
                        @csrf
                      <button type="submit"><i class="bi bi-trash-fill"></i></button>
