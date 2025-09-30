@@ -2,259 +2,201 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fee Challan</title>
     <style>
-        /* Add your CSS styles for formatting the fee challan here */
-        body {
-            font-family: Arial, sans-serif;
+        html, body {
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 13px;   /* reduced just a little */
+            line-height: 1.4;
         }
         .challan {
-            /* width: 210mm;  */
-            margin: 0 auto;
-            background-color: #ffffff;
-            /* Add some padding and margins to make the challan look more attractive */
-            padding: 20px 40px;
-            /* margin-top: 20px; */
+            page-break-after: always;
+            padding: 10px;
         }
-        .challan h4 {
-            text-align: center;
-            /* //margin-bottom: 10px; */
-            color: #555;
+        .challan:last-child {
+            page-break-after: auto;
         }
-        table {
+        .main-table {
             width: 100%;
             border-collapse: collapse;
         }
-        table, th, td {
+        .main-table td {
+            width: 50%;
+            vertical-align: top;
             border: 1px solid #000;
-            font-size: 80%;
-            
+            padding: 12px;
         }
-        .data{
-             /* border: 1px solid #000; */
+        .header {
+            text-align: center;
+            margin-bottom: 8px;
         }
-        th, td {
+        .header img {
+            width: 50px;   /* slightly smaller logo */
+            height: 50px;
+            margin-bottom: 5px;
+        }
+        .school-name {
+            font-size: 18px;  /* reduced slightly */
+            font-weight: bold;
+            margin: 0;
+        }
+        .address {
+            font-size: 12px;
+            margin: 2px 0;
+        }
+        .info-table {
+            width: 100%;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .info-table td {
+            padding: 4px;
+        }
+        .fee-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .fee-table th, .fee-table td {
+            /* border: 1px solid #000; */
             padding: 6px;
+        }
+        .fee-table th {
+            background: #f2f2f2;
+            text-align: left;
+            font-size: 14px;
+        }
+        .total {
+            text-align: right;
+            font-weight: bold;
+            font-size: 15px;
+            margin-top: 8px;
+        }
+
+        .note-total {
+            text-align: left;
+            font-weight: bold;
+            font-size: 15px;
+            margin-top: 8px;
+        }
+        .note {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        /* optional dashed cut line between school & student copy */
+        .main-table td + td {
+            /* border-left: 2px dashed #000; */
+        }
+
+        .fee-table td:first-child,
+        .fee-table th:first-child {
+            width: 70%;         /* Description column bigger */
             text-align: left;
         }
-        .finee {
-            background-color: #ffcccc;
-            border: 1px solid #cc0000;
-            padding: 5px;
-            color: #cc0000;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 5px;
+
+        .fee-table td:last-child,
+        .fee-table th:last-child {
+            width: 30%;         /* Amount column smaller */
+            text-align: right;  /* Align values to right */
         }
-        .copy {
-            text-align: center;
-            margin-top: 2px;
-        }
-        h3{
-            /* text-align: center; */
-        }
-        .fee-info {
-            display: flex;
-            justify-content: space-between;
-            /* margin-top: 10px; */
-            font-weight: bold;
-
-        }
-        .fee-info-item {
-            border: 0px solid #cc0000;
-            font-weight: bold;
-            font-size: 80%;
-
-        }
-        .note{
-            font-size: 60%;
-        }
-        .address{
-            font-size: 70%;
-
-        }
-        .challan .note {
-            page-break-after: always; /* Page break after the footer */
-        }
-        .total{
-            font-size: 80%;
-
-        }
-        /* CSS style for the horizontal line */
-        hr {
-            border: none; /* Remove the default border */
-            border-top: 2px solid #555; /* Set the desired line thickness and color */
-            margin: 50px 0; /* Add some space above and below the line */
-        }
-        .container {
-                display: block;
-                width: 100%;
-            }
-            /* Apply styles to the table */
-            table.header {
-            border: none; /* Remove the border */
-            width: 95%;
-            margin: 0 auto; /* Center the table horizontally */
-
-            }
-
-            /* Apply styles to the table cells (th elements) */
-            table.header td {
-                border: none;
-            padding: 5px; /* Add padding for spacing */
-            }
-
-            /* Apply styles to the logo and info columns */
-            .logo {
-            width: 50px;
-            text-align: center; /* Center align the content within the cell */
-            }
-
-            .info {
-            text-align: left; /* Align the content to the left within the cell */
-            }
-
-            /* Apply styles to the school name */
-            .school-name {
-            font-size: 18px; /* Adjust the font size as needed */
-            margin-left: 100px; /* Remove default margin */
-            }
-
-            /* Apply styles to the address */
-            .address {
-            font-size: 12px; /* Adjust the font size as needed */
-            margin-left: 30px; /* Remove default margin */
-            margin-top: 10px;
-
-            }
-
-            
-            
-
-
 
     </style>
 </head>
 <body>
-    <!-- School Copy -->
     @foreach ($data as $item)
-    
-        
     <div class="challan">
-      
-        <table class="header">
-            <tr class="col-md-6">
-              <td><img src="{{ public_path('img/logo/school_logo.jpg') }}" style="width: 50px; height: 50px;"> </td>
-              <td><h3 class="school-name">Meezan School System</h3>
-                <p class="address">Address: Chak no 149/9.L, Sahiwal . Contact No : 03457423031</p>
-    
-            </td>
-            </tr>
-          </table>
-          <div class="row col-md-12">
-
-         <h4 class="heading">Fee Challan - School Copy</h4>
-          </div>
-        {{-- </div> --}}
-        <!-- Fee Information -->
-        <table class="fee-info-item">
-        <tr>
-            <td class="fee-info-item">Voucher No: {{$item->voucher_no}}</td>
-            <td class="fee-info-item">Month: {{$item->fee_month}}</td>
-            <td class="fee-info-item">Issue Date: {{$item->issue_date}}</td>
-            <td class="fee-info-item">Due Date: {{$item->submit_date}}</td>
-        </tr>
-        </table>
-        <table>
-          
+        <table class="main-table">
             <tr>
-                <td><strong>Student Name:</strong> {{$item->student->student_name}}</td>
-                <td><strong>Test Series Charges:</strong> {{$item->test_series_charges}}</td>
-                <td><strong>Monthly Fee :</strong> {{$item->academic_fee}}</td>
+                <!-- School Copy -->
+                <td>
+                    <div class="header">
+                        <img src="{{ public_path('img/logo/school_logo.jpg') }}">
+                        <p class="school-name">The Meezan School</p>
+                        <p class="address">Chak No.149/9L</p>
+                        <p class="address">Contact/WhatsApp: 03406581549</p>
+                        <h3>Fee Voucher - {{ $item->fee_month }}<</h3>
+                        <h3>School Copy </h3>
+                    </div>
+                    <table class="info-table">
+                        <tr>
+                            <td><strong>Student: </strong>{{ $item->student->student_name }}</td>
+                            <td><strong>Date: </strong>{{ $item->issue_date }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Father Name: </strong>{{ $item->student->father_name }}</td>
+                            <td><strong>Class: </strong>{{ $item->student->classroom->class_name.' '.$item->student->classroom->section_name ?? '' }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invoice No: </strong>{{ $item->voucher_no }}</td>
+                            <td><strong>Contact: </strong>{{ $item->student->contact_no ?? '' }}</td>
+                        </tr>
+                         <tr>
+                            <td><strong>Issue Date: </strong>{{ $item->issue_date ?? ''}}</td>
+                            <td><strong>Due Date: </strong>{{ $item->submit_date ?? '' }}</td>
+                        </tr>
+                    </table>
+                    <table class="fee-table">
+                        <tr><th>Description</th><th>Amount</th></tr>
+                        <tr><td>Monthly Fee</td><td>{{ $item->academic_fee ?? 0 }}</td></tr>
+                        <tr><td>Exam charges / Annual Test Fund</td><td>{{ $item->exam_charges ?? 0 }}</td></tr>
+                        <tr><td>Stationery Charges</td><td>{{ $item->stationery_charges ?? 0 }}</td></tr>
+                        <tr><td>Note Book / Diary</td><td>{{ $item->notebook_charges ?? 0 }}</td></tr>
+                        <tr><td>Books</td><td>{{ $item->books_charges ?? 0 }}</td></tr>
+                        <tr><td>Arrears</td><td>{{ $item->arrears ?? 0 }}</td></tr>
+                        <tr><td>Fine</td><td>{{ $item->fine ?? 0 }}</td></tr>
+                    </table>
+                    <p class="total">Grand Total: {{ $item->total_fee }}</p>
+                    <p class="note-total">Terms & Conditions</p>
+                    <p class="note">Fee must be paid before 10th of every Month. Rs.50 charge if fee paid after Due Date.</p>
+                </td>
 
-
-            </tr>
-            <tr>
-                <td><strong>Father Name:</strong> {{$item->student->father_name}}</td>
-                <td><strong>Exam Charges:</strong> {{$item->exam_charges}}</td>
-                <td><strong>Stationery Charges:</strong> {{$item->stationery_charges}}</td>
-
-            </tr>
-            <tr>
-                <td><strong>Contact No:</strong> {{$item->student->contact_no ?? ''}}</td>
-                <td><strong>Arrears:</strong> {{$item->arrears}}</td>
-                <td><strong>Fine :</strong> {{$item->fine}}</td>
-            </tr>
-        </table>
-        <!-- Add fine details if applicable -->
-    
-        <div class="footer row">
-            <p class="total"><span style="text-align: right; display: block;"><b>Total : {{$item->total_fee}}</b></span></p>
-                         
-        </div>
-      <!-- Line break -->
-      <hr>
-
-
-    <!-- Student Copy 1 -->
-
-        <table class="header">
-            <tr class="col-md-6">
-            <td><img src="{{ public_path('img/logo/school_logo.jpg') }}" style="width: 50px; height: 50px;"> </td>
-            <td><h3 class="school-name">Meezan School System</h3>
-                <p class="address">Address: Chak no 149/9.L, Sahiwal . Contact No : 03457423031</p>
-
-            </td>
-            </tr>
-        </table>
-      <div class="row col-md-12">
-
-     <h4 class="heading">Fee Challan - Student Copy</h4>
-      </div>
-        <table class="fee-info-item">
-            <tr>
-                <td class="fee-info-item">Voucher No: {{$item->voucher_no}}</td>
-                <td class="fee-info-item">Month: {{$item->fee_month}}</td>
-                <td class="fee-info-item">Issue Date: {{$item->issue_date}}</td>
-                <td class="fee-info-item">Due Date: {{$item->submit_date}}</td>
-            </tr>
-            </table>
-        <table>
-            <tr>
-                <td><strong>Student Name:</strong> {{$item->student->student_name}}</td>
-                <td><strong>Test Series Charges:</strong> {{$item->test_series_charges}}</td>
-                <td><strong>Monthly Fee :</strong> {{$item->academic_fee}}</td>
-
-
-            </tr>
-            <tr>
-                <td><strong>Father Name:</strong> {{$item->student->father_name}}</td>
-                <td><strong>Exam Charges:</strong> {{$item->exam_charges}}</td>
-                <td><strong>Stationery Charges:</strong> {{$item->stationery_charges}}</td>
-
-            </tr>
-            <tr>
-                <td><strong>Contact No:</strong> {{$item->student->contact_no ?? ''}}</td>
-                <td><strong>Arrears:</strong> {{$item->arrears}}</td>
-                <td><strong>Fine :</strong> {{$item->fine}}</td>
+                <!-- Student Copy -->
+                <td>
+                    <div class="header">
+                        <img src="{{ public_path('img/logo/school_logo.jpg') }}">
+                        <p class="school-name">The Meezan School</p>
+                        <p class="address">Chak No.149/9L</p>
+                        <p class="address">Contact/WhatsApp: 03406581549</p>
+                       <h3>Fee Voucher - {{ $item->fee_month }}<</h3>
+                        <h3>Student Copy</h3>
+                    </div>
+                     <table class="info-table">
+                        <tr>
+                            <td><strong>Student: </strong>{{ $item->student->student_name }}</td>
+                            <td><strong>Date: </strong>{{ $item->issue_date }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Father Name: </strong>{{ $item->student->father_name }}</td>
+                            <td><strong>Class: </strong>{{ $item->student->classroom->class_name.' '.$item->student->classroom->section_name ?? '' }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Invoice No: </strong>{{ $item->voucher_no }}</td>
+                            <td><strong>Contact: </strong>{{ $item->student->contact_no ?? '' }}</td>
+                        </tr>
+                         <tr>
+                            <td><strong>Issue Date: </strong>{{ $item->issue_date ?? ''}}</td>
+                            <td><strong>Due Date: </strong>{{ $item->submit_date ?? '' }}</td>
+                        </tr>
+                    </table>
+                    <table class="fee-table">
+                        <tr><th>Description</th><th>Amount</th></tr>
+                        <tr><td>Monthly Fee</td><td>{{ $item->academic_fee ?? 0 }}</td></tr>
+                        <tr><td>Exam charges / Annual Test Fund</td><td>{{ $item->exam_charges  ?? 0}}</td></tr>
+                        <tr><td>Stationery Charges</td><td>{{ $item->stationery_charges ?? 0 }}</td></tr>
+                        <tr><td>Note Book / Diary</td><td>{{ $item->notebook_charges ?? 0 }}</td></tr>
+                        <tr><td>Books</td><td>{{ $item->books_charges ?? 0 }}</td></tr>
+                        <tr><td>Arrears</td><td>{{ $item->arrears ?? 0 }}</td></tr>
+                        <tr><td>Fine</td><td>{{ $item->fine ?? 0 }}</td></tr>
+                    </table>
+                    <p class="total">Grand Total: {{ $item->total_fee }}</p>
+                    <p class="note-total">Terms & Conditions</p>
+                    <p class="note">Fee must be paid before 10th of every Month. Rs.50 charge if fee paid after Due Date.</p>
+                </td>
             </tr>
         </table>
-        <!-- Add fine details if applicable -->
-        <div class="footer row">
-            <p class="total"><span style="text-align: right; display: block;"><b>Total : {{$item->total_fee}}</b></span></p>
-            <p class="note">Note: 20 PKR (if paid after due date) </p>
-                         
-        </div>
     </div>
-        @endforeach
-
-
-    <!-- Student Copy 2 -->
-
-     <!-- School Copy -->
-   
+    @endforeach
 </body>
 </html>

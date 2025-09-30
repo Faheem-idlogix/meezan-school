@@ -61,7 +61,7 @@
                      <button type="submit"><i class="bi bi-trash-fill"></i></button>
                      </form>
                      <a href="{{route('class_edit', $item->class_fee_voucher_id)}}"> <i class="bi bi-pencil-fill"></i></a>
-                     <a href="{{route('generate_fee_invoice', $item->class_fee_voucher_id)}}"> <i class="bi bi-printer"></i></a>
+                     <a href="{{route('generate_fee_invoice', $item->class_fee_voucher_id)}}"  target="_blank"> <i class="bi bi-printer"></i></a>
                      <a href="{{route('class_fee', $item->class_fee_voucher_id)}}"> <i class="bi bi-eye-fill"></i></a>
                      </div>
                     </td>

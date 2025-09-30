@@ -66,20 +66,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance');
     Route::post('attendance_store', [AttendanceController::class, 'store'])->name('attendance_store');
 
-    Route::get('/run-migrations', function () {
-        Artisan::call('migrate', ['--force' => true]);
-        return 'Migrations completed successfully.';
-    });
+    // Route::get('/run-migrations', function () {
+    //     Artisan::call('migrate', ['--force' => true]);
+    //     return 'Migrations completed successfully.';
+    // });
 
-    Route::get('/clear-config', function () {
-        Artisan::call('config:clear');
-        return 'Configuration cache cleared successfully.';
-    });
+    // Route::get('/clear-config', function () {
+    //     Artisan::call('config:clear');
+    //     return 'Configuration cache cleared successfully.';
+    // });
     
-    Route::get('/clear-view', function () {
-        Artisan::call('view:clear');
-        return 'View cache cleared successfully.';
-    });
+    // Route::get('/clear-view', function () {
+    //     Artisan::call('view:clear');
+    //     return 'View cache cleared successfully.';
+    // });
 
 
 

@@ -123,8 +123,9 @@ class ClassFeeVoucherController extends Controller
 
     public function generate_fee_voucher($id){
        
-        $data = StudentFee::with('class_fee_voucher', 'student')->where('class_fee_voucher_id', $id)->get();
-        $pdf = PDF::loadView('admin.report.student_fee',  ['data' => $data]);
+        $data = StudentFee::with('class_fee_voucher', 'student.classroom')->where('class_fee_voucher_id', $id)->get();
+        $pdf = PDF::loadView('admin.report.student_fee',  ['data' => $data])
+                  ->setPaper('a4', 'landscape'); // make it horizontal  
         $pdf->render();
     
         // Output the generated PDF to the browser or save it to a file
