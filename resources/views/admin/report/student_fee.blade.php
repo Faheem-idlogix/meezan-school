@@ -143,7 +143,7 @@
                         <tr><td>Exam charges / Annual Test Fund</td><td>{{ $item->exam_charges ?? 0 }}</td></tr>
                         <tr><td>Stationery Charges</td><td>{{ $item->stationery_charges ?? 0 }}</td></tr>
                         <tr><td>Note Book / Diary</td><td>{{ $item->notebook_charges ?? 0 }}</td></tr>
-                        <tr><td>Books</td><td>{{ $item->books_charges ?? 0 }}</td></tr>
+                        <tr><td>Books</td><td>{{ $item->book_charges ?? 0 }}</td></tr>
                         <tr><td>Arrears</td><td>{{ $item->arrears ?? 0 }}</td></tr>
                         <tr><td>Fine</td><td>{{ $item->fine ?? 0 }}</td></tr>
                     </table>
@@ -186,7 +186,7 @@
                         <tr><td>Exam charges / Annual Test Fund</td><td>{{ $item->exam_charges  ?? 0}}</td></tr>
                         <tr><td>Stationery Charges</td><td>{{ $item->stationery_charges ?? 0 }}</td></tr>
                         <tr><td>Note Book / Diary</td><td>{{ $item->notebook_charges ?? 0 }}</td></tr>
-                        <tr><td>Books</td><td>{{ $item->books_charges ?? 0 }}</td></tr>
+                        <tr><td>Books</td><td>{{ $item->book_charges ?? 0 }}</td></tr>
                         <tr><td>Arrears</td><td>{{ $item->arrears ?? 0 }}</td></tr>
                         <tr><td>Fine</td><td>{{ $item->fine ?? 0 }}</td></tr>
                     </table>

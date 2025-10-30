@@ -73,7 +73,7 @@
                         </div>
                </div>
 
-               <div class="row mb-3">
+              <div class="row mb-3">
                 <div class="col-lg-6">
                   <label for="inputText" class="col-form-label">Enter Test Charges</label>
                     <input type="text" name="test_series_charges" pattern="-?[0-9]+$" oninput="validateNumber(this)" placeholder="Enter the Test Charges"  class="form-control">
@@ -82,7 +82,18 @@
                     <label for="inputText" class="col-form-label">Enter Exam Charges</label>
                       <input type="text" name="exam_charges" pattern="-?[0-9]+$" oninput="validateNumber(this)" placeholder="Enter the Exam Charges"  class="form-control">
                     </div>
-           </div>
+                </div>
+
+              <div class="row mb-3">
+                <div class="col-lg-6">
+                  <label for="inputText" class="col-form-label">Enter Note Book / Dairy Charges</label>
+                    <input type="text" name="notebook_charges" pattern="-?[0-9]+$" oninput="validateNumber(this)" placeholder="Enter the Test Charges"  class="form-control">
+                  </div>
+                  <div class="col-lg-6">
+                    <label for="inputText" class="col-form-label">Enter Book Charges</label>
+                      <input type="text" name="book_charges" pattern="-?[0-9]+$" oninput="validateNumber(this)" placeholder="Enter the Exam Charges"  class="form-control">
+                    </div>
+              </div>
 
            <div class="row mb-3">
             <div class="col-lg-6">

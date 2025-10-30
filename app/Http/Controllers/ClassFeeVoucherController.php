@@ -9,7 +9,9 @@ use App\Models\Student;
 use App\Models\StudentFee;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use PDF;
+// use PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 
 
@@ -52,6 +54,8 @@ class ClassFeeVoucherController extends Controller
         $total_fee = $request->stationery_charges +
         $request->test_series_charges +
         $request->exam_charges +
+        $request->notebook_charges +
+        $request->book_charges +
         $request->fine +
         $request->arrears +
         $request->academic_fee;
@@ -78,6 +82,8 @@ class ClassFeeVoucherController extends Controller
             $student_fee->stationery_charges = $request->stationery_charges;
             $student_fee->test_series_charges = $request->test_series_charges;
             $student_fee->exam_charges = $request->exam_charges;
+            $student_fee->notebook_charges = $request->notebook_charges;
+            $student_fee->book_charges = $request->book_charges;
             $student_fee->fine = $request->fine;
             $student_fee->arrears = $request->arrears  + $last_month_charges;
             $student_fee->academic_fee = $request->academic_fee;
