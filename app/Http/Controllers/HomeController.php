@@ -29,7 +29,7 @@ class HomeController extends Controller
         $totalStudents = Student::count();
         $classrooms = ClassRoom::count();
         $currentMonth = date('F Y');
-        $totalFee = StudentFee::where("fee_month", $currentMonth)->sum('total_fee');
+        $totalFee = StudentFee::where("fee_month", $currentMonth)->whereHas('class_fee_voucher')->sum('total_fee');
         $students = StudentFee::with('student')->where("fee_month", $currentMonth)->whereHas('class_fee_voucher')->get();
        // $totalFee = StudentFee::whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$currentMonth])->sum('total_fee');
        // $students = StudentFee::with('student')->whereRaw("DATE_FORMAT(created_at, '%Y-%m') = ?", [$currentMonth])->get();
