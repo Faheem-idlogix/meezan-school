@@ -124,4 +124,11 @@ class StudentController extends Controller
           $Student->delete();
           return redirect()->route('student.index')->with('success','Conference Category deleted successfully');
     }
+
+    public function getStudentsByClass(Request $request)
+    {
+        $students = Student::where('class_room_id', $request->class_id)->get(['id', 'student_name']);
+        return response()->json(['students' => $students]);
+    }
+
 }

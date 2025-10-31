@@ -245,6 +245,11 @@
               <i class="bi bi-circle"></i><span>Monthly Fee Invoices</span>
             </a>
           </li>
+           <li>
+            <a href="{{ route('create_student_fee') }}">
+              <i class="bi bi-circle"></i><span>Create Student Voucher</span>
+            </a>
+          </li>
         
         </ul>
       </li><!-- End Charts Nav -->

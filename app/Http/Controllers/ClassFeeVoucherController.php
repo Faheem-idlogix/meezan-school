@@ -23,7 +23,7 @@ class ClassFeeVoucherController extends Controller
     public function index()
     {
         //
-        $class_fee_voucher =  ClassFeeVoucher::all();
+        $class_fee_voucher = ClassFeeVoucher::orderBy('class_fee_voucher_id', 'desc')->get();
         return view('admin.pages.invoice.index', compact('class_fee_voucher'));
     }
 

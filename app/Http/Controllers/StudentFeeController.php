@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\StudentFee;
 use App\Models\Student;
 use App\Models\ClassRoom;
+use App\Models\ClassFeeVoucher;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\View;
 
@@ -28,6 +29,8 @@ class StudentFeeController extends Controller
     public function create()
     {
         //
+        $classrooms = ClassRoom::all();
+        return view('admin.pages.student_fee.create', compact('classrooms'));
     }
 
     /**
@@ -35,7 +38,70 @@ class StudentFeeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'classroom_id' => 'required|exists:class_rooms,id',
+            'student_id' => 'required|exists:students,id',
+            'issue_date' => 'required|date',
+            'submit_date' => 'required|date|after_or_equal:issue_date',
+            'academic_fee' => 'nullable|numeric',
+            'stationery_charges' => 'nullable|numeric',
+            'test_series_charges' => 'nullable|numeric',
+            'exam_charges' => 'nullable|numeric',
+            'notebook_charges' => 'nullable|numeric',
+            'book_charges' => 'nullable|numeric',
+            'arrears' => 'nullable|numeric',
+            'fine' => 'nullable|numeric',
+        ]);
+
+        $classRoom = ClassRoom::findOrFail($request->classroom_id);
+        $student = Student::findOrFail($request->student_id);
+
+        // Calculate total fee
+        $total_fee =
+            ($request->stationery_charges ?? 0) +
+            ($request->test_series_charges ?? 0) +
+            ($request->exam_charges ?? 0) +
+            ($request->notebook_charges ?? 0) +
+            ($request->book_charges ?? 0) +
+            ($request->fine ?? 0) +
+            ($request->arrears ?? 0) +
+            ($request->academic_fee ?? 0);
+
+        // Fee month and voucher name
+        $carbonDate = Carbon::parse($request->issue_date);
+        $fee_month = $carbonDate->format('F Y');
+        $fee_voucher_name = $student->student_name . ' - ' . $classRoom->class_name . '-' . $classRoom->section_name . ' (' . $fee_month . ')';
+
+        // Create Class Fee Voucher
+        $classFeeVoucher = new ClassFeeVoucher();
+        $classFeeVoucher->name = $fee_voucher_name;
+        $classFeeVoucher->month = $fee_month;
+        $classFeeVoucher->class_room_id = $classRoom->id;
+        $classFeeVoucher->save();
+
+        // Create Student Fee entry
+        $studentFee = new StudentFee();
+        $studentFee->student_id = $student->id;
+        $studentFee->class_fee_voucher_id = $classFeeVoucher->class_fee_voucher_id;
+        $studentFee->voucher_no = StudentFee::generateUniqueVoucherNumber();
+        $studentFee->fee_month = $fee_month;
+        $studentFee->issue_date = $request->issue_date;
+        $studentFee->submit_date = $request->submit_date;
+        $studentFee->total_fee = $total_fee;
+        $studentFee->stationery_charges = $request->stationery_charges ?? 0;
+        $studentFee->test_series_charges = $request->test_series_charges ?? 0;
+        $studentFee->exam_charges = $request->exam_charges ?? 0;
+        $studentFee->notebook_charges = $request->notebook_charges ?? 0;
+        $studentFee->book_charges = $request->book_charges ?? 0;
+        $studentFee->fine = $request->fine ?? 0;
+        $studentFee->arrears = $request->arrears ?? 0;
+        $studentFee->academic_fee = $request->academic_fee ?? 0;
+        $studentFee->note = $request->note;
+        $studentFee->status = 'unpaid';
+        $studentFee->save();
+
+        return redirect()->route('create_student_fee')->with('success','Student Fee Voucher created successfully!');
+
     }
 
     /**
