@@ -45,8 +45,10 @@ class ClassFeeVoucherController extends Controller
     public function store(Request $request)
     {
         //
+        //dd($request);
         $currentDate = Carbon::now();
-        $lastMonthFormatted = $currentDate->subMonth()->format('F Y');
+        $issueDate = Carbon::parse($request->issue_date);
+        $lastMonthFormatted = $issueDate->subMonth()->format('F Y');
 
         $class_name = ClassRoom::where('id', $request->class_room_id)->value('class_name');
         $section_name = ClassRoom::where('id', $request->class_room_id)->value('section_name');
@@ -79,6 +81,7 @@ class ClassFeeVoucherController extends Controller
             $student_fee->issue_date = $request->issue_date;
             $student_fee->submit_date = $request->submit_date;
             $student_fee->total_fee = $total_fee + $last_month_charges;
+            $student_fee->fee_charges_left = $total_fee + $last_month_charges;
             $student_fee->stationery_charges = $request->stationery_charges;
             $student_fee->test_series_charges = $request->test_series_charges;
             $student_fee->exam_charges = $request->exam_charges;

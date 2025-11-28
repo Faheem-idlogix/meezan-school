@@ -218,7 +218,7 @@ class StudentFeeController extends Controller
         $student_fee = StudentFee::find($request->id);
         $student_fee->received_payment_fee = $student_fee->total_fee;
         $student_fee->status = 'paid';
-        $student_fee->fee_charges_left = null;
+        $student_fee->fee_charges_left = 0;
         $student_fee->save();
         $student_name = $student_fee->student->student_name;
         $statusView = View::make('admin.pages.student_fee.status_view', ['status' => $student_fee->status, 'student' => $student_fee])->render();
