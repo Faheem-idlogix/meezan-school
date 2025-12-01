@@ -49,7 +49,7 @@
                   @foreach ($studentFee as $item)
                   <tr>
                     <th >{{ $sr_no++ }}</th>
-                    <td>{{ $item->student->student_name }}</td>
+                    <td>{{ $item->student->student_name ?? '' }}</td>
                     <td>{{ $item->fee_month }}</td>
                     <td>{{ $item->student->classroom->class_name ?? '' }}</td>
                     <td>{{ $item->total_fee }}</td>

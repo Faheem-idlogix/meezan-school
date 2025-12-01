@@ -121,7 +121,7 @@
                     </div>
                     <table class="info-table">
                         <tr>
-                            <td><strong>Student: </strong>{{ $item->student->student_name }}</td>
+                            <td><strong>Student: </strong>{{ $item->student->student_name ?? '' }}</td>
                             <td><strong>Date: </strong>{{ $item->issue_date }}</td>
                         </tr>
                         <tr>
@@ -164,7 +164,7 @@
                     </div>
                      <table class="info-table">
                         <tr>
-                            <td><strong>Student: </strong>{{ $item->student->student_name }}</td>
+                            <td><strong>Student: </strong>{{ $item->student->student_name ?? '' }}</td>
                             <td><strong>Date: </strong>{{ $item->issue_date }}</td>
                         </tr>
                         <tr>
