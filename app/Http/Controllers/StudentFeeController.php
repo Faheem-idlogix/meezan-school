@@ -19,7 +19,8 @@ class StudentFeeController extends Controller
     public function index($id)
     {
         //
-        $studentFee = StudentFee::where('class_fee_voucher_id', $id)->get();
+        $studentFee = StudentFee::where('class_fee_voucher_id', $id)
+            ->whereHas('student')->get();
         return view('admin.pages.student_fee.index', compact('studentFee'));
     }
 
