@@ -41,7 +41,7 @@
                             <div class="row g-3 align-items-end">
 
                                 <!-- Start Date -->
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label for="first_date" required class="form-label fw-semibold">
                                         Start Date
                                     </label>
@@ -53,7 +53,7 @@
                                 </div>
 
                                 <!-- End Date -->
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label for="last_date" required class="form-label fw-semibold">
                                         End Date
                                     </label>
@@ -64,8 +64,26 @@
                                            required>
                                 </div>
 
+                                <div class="col-md-3">
+                                    <label for="class_id" class="form-label fw-semibold">
+                                        Select Class
+                                    </label>
+                                    <select class="form-select" 
+                                            id="class_id" 
+                                            name="class_id" 
+                                            required>
+                                        <option value="" disabled selected>
+                                            -- Select Class --
+                                        </option>
+                                        @foreach($class_room as $class)
+                                            <option value="{{ $class->id }}">
+                                                {{ $class->class_name }} - {{ $class->section_name }}
+                                            </option>       
+                                        @endforeach
+                                    </select>
+                                </div>       
                                 <!-- Button -->
-                                <div class="col-md-4 d-grid">
+                                <div class="col-md-3 d-grid">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="bi bi-bar-chart-line me-1"></i>
                                         Generate Report

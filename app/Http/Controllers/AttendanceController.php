@@ -96,7 +96,8 @@ class AttendanceController extends Controller
     public function show(Attendance $attendance)
     {
         //
-        return view('admin.pages.attendance.get_attendance_report');
+        $class_room = ClassRoom::all();
+        return view('admin.pages.attendance.get_attendance_report', compact('class_room'));
     }
 
     /**
@@ -128,6 +129,7 @@ class AttendanceController extends Controller
         $first_date = $request->first_date;
         $last_date = $request->last_date;
         $attendance = Attendance::with(['student', 'classRoom'])
+            ->where('class_room_id', $request->class_id)
             ->whereBetween('date', [$request->first_date, $request->last_date])
             ->get()
             ->groupBy('student_id')
