@@ -33,24 +33,24 @@ class AttendanceController extends Controller
             $class_id = $class_room[0]->id;
         }
         $students = Student::where('class_room_id', $class_id)->get();
-        $attendanceData = [];
+        $attendance = [];
         if ($class_id && $date) {
             $attendanceRecords = Attendance::where('class_room_id', $class_id)
                 ->where('date', $date)
                 ->get();
 
             foreach ($attendanceRecords as $attendanceRecord) {
-                $attendanceData[$attendanceRecord->student_id] = [
+                $attendance[$attendanceRecord->student_id] = [
                     'status' => $attendanceRecord->attendance,
                 ];
             }
         }
 
         if($classId != ""){
-            $studentView = View::make('admin.pages.attendance.student_render_file', ['students' => $students, 'attendanceData' => $attendanceData])->render();
+            $studentView = View::make('admin.pages.attendance.student_render_file', ['students' => $students, 'attendance' => $attendance])->render();
             return response()->json(['class_room' => $class_room, 'studentHtml' => $studentView]);
         } else{
-            return view('admin.pages.attendance.index', compact('class_room', 'students', 'attendanceData'));
+            return view('admin.pages.attendance.index', compact('class_room', 'students', 'attendance'));
         }
     }
 
@@ -96,6 +96,7 @@ class AttendanceController extends Controller
     public function show(Attendance $attendance)
     {
         //
+        return view('admin.pages.attendance.get_attendance_report');
     }
 
     /**
@@ -121,4 +122,30 @@ class AttendanceController extends Controller
     {
         //
     }
+
+   public function attendanceReport(Request $request)
+    {
+        $first_date = $request->first_date;
+        $last_date = $request->last_date;
+        $attendance = Attendance::with(['student', 'classRoom'])
+            ->whereBetween('date', [$request->first_date, $request->last_date])
+            ->get()
+            ->groupBy('student_id')
+            ->map(function ($records) {
+
+                return [
+                    'student'   => $records->first()->student,
+                    'classRoom' => $records->first()->classRoom,
+
+                    'present' => $records->where('attendance', 1)->count(),
+                    'leave'   => $records->where('attendance', 2)->count(),
+                    'absent'  => $records->where('attendance', 3)->count(),
+                ];
+            });
+            
+
+           // dd($attendance);
+        return view('admin.pages.attendance.attendance_report', compact('attendance', 'first_date', 'last_date'));
+    }
+
 }

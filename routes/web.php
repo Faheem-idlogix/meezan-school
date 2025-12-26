@@ -70,6 +70,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance');
     Route::post('attendance_store', [AttendanceController::class, 'store'])->name('attendance_store');
+    Route::get('attendance_report', [AttendanceController::class, 'attendanceReport'])->name('attendance_report');
+    Route::get('get_attendance_report', [AttendanceController::class, 'show'])->name('get_attendance_report');
 
     // Route::get('/run-migrations', function () {
     //     Artisan::call('migrate', ['--force' => true]);

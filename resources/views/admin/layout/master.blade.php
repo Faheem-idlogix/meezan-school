@@ -263,6 +263,9 @@
             <a href="{{ route('attendance') }}">
               <i class="bi bi-circle"></i><span>Attendance</span>
             </a>
+               <a href="{{ route('get_attendance_report') }}">
+              <i class="bi bi-circle"></i><span>Attendance Report</span>
+            </a>
           </li>
         
         </ul>

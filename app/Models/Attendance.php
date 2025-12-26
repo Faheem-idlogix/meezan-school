@@ -11,4 +11,13 @@ class Attendance extends Model
 {
     use SoftDeletes;
     use HasFactory;
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
+    public function classRoom()
+    {
+        return $this->belongsTo(ClassRoom::class);
+    }
 }

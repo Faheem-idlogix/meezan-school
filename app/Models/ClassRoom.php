@@ -22,4 +22,8 @@ class ClassRoom extends Model
     {
         return $this->hasMany(Student::class, 'id');
     }
+    public function attendance()
+    {
+        return $this->hasMany(Attendance::class, 'class_room_id');
+    }
 }
