@@ -33,24 +33,24 @@ class AttendanceController extends Controller
             $class_id = $class_room[0]->id;
         }
         $students = Student::where('class_room_id', $class_id)->get();
-        $attendance = [];
+        $attendanceData = [];
         if ($class_id && $date) {
             $attendanceRecords = Attendance::where('class_room_id', $class_id)
                 ->where('date', $date)
                 ->get();
 
             foreach ($attendanceRecords as $attendanceRecord) {
-                $attendance[$attendanceRecord->student_id] = [
+                $attendanceData[$attendanceRecord->student_id] = [
                     'status' => $attendanceRecord->attendance,
                 ];
             }
         }
 
         if($classId != ""){
-            $studentView = View::make('admin.pages.attendance.student_render_file', ['students' => $students, 'attendance' => $attendance])->render();
+            $studentView = View::make('admin.pages.attendance.student_render_file', ['students' => $students, 'attendanceData' => $attendanceData])->render();
             return response()->json(['class_room' => $class_room, 'studentHtml' => $studentView]);
         } else{
-            return view('admin.pages.attendance.index', compact('class_room', 'students', 'attendance'));
+            return view('admin.pages.attendance.index', compact('class_room', 'students', 'attendanceData'));
         }
     }
 

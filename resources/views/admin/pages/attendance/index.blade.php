@@ -75,11 +75,13 @@
                   <th >{{$sr_no++}}</th>
                   <td>{{$student->student_name}}</td>
                   <td>{{$student->classroom->class_name.' '.$student->classroom->section_name}}</td>
-                 
                   {{-- <button type="button" value="1" data-id="{{$student->id}}" id="attendance-button" class="btn btn-danger">Absent</button> --}}
                   @if (isset($attendanceData[$student->id]))
-                 
-                  @if ($attendanceData[$student->id]['status'] == 1)
+                    @if ($attendanceData[$student->id]['status'] == 0)
+                    <td >
+                      <button type="button" value="0" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-primary">Mark Attendance</button>
+                    </td>
+                  @elseif ($attendanceData[$student->id]['status'] == 1)
                     <td >
                       <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-success">Present</button>
                     </td>
@@ -98,7 +100,7 @@
                   @endif
                 @else
                   <td >
-                    <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-danger">Absent</button>
+                    <button type="button" value="0" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-primary">Mark Attendance</button>
                   </td>
                 @endif
                                      
@@ -189,6 +191,12 @@
                 type: 'POST',
                 data: data,
                 success: function (data) {
+                if(attendance == 0){
+                      clickedButton.removeClass('btn-outline-secondary');
+                      clickedButton.addClass('btn-danger');
+                      clickedButton.val('1');
+                      clickedButton.text('Absent');
+                    }
                     if(attendance == 1){
                       clickedButton.removeClass('btn-danger');
                       clickedButton.addClass('btn-success');

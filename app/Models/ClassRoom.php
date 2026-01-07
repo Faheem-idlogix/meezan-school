@@ -26,4 +26,9 @@ class ClassRoom extends Model
     {
         return $this->hasMany(Attendance::class, 'class_room_id');
     }
+
+    public function classSubject()
+    {
+        return $this->hasMany(ClassSubject::class, 'class_id');
+    }
 }

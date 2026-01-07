@@ -12,4 +12,9 @@ class Subject extends Model
     use SoftDeletes;
     use HasFactory;
     protected $guarded = ['id'];
+
+    public function classSubject()
+    {
+        return $this->hasMany(ClassSubject::class, 'subject_id');
+    }
 }

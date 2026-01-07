@@ -197,11 +197,16 @@
             </a>
           </li>
         
-          {{-- <li>
+          <li>
             <a href="{{ route('subject.index') }}">
               <i class="bi bi-circle"></i><span>Subjects</span>
             </a>
-          </li> --}}
+          </li>
+          <li>
+            <a href="{{ route('class_subject.index') }}">
+              <i class="bi bi-circle"></i><span>Class Subjects</span>
+            </a>
+          </li>
           <li>
             <a href="{{ route('session.index') }}">
               <i class="bi bi-circle"></i><span>Session</span>
@@ -250,6 +255,11 @@
               <i class="bi bi-circle"></i><span>Create Student Voucher</span>
             </a>
           </li>
+            <li>
+              <a href="{{ route('voucher.index') }}">
+                <i class="bi bi-circle"></i><span>Journal Vouchers</span>
+              </a>
+            </li>
         
         </ul>
       </li><!-- End Charts Nav -->
@@ -295,13 +305,13 @@
         <ul id="icon-nav5" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           
           <li>
-            <a href="#">
-              <i class="bi bi-circle"></i><span>Add user</span>
+            <a href="{{ route('exam.index') }}">
+              <i class="bi bi-circle"></i><span>Exam</span>
             </a>
           </li>
           <li>
-            <a href="#">
-              <i class="bi bi-circle"></i><span>All user</span>
+            <a href="{{ route('exam_result.index') }}">
+              <i class="bi bi-circle"></i><span>Exam Result</span>
             </a>
           </li>
         </ul>

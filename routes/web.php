@@ -6,11 +6,16 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentFeeController;
 use App\Http\Controllers\ClassRoomController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\ClassSubjectController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ClassFeeVoucherController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\ExamController;
+use App\Http\Controllers\ExamResultController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\VoucherController;
 
 
 
@@ -73,6 +78,38 @@ Route::middleware(['auth'])->group(function () {
     Route::get('attendance_report', [AttendanceController::class, 'attendanceReport'])->name('attendance_report');
     Route::get('get_attendance_report', [AttendanceController::class, 'show'])->name('get_attendance_report');
 
+    Route::resource('subject', SubjectController::class);
+
+    Route::resource('class_subject', ClassSubjectController::class);
+
+    Route::resource('exam', ExamController::class);
+
+    Route::resource('exam_result', ExamResultController::class);
+
+    Route::resource('voucher', VoucherController::class);
+    
+    // AJAX endpoint for fetching class data
+    Route::get('exam_result/ajax/class-data/{classId}', [ExamResultController::class, 'getClassData'])
+        ->name('exam_result.class_data');
+
+    
+
+
+
+
+
+    // Route::prefix('subject')->group(function () {
+    //     Route::get('/', [SubjectController::class, 'index'])->name('subject');
+    //     Route::get('/create', [SubjectController::class, 'create'])->name('subject.create');
+    //     Route::post('/store', [SubjectController::class, 'store'])->name('subject.store');
+    //     Route::get('/edit/{subject}', [SubjectController::class, 'edit'])->name('subject.edit');
+    //     Route::delete('/subject/{subject}', [SubjectController::class, 'destroy'])->name('subject.destroy');
+    // });
+
+
+    Route::get('result_card', [ReportController::class, 'result_card'])->name('result_card');
+
+
     // Route::get('/run-migrations', function () {
     //     Artisan::call('migrate', ['--force' => true]);
     //     return 'Migrations completed successfully.';
@@ -91,7 +128,6 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-    Route::resource('subject', SubjectController::class);
 });
 
     Route::get('generate-pdf', [PDFController::class, 'generatePDF']);

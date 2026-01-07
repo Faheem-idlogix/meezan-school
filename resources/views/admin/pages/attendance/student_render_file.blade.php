@@ -19,8 +19,11 @@
      
       {{-- <button type="button" value="1" data-id="{{$student->id}}" id="attendance-button" class="btn btn-danger">Absent</button> --}}
       @if (isset($attendanceData[$student->id]))
-     
-      @if ($attendanceData[$student->id]['status'] == 1)
+      @if ($attendanceData[$student->id]['status'] == 0)
+        <td >
+          <button type="button" value="0" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-primary">Mark Attendance</button>
+        </td>
+      @elseif ($attendanceData[$student->id]['status'] == 1)
         <td >
           <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-success">Present</button>
         </td>
@@ -39,7 +42,7 @@
       @endif
     @else
       <td >
-        <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-danger">Absent</button>
+        <button type="button" value="0" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-primary">Mark Attendance</button>
       </td>
     @endif
                          

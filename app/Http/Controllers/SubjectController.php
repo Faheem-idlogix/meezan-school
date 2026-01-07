@@ -37,7 +37,7 @@ class SubjectController extends Controller
             'subject_name' => 'required',           
             ]);
             $data = Subject::create($input);
-            return redirect()->route('Subject.create')->with('success','Subject add successfully');
+            return redirect()->route('subject.create')->with('success','Subject add successfully');
     }
 
     /**
@@ -69,7 +69,7 @@ class SubjectController extends Controller
             'subject_name' => 'required',           
             ]);
             $data = $Subject->update($input);
-            return redirect()->route('Subject.index')->with('success','Subject updated successfully');
+            return redirect()->route('subject.index')->with('success','Subject updated successfully');
     }
 
     /**
@@ -78,6 +78,6 @@ class SubjectController extends Controller
     public function destroy(Subject $Subject)
     {
         $Subject->delete();
-        return redirect()->route('Subject.index')->with('success','Subject deleted successfully');
+        return redirect()->route('subject.index')->with('success','Subject deleted successfully');
     }
 }

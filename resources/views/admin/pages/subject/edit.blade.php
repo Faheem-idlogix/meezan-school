@@ -24,7 +24,7 @@
 
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Subjectn</h5>
+              <h5 class="card-title">Subject</h5>
 
               <!-- General Form Elements -->
               <form action="{{ route('subject.update', $Subject) }}" method="post">
