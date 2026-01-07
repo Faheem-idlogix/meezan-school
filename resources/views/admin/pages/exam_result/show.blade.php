@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>{{ $student->student_name }} - {{ $exam->name }} Report Card</title>
+<title>{{ $student->student_name }} - {{ $exam->name }}</title>
 
 <style>
     @page { size: A4; margin: 15mm; }
@@ -24,9 +24,39 @@
     .summary { margin-top: 10px; font-size: 15px; }
     .summary-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
     .summary-table td { border: 1px solid #000; padding: 6px; text-align: center; }
-    .footer-table { width: 100%; border-collapse: collapse; font-size: 15px; margin-top: 14px; }
-    .footer-table td { padding: 6px 4px; vertical-align: bottom; }
+    /* .footer-table { width: 100%; border-collapse: collapse; font-size: 15px; margin-top: 14px; }
+    .footer-table td { padding: 6px 4px; vertical-align: bottom; } */
+    /* .footer-table td {padding: 10px 8px; vertical-align: top;}
+    .footer-label { display: block; width: 100%; border-collapse: collapse; table-layout: fixed;font-size: 14px;margin-bottom: 6px;}
+    .footer-line {display: block;border-bottom: 1px solid #000;width: 100%;height: 18px;} */
     .signature-table { width: 100%; margin-top: 35px; text-align: center; font-size: 14px; }
+    .footer-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed; /* 🔥 REQUIRED */
+        margin-top: 20px;
+    }
+
+    .footer-table td {
+        width: 50%;
+        padding: 12px 10px;
+        vertical-align: top;
+    }
+
+    .footer-label {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    .footer-line {
+        display: block;
+        width: 100%;
+        height: 18px;
+        border-bottom: 1px solid #000;
+        line-height: 18px;
+    }
+
     @media print { body { margin: 0; } }
 </style>
 </head>
@@ -39,7 +69,7 @@
     </div>
     <div class="school-name">The Meezan School System 149/9.L Sahiwal</div>
 
-    <div class="report-title">{{ $exam->name }} Report Card</div>
+    <div class="report-title">{{ $exam->name }}</div>
 
     <!-- STUDENT INFO -->
     <table class="info-table">
@@ -120,16 +150,43 @@
     <!-- FOOTER -->
     <table class="footer-table">
         <tr>
-            <td>Neatness & Behavior: <span class="line"></span></td>
-            <td>Grade: <span class="line-small">{{ $overallGrade }}</span></td>
+            <td>
+                <span class="footer-label">Class Position</span>
+                <span class="footer-line"></span>
+            </td>
+            <td>
+                <span class="footer-label">Present Attendance</span>
+                <span class="footer-line"></span>
+            </td>
         </tr>
+
         <tr>
-            <td>Remarks: <span class="line">{{ $overallRemark }}</span></td>
-            <td>Issue Date: <span class="line-small">{{ now()->format('d M Y') }}</span></td>
+            <td>
+                <span class="footer-label">Neatness &amp; Behavior</span>
+                <span class="footer-line"></span>
+            </td>
+            <td>
+                <span class="footer-label">Grade</span>
+                <span class="footer-line">{{ $overallGrade }}</span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <span class="footer-label">Remarks</span>
+                <span class="footer-line">{{ $overallRemark }}</span>
+            </td>
+            <td>
+                <span class="footer-label">Issue Date</span>
+                <span class="footer-line">{{ now()->format('d M Y') }}</span>
+            </td>
         </tr>
     </table>
 
-    <table style="margin-top: 50px" class="signature-table">
+
+
+
+    <table style="margin-top: 80px" class="signature-table">
         <tr>
             <td>Parent’s Sign</td>
             <td>Teacher’s Signature</td>
