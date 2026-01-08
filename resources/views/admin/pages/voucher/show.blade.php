@@ -115,7 +115,7 @@
                         <p class="school-name">The Meezan School</p>
                         <p class="address">Chak No.149/9L</p>
                         <p class="address">Contact/WhatsApp: 03406581549</p>
-                        <h3>Journal Voucher</h3>
+                        <h3>New session voucher</h3>
                         <h3>School Copy</h3>
                     </div>
                     <table class="info-table">
@@ -153,7 +153,7 @@
                         <p class="school-name">The Meezan School</p>
                         <p class="address">Chak No.149/9L</p>
                         <p class="address">Contact/WhatsApp: 03406581549</p>
-                        <h3>Journal Voucher</h3>
+                        <h3>New session voucher</h3>
                         <h3>Student Copy</h3>
                     </div>
                     <table class="info-table">
