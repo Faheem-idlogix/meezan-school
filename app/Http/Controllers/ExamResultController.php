@@ -85,6 +85,7 @@ class ExamResultController extends Controller
             'marks.*.total_marks' => 'required|numeric|min:0',
             'marks.*.obtained_marks' => 'required|numeric|min:0',
         ]);
+         // Begin transaction
 
         try {
             $created = 0;

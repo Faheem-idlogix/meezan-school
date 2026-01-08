@@ -8,6 +8,24 @@
     @page { size: A4; margin: 15mm; }
     body { margin: 0; font-family: "Times New Roman", serif; background: #fff; color: #000; }
     .page { width: 100%; }
+    .header {
+    display: flex;
+    align-items: center;        /* vertical center */
+    justify-content: center;    /* center whole row */
+    gap: 12px;                  /* space between logo & text */
+}
+
+.header img {
+    width: 60px;
+    height: 60px;
+}
+
+.school-name {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: left;
+}
+
     .school-name { text-align: center; font-weight: bold; font-size: 20px; }
     .report-title { text-align: center; font-weight: bold; font-size: 18px; text-decoration: underline; margin: 6px 0 20px; }
     .info-table { width: 100%; border-collapse: collapse; font-size: 16px; margin-bottom: 12px; }
@@ -68,6 +86,13 @@
         <img src="{{ asset('img/logo/school_logo.ico') }}" alt="School Logo" style="width:60px; height:60px; display:block; margin: 0 auto 10px auto;">
     </div>
     <div class="school-name">The Meezan School System 149/9.L Sahiwal</div>
+    {{-- <div class="header">
+        <img src="{{ asset('img/logo/school_logo.ico') }}" alt="School Logo">
+        <div class="school-name">
+            The Meezan School System 149/9.L Sahiwal
+        </div>
+    </div> --}}
+
 
     <div class="report-title">{{ $exam->name }}</div>
 
@@ -155,9 +180,18 @@
                 <span class="footer-line"></span>
             </td>
             <td>
-                <span class="footer-label">Present Attendance</span>
+                <span class="footer-label">Total Working Days</span>
                 <span class="footer-line"></span>
             </td>
+            <td>
+                <span class="footer-label">Present Days</span>
+                <span class="footer-line"></span>
+            </td>
+            <td>
+                <span class="footer-label">Absent Days</span>
+                <span class="footer-line"></span>
+            </td>
+            
         </tr>
 
         <tr>
@@ -169,10 +203,7 @@
                 <span class="footer-label">Grade</span>
                 <span class="footer-line">{{ $overallGrade }}</span>
             </td>
-        </tr>
-
-        <tr>
-            <td>
+               <td>
                 <span class="footer-label">Remarks</span>
                 <span class="footer-line">{{ $overallRemark }}</span>
             </td>
