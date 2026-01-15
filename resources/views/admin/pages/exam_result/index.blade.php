@@ -51,7 +51,7 @@
                   @foreach ($exam_results as $item)
                   <tr>
                     <th>{{ $sr_no++ }}</th>
-                    <td>{{ $item->student->student_name }}</td>
+                    <td>{{ $item->student->student_name ?? '' }}</td>
                     <td>{{ $item->classRoom->class_name }}</td>
                     <td>{{ $item->exam->name }}</td>
                     <td>{{ $item->subject->subject_name }}</td>
