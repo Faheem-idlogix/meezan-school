@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -33,10 +34,10 @@ return new class extends Migration
 
         // Back-fill existing vouchers as income (they're fee receipts from students)
         if (Schema::hasColumn('vouchers', 'type')) {
-            \DB::table('vouchers')->whereNull('category')->update([
+            DB::table('vouchers')->whereNull('category')->update([
                 'type'         => 'income',
                 'category'     => 'Student Fee',
-                'voucher_date' => \DB::raw('DATE(created_at)'),
+                'voucher_date' => DB::raw('DATE(created_at)'),
             ]);
         }
     }
