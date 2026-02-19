@@ -25,8 +25,17 @@
   <link href="{{asset("assets/vendor/quill/quill.bubble.css")}}"  rel="stylesheet">
   <link href="{{asset("assets/vendor/remixicon/remixicon.css")}}"  rel="stylesheet">
   <link href="{{asset("assets/vendor/simple-datatables/style.css")}}"  rel="stylesheet">
+  <!-- Toastr CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <!-- Template Main CSS File -->
   <link href="{{asset("assets/css/style.css")}}"  rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+    body { font-family: 'Poppins', sans-serif; }
+    .form-control, .form-select { border-radius: 5px; font-family: 'Poppins', sans-serif; }
+    .form-control:focus, .form-select:focus { border-color: #4154f1; box-shadow: 0 0 0 .2rem rgba(65,84,241,.15); }
+    .input-group-text { border-radius: 5px 0 0 5px; }
+  </style>
   @yield("css")
   <!-- =======================================================
   * Template Name: NiceAdmin - v2.2.2
@@ -60,6 +69,45 @@
 
   <!-- Template Main JS File -->
   <script src="{{asset("assets/js/main.js")}}"></script>
+  
+  <!-- jQuery (required for Toastr) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Toastr JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  
+  <script>
+    // Toastr configuration
+    toastr.options = {
+      "closeButton": true,
+      "progressBar": true,
+      "positionClass": "toast-top-right",
+      "timeOut": "3000"
+    };
+
+    // Display Laravel flash messages
+    @if(session('success'))
+      toastr.success("{{ session('success') }}");
+    @endif
+    
+    @if(session('error'))
+      toastr.error("{{ session('error') }}");
+    @endif
+    
+    @if(session('warning'))
+      toastr.warning("{{ session('warning') }}");
+    @endif
+    
+    @if(session('info'))
+      toastr.info("{{ session('info') }}");
+    @endif
+
+    @if($errors->any())
+      @foreach($errors->all() as $error)
+        toastr.error("{{ $error }}");
+      @endforeach
+    @endif
+  </script>
+  
   @yield("script")
 </body>
 

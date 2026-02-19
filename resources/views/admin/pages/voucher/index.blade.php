@@ -51,7 +51,7 @@
                   @foreach ($vouchers as $voucher)
                   <tr>
                     <th>{{ $sr_no++ }}</th>
-                    <td>{{ $voucher->student->student_name }}</td>
+                    <td>{{ $voucher->student?->student_name ?? '— Deleted Student —' }}</td>
                     <td>{{ $voucher->voucher_code }}</td>
                     <td>{{ $voucher->amount }}</td>
                     <td>{{ $voucher->expiry_date }}</td>

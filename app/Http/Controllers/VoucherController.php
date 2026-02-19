@@ -15,7 +15,9 @@ class VoucherController extends Controller
     public function index()
     {
         //
-        $vouchers = Voucher::with('student', 'items')->get();
+        $vouchers = Voucher::with(['student' => function ($q) {
+            $q->withTrashed();
+        }, 'items'])->get();
         return view('admin.pages.voucher.index', compact('vouchers'));
     }
 

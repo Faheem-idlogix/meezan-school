@@ -23,4 +23,20 @@ class Student extends Model
     {
         return $this->hasMany(Attendance::class, 'student_id');
     }
+    public function leaveRequests()
+    {
+        return $this->morphMany(LeaveRequest::class, 'leavable');
+    }
+    public function promotions()
+    {
+        return $this->hasMany(StudentPromotion::class);
+    }
+    public function fees()
+    {
+        return $this->hasMany(StudentFee::class);
+    }
+    public function examResults()
+    {
+        return $this->hasMany(ExamResult::class, 'student_id');
+    }
 }

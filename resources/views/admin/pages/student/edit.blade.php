@@ -2,15 +2,19 @@
 @section('content')
 <main id="main" class="main">
 
-    <div class="pagetitle">
-      <h1>Edit Student</h1>
-      <nav>
-        <ol class="breadcrumb">
+    <div class="pagetitle d-flex align-items-center justify-content-between">
+      <div>
+        <h1>Edit Student</h1>
+        <nav><ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-          <li class="breadcrumb-item active">Elements</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
+          <li class="breadcrumb-item"><a href="{{ route('student.index') }}">Students</a></li>
+          <li class="breadcrumb-item active">Edit</li>
+        </ol></nav>
+      </div>
+      <a href="{{ route('student.index') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back
+      </a>
+    </div>
 
     <section class="section">
       <div class="row">
@@ -23,8 +27,11 @@
        @endif
 
           <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Student General Information</h5>
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <h5 class="card-title"><i class="bi bi-pencil-square me-2 text-primary"></i>Student Information</h5>
+              <span class="badge" style="background:#f0f4ff;color:#4154f1;">ID: {{ $Student->id }}</span>
+            </div>
+            <div class="card-body pt-3">
 
               <!-- General Form Elements -->
               <form method="post" action="{{ route('student.update', $Student) }}" enctype="multipart/form-data" novalidate>

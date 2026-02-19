@@ -29,15 +29,15 @@
         </td>
       @elseif ($attendanceData[$student->id]['status'] == 2)
         <td >
-          <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-warning">Leave</button>
+          <button type="button" value="2" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-warning">Leave</button>
         </td>
       @elseif ($attendanceData[$student->id]['status'] == 3)
         <td >
-          <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-danger">Absent</button>
+          <button type="button" value="3" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-danger">Absent</button>
         </td>
       @else
         <td >
-          <button type="button" value="1" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-danger">Absent</button>
+          <button type="button" value="0" data-id="{{ $student->id }}" id="attendance-button" class="btn btn-primary">Mark Attendance</button>
         </td>
       @endif
     @else

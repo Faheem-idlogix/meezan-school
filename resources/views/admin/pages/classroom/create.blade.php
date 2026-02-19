@@ -2,23 +2,29 @@
 @section('content')
 <main id="main" class="main">
 
-    <div class="pagetitle">
-      <h1>Add Class</h1>
-      <nav>
-        <ol class="breadcrumb">
+    <div class="pagetitle d-flex align-items-center justify-content-between">
+      <div>
+        <h1>Add Class</h1>
+        <nav><ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-          <li class="breadcrumb-item active">Elements</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
+          <li class="breadcrumb-item"><a href="{{ route('class.index') }}">Classes</a></li>
+          <li class="breadcrumb-item active">Add New</li>
+        </ol></nav>
+      </div>
+      <a href="{{ route('class.index') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back
+      </a>
+    </div>
 
     <section class="section">
       <div class="row">
         <div class="col-lg-12">
 
           <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Class General Information</h5>
+            <div class="card-header">
+              <h5 class="card-title"><i class="bi bi-building me-2 text-primary"></i>Class Information</h5>
+            </div>
+            <div class="card-body pt-3">
 
               <!-- General Form Elements -->
               <form  action="{{ route('class.store') }}" method="post">
