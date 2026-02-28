@@ -59,7 +59,7 @@
                     <div class="slot-subject">{{ $slot->subject?->subject_name ?? '—' }}</div>
                     <div class="slot-teacher">{{ $slot->teacher?->teacher_name ?? '—' }}</div>
                     <form action="{{ route('timetable.destroy', $slot) }}" method="POST" class="mt-1">@csrf @method('DELETE')
-                      <button class="btn btn-sm p-0 text-danger" style="font-size:.65rem" title="Remove period"><i class="bi bi-x-circle"></i></button>
+                      <button class="btn btn-sm btn-outline-danger p-0" style="font-size:.65rem" title="Remove period"><i class="bi bi-trash-fill"></i></button>
                     </form>
                   </div>
                   @endforeach

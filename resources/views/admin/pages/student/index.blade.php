@@ -1,7 +1,6 @@
 @extends('admin.layout.master')
 @section('css')
 <style>
-.btn-icon { padding: 4px 8px; font-size: 12px; }
 .status-pill {
   display: inline-block;
   padding: 2px 10px;
@@ -25,8 +24,8 @@
           </ol>
         </nav>
       </div>
-      <a href="{{ route('student.create') }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-1"></i> Add Student
+      <a href="{{ route('student.create') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>Add Student
       </a>
     </div>
 
@@ -84,9 +83,9 @@
                           <td><span class="status-pill" style="background:{{ $item->student_status === 'active' ? '#198754' : '#ffc107' }}">{{ ucfirst($item->student_status) }}</span></td>
                           <td>
                             <div class="d-flex gap-1 flex-wrap">
-                              <a href="{{ route('student.show', $item) }}" class="btn btn-sm btn-outline-info btn-icon" title="View Profile"><i class="bi bi-eye-fill"></i></a>
-                              <a href="{{ route('student.edit', $item) }}" class="btn btn-sm btn-outline-primary btn-icon" title="Edit"><i class="bi bi-pencil-fill"></i></a>
-                              <button class="btn btn-sm btn-outline-danger btn-icon" onclick="softDeleteStudent({{ $item->id }})" title="Deactivate"><i class="bi bi-person-dash"></i></button>
+                              <a href="{{ route('student.show', $item) }}" class="btn btn-sm btn-outline-info" title="View Profile"><i class="bi bi-eye-fill"></i></a>
+                              <a href="{{ route('student.edit', $item) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+                              <button class="btn btn-sm btn-outline-danger" onclick="softDeleteStudent({{ $item->id }})" title="Deactivate"><i class="bi bi-person-dash"></i></button>
                               <form id="delete-form-{{ $item->id }}" action="{{ route('student.destroy', $item) }}" method="POST" class="d-none">@method('DELETE') @csrf</form>
                             </div>
                           </td>
@@ -122,8 +121,8 @@
                           <td><small class="text-muted">{{ $item->deleted_at->format('d M Y') }}</small></td>
                           <td>
                             <div class="d-flex gap-1 flex-wrap">
-                              <button class="btn btn-sm btn-outline-success btn-icon" onclick="restoreStudent({{ $item->id }})"><i class="bi bi-arrow-counterclockwise"></i> Restore</button>
-                              <button class="btn btn-sm btn-outline-danger btn-icon" onclick="forceDeleteStudent({{ $item->id }})"><i class="bi bi-trash3"></i></button>
+                              <button class="btn btn-sm btn-outline-success" onclick="restoreStudent({{ $item->id }})"><i class="bi bi-arrow-counterclockwise"></i> Restore</button>
+                              <button class="btn btn-sm btn-outline-danger" onclick="forceDeleteStudent({{ $item->id }})"><i class="bi bi-trash-fill"></i></button>
                             </div>
                           </td>
                         </tr>

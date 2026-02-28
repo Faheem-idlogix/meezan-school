@@ -12,8 +12,8 @@
           </ol>
         </nav>
       </div>
-      <a href="{{ route('teacher.create') }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle me-1"></i> Add Teacher
+      <a href="{{ route('teacher.create') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>Add Teacher
       </a>
     </div>
 
@@ -106,7 +106,7 @@
                           <td>
                             <div class="d-flex gap-1">
                               <button class="btn btn-sm btn-outline-success" onclick="restoreTeacher({{ $item->id }})"><i class="bi bi-arrow-counterclockwise"></i> Restore</button>
-                              <button class="btn btn-sm btn-outline-danger" onclick="forceDeleteTeacher({{ $item->id }})"><i class="bi bi-trash3"></i></button>
+                              <button class="btn btn-sm btn-outline-danger" onclick="forceDeleteTeacher({{ $item->id }})"><i class="bi bi-trash-fill"></i></button>
                             </div>
                           </td>
                         </tr>

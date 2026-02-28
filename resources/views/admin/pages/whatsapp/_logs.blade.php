@@ -8,7 +8,7 @@
   @if($logStats['total'] > 0)
   <form action="{{ route('whatsapp.clearLogs') }}" method="POST" onsubmit="return confirm('Clear all WhatsApp logs?')">
     @csrf @method('DELETE')
-    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Clear All Logs</button>
+    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash-fill me-1"></i>Clear All Logs</button>
   </form>
   @endif
 </div>

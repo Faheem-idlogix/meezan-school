@@ -83,16 +83,16 @@
               </td>
               <td>
                 <div class="d-flex gap-1">
-                  <a href="{{ route('payroll.show', $p) }}" class="fee-btn fee-btn-partial" title="View Payslip"><i class="bi bi-eye"></i></a>
-                  <a href="{{ route('payroll.payslip', $p) }}" class="fee-btn fee-btn-full" title="Download PDF"><i class="bi bi-file-earmark-pdf"></i></a>
+                  <a href="{{ route('payroll.show', $p) }}" class="btn btn-sm btn-outline-info" title="View Payslip"><i class="bi bi-eye-fill"></i></a>
+                  <a href="{{ route('payroll.payslip', $p) }}" class="btn btn-sm btn-outline-danger" title="Download PDF"><i class="bi bi-file-earmark-pdf-fill"></i></a>
                   @if($p->status === 'draft')
                   <form action="{{ route('payroll.approve', $p) }}" method="POST">@csrf
-                    <button class="fee-btn fee-btn-full" title="Approve"><i class="bi bi-check2"></i></button>
+                    <button class="btn btn-sm btn-outline-success" title="Approve"><i class="bi bi-check-lg"></i></button>
                   </form>
                   @endif
                   @if($p->status !== 'paid')
                   <form action="{{ route('payroll.destroy', $p) }}" method="POST" onsubmit="return confirm('Delete this payroll?')">@csrf @method('DELETE')
-                    <button class="fee-btn fee-btn-cancel" title="Delete"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash-fill"></i></button>
                   </form>
                   @endif
                 </div>

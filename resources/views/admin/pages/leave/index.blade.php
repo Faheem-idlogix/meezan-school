@@ -54,12 +54,12 @@
                 <div class="d-flex gap-1">
                   @if($l->status === 'pending')
                   <form action="{{ route('leave.approve', $l) }}" method="POST">@csrf @method('PUT')
-                    <button class="fee-btn fee-btn-full" title="Approve"><i class="bi bi-check2"></i></button>
+                    <button class="btn btn-sm btn-outline-success" title="Approve"><i class="bi bi-check-lg"></i></button>
                   </form>
-                  <button class="fee-btn fee-btn-cancel" title="Reject" data-bs-toggle="modal" data-bs-target="#rejectModal{{ $l->id }}"><i class="bi bi-x-lg"></i></button>
+                  <button class="btn btn-sm btn-outline-warning" title="Reject" data-bs-toggle="modal" data-bs-target="#rejectModal{{ $l->id }}"><i class="bi bi-x-lg"></i></button>
                   @endif
                   <form action="{{ route('leave.destroy', $l) }}" method="POST" onsubmit="return confirm('Delete?')">@csrf @method('DELETE')
-                    <button class="fee-btn fee-btn-cancel" title="Delete"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash-fill"></i></button>
                   </form>
                 </div>
               </td>

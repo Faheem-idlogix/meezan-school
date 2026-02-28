@@ -155,7 +155,7 @@
                                     <button type="submit" class="btn btn-primary" id="submitBtn">
                                         Update Result
                                     </button>
-                                    <a href="{{ route('exam_result.index') }}" class="btn btn-secondary">Cancel</a>
+                                    <a href="{{ route('exam_result.index') }}" class="btn btn-outline-secondary"><i class="bi bi-x-lg me-1"></i>Cancel</a>
                                 </div>
                             </div>
                         </form>

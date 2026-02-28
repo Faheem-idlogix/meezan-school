@@ -76,7 +76,7 @@
                     <input type="file" name="teacher_image" class="form-control" accept="image/*">
                   </div>
                   <div class="col-12 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle me-1"></i> Save Teacher</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> Save Teacher</button>
                     <a href="{{ route('teacher.index') }}" class="btn btn-outline-secondary">Cancel</a>
                   </div>
                 </div>

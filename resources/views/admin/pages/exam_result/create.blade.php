@@ -116,9 +116,9 @@
                             <div class="row mt-4">
                                 <div class="col-lg-12">
                                     <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
-                                        Save All Results
+                                        <i class="bi bi-check-lg me-1"></i>Save All Results
                                     </button>
-                                    <button type="reset" class="btn btn-secondary">Clear Form</button>
+                                    <button type="reset" class="btn btn-outline-secondary"><i class="bi bi-x-lg me-1"></i>Clear Form</button>
                                 </div>
                             </div>
                         </form>

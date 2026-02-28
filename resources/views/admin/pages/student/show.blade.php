@@ -46,7 +46,7 @@
       </nav>
     </div>
     <div class="d-flex gap-2">
-      <a href="{{ route('student.edit', $student) }}" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>Edit</a>
+      <a href="{{ route('student.edit', $student) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil-fill me-1"></i>Edit</a>
       <a href="{{ route('student.index') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back</a>
     </div>
   </div>

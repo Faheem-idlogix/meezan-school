@@ -5,7 +5,7 @@
 <div class="page-title d-flex align-items-center justify-content-between mb-4">
     <h4 class="mb-0 fw-bold"><i class="bi bi-person-badge me-2"></i>Teacher Profile</h4>
     <div>
-        <a href="{{ route('teacher.edit', $teacher->id) }}" class="btn btn-warning btn-sm me-2">
+        <a href="{{ route('teacher.edit', $teacher->id) }}" class="btn btn-outline-primary btn-sm me-2">
             <i class="bi bi-pencil-fill me-1"></i> Edit
         </a>
         <a href="{{ route('teacher.index') }}" class="btn btn-outline-secondary btn-sm">

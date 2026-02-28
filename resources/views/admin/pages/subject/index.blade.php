@@ -13,7 +13,7 @@
       </nav>
     </div>
       <div class="col-lg-2">
-        <a href="{{ route('subject.create') }}" class="btn btn-primary">Add Subject</a>
+        <a href="{{ route('subject.create') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Subject</a>
       </div>
     </div><!-- End Page Title -->
 
@@ -51,15 +51,13 @@
                     <td>{{ $item->subject_code }}</td>
                     <td>{{ $item->subject_name }}</td>
                     <td>
-                    <div class="btn-group">
-                      <form action="{{route('subject.destroy', $item)}}" method="post">
-                       @method('delete')
-                       @csrf
-                     <button type="submit"><i class="bi bi-trash-fill"></i></button>
-                     </form>
-                     
-                     <a href="{{route('subject.edit', $item)}}"> <i class="bi bi-pencil-fill"></i></a>
-                     </div>
+                      <div class="d-flex gap-1">
+                        <a href="{{ route('subject.edit', $item) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+                        <form action="{{ route('subject.destroy', $item) }}" method="POST" onsubmit="return confirm('Delete this subject?')">
+                          @method('DELETE') @csrf
+                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash-fill"></i></button>
+                        </form>
+                      </div>
                     </td>
                 
                   </tr>

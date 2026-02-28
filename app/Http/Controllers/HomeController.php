@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Attendance;
 use App\Models\ClassRoom;
 use App\Models\Exam;
@@ -196,6 +197,12 @@ class HomeController extends Controller
                             ->take(5)
                             ->get();
 
+        // ── Recent Activity Logs ──
+        $recentLogs = ActivityLog::with([])
+            ->latest()
+            ->take(15)
+            ->get();
+
         // ── Attendance Stats (within period, not just today) ──
         $attendanceRaw = Attendance::where(function ($q) use ($dateFrom, $dateTo) {
                 // date column is string, try multiple formats
@@ -243,7 +250,7 @@ class HomeController extends Controller
             'totalIncome', 'totalExpense', 'totalVouchers', 'profitLoss',
             'monthIncome', 'monthExpense', 'monthVouchers',
             'monthlyChart', 'recentExpenses',
-            'totalExams', 'recentNotices',
+            'totalExams', 'recentNotices', 'recentLogs',
             'attendanceToday', 'attendanceUnmarked', 'classAttendance',
             'periodKey', 'periodLabel', 'dateFrom', 'dateTo'
         ));

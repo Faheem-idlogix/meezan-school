@@ -55,15 +55,14 @@
                     <td>{{ $item->total_fee }}</td>
 
                   
-                    <td>  
-                      <div class="btn-group">
-                      <form action="{{route('class_destroy', $item->class_fee_voucher_id)}}" method="post">
-                       @method('delete')
-                       @csrf
-                     <button type="submit"><i class="bi bi-trash-fill"></i></button>
-                     </form>
-                     <a href="{{route('student_fee_edit', $item->student_fee_id)}}"> <i class="bi bi-pencil-fill"></i></a>
-                     </div>
+                    <td>
+                      <div class="d-flex gap-1">
+                        <a href="{{ route('student_fee_edit', $item->student_fee_id) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+                        <form action="{{ route('class_destroy', $item->class_fee_voucher_id) }}" method="POST" onsubmit="return confirm('Delete this fee?')">
+                          @method('DELETE') @csrf
+                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash-fill"></i></button>
+                        </form>
+                      </div>
                     </td>
                   </tr>
                       

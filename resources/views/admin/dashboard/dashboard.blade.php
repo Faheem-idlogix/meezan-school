@@ -401,7 +401,80 @@
         </div>
       </div>
 
-      {{-- ══════════ ROW 6 — FEE REPORT TABLE ══════════ --}}
+      {{-- ══════════ ROW 6 — RECENT ACTIVITY LOGS ══════════ --}}
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <h5 class="card-title mb-0"><i class="bi bi-clock-history me-2 text-info"></i>Recent Activity</h5>
+              <a href="{{ route('activity_logs.index') }}" class="btn btn-sm btn-outline-info">View All Logs</a>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover table-sm mb-0" style="font-size:.82rem">
+                  <thead class="table-light">
+                    <tr>
+                      <th style="width:150px">Time</th>
+                      <th style="width:120px">User</th>
+                      <th style="width:100px">Action</th>
+                      <th>Description</th>
+                      <th style="width:120px">Model</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse($recentLogs as $log)
+                    <tr>
+                      <td class="text-muted">
+                        <i class="bi bi-clock me-1"></i>{{ $log->created_at->diffForHumans() }}
+                      </td>
+                      <td>
+                        <span class="fw-semibold">{{ $log->user_name ?? 'System' }}</span>
+                      </td>
+                      <td>
+                        @php
+                          $actionColors = [
+                            'created' => 'success',
+                            'updated' => 'primary',
+                            'deleted' => 'danger',
+                            'restored' => 'info',
+                            'force_deleted' => 'dark',
+                            'login' => 'warning',
+                            'logout' => 'secondary',
+                          ];
+                          $color = $actionColors[$log->action] ?? 'secondary';
+                        @endphp
+                        <span class="badge bg-{{ $color }}">{{ ucfirst($log->action) }}</span>
+                      </td>
+                      <td class="text-truncate" style="max-width:300px">
+                        {{ $log->description }}
+                      </td>
+                      <td>
+                        @if($log->model_type)
+                          <span class="badge bg-light text-dark border">{{ class_basename($log->model_type) }}
+                            @if($log->model_id) #{{ $log->model_id }} @endif
+                          </span>
+                        @else
+                          <span class="text-muted">—</span>
+                        @endif
+                      </td>
+                    </tr>
+                    @empty
+                    <tr>
+                      <td colspan="5" class="text-center py-4 text-muted">
+                        <i class="bi bi-clock-history fs-1 mb-2 d-block" style="color:#c5cde8"></i>
+                        <small>No activity logged yet</small>
+                      </td>
+                    </tr>
+                    @endforelse
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{-- ══════════ ROW 7 — FEE REPORT TABLE ══════════ --}}
       <div class="row g-3">
         <div class="col-lg-12">
           <div class="card">
@@ -464,15 +537,15 @@
                       <td>
                         <div class="d-flex gap-1 fee-actions">
                           <button type="button" id="edit-fee" data-id="{{ $student->student_fee_id }}"
-                            class="fee-btn fee-btn-cancel" data-bs-toggle="tooltip" title="Clear / Reset">
+                            class="btn btn-sm btn-outline-secondary rounded-circle" data-bs-toggle="tooltip" title="Clear / Reset">
                             <i class="bi bi-x-lg edit-fee"></i>
                           </button>
                           <button type="button" id="add-fee" data-id="{{ $student->student_fee_id }}"
-                            class="fee-btn fee-btn-partial" data-bs-toggle="tooltip" title="Add Partial Payment">
+                            class="btn btn-sm btn-outline-primary rounded-circle" data-bs-toggle="tooltip" title="Add Partial Payment">
                             <i class="bi bi-plus-lg add-fee"></i>
                           </button>
                           <button type="button" id="submit-fee" data-id="{{ $student->student_fee_id }}"
-                            class="fee-btn fee-btn-full" data-bs-toggle="tooltip" title="Mark as Fully Paid">
+                            class="btn btn-sm btn-outline-success rounded-circle" data-bs-toggle="tooltip" title="Mark as Fully Paid">
                             <i class="bi bi-check2-all submit-fee"></i>
                           </button>
                         </div>

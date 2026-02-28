@@ -54,7 +54,7 @@
                     </div>
                   </div>
                   <div class="col-12 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Update Notice</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Update Notice</button>
                     <a href="{{ route('notice.index') }}" class="btn btn-outline-secondary">Cancel</a>
                   </div>
                 </div>

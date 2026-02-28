@@ -14,7 +14,7 @@
               </div>
 
         <div class="col-lg-2">
-        <a href="{{ route('voucher.create') }}" class="btn btn-primary">Add Voucher</a>
+        <a href="{{ route('voucher.create') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Voucher</a>
         </div>
     </div><!-- End Page Title -->
     <section class="section">
@@ -63,16 +63,15 @@
                       </ul>
                     </td>
                     <td>
-                    <div class="btn-group">
-                      <form action="{{route('voucher.destroy', $voucher)}}" method="post">
-                       @method('delete')
-                       @csrf
-                     <button type="submit"><i class="bi bi-trash-fill"></i></button>
-                     </form>
-                     <a href="{{ route('voucher.edit', $voucher->id) }}"><i class="bi bi-pencil-fill"></i></a>
-                     <a href="{{ route('voucher.show', $voucher->id) }}"><i class="bi bi-printer"></i></a>
-                    </div>
-                  </td>
+                      <div class="d-flex gap-1">
+                        <a href="{{ route('voucher.edit', $voucher->id) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+                        <a href="{{ route('voucher.show', $voucher->id) }}" class="btn btn-sm btn-outline-secondary" title="Print"><i class="bi bi-printer-fill"></i></a>
+                        <form action="{{ route('voucher.destroy', $voucher) }}" method="POST" onsubmit="return confirm('Delete this voucher?')">
+                          @method('DELETE') @csrf
+                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash-fill"></i></button>
+                        </form>
+                      </div>
+                    </td>
                   </tr>
                   @endforeach
                 </tbody>

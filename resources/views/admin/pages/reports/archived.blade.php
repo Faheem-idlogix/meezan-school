@@ -71,7 +71,7 @@
                   <button class="btn btn-sm btn-outline-success"><i class="bi bi-arrow-counterclockwise"></i> Restore</button>
                 </form>
                 <form action="{{ route('student.forceDelete', $s->id) }}" method="POST" class="d-inline ms-1" onsubmit="return confirm('Permanently delete this student?')">@csrf @method('DELETE')
-                  <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle"></i> Delete Forever</button>
+                  <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash-fill"></i> Delete Forever</button>
                 </form>
               </td>
             </tr>
@@ -102,7 +102,7 @@
                   <button class="btn btn-sm btn-outline-success"><i class="bi bi-arrow-counterclockwise"></i> Restore</button>
                 </form>
                 <form action="{{ route('teacher.forceDelete', $t->id) }}" method="POST" class="d-inline ms-1" onsubmit="return confirm('Permanently delete?')">@csrf @method('DELETE')
-                  <button class="btn btn-sm btn-outline-danger"><i class="bi bi-x-circle"></i> Delete Forever</button>
+                  <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash-fill"></i> Delete Forever</button>
                 </form>
               </td>
             </tr>

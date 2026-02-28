@@ -132,7 +132,7 @@
           <div class="d-flex gap-2 justify-content-end">
             <a href="{{ route('student.index') }}" class="btn btn-outline-secondary px-4">Cancel</a>
             <button type="submit" class="btn btn-primary px-5">
-              <i class="bi bi-save me-1"></i> Save Student
+              <i class="bi bi-check-lg me-1"></i> Save Student
             </button>
           </div>
         </div>

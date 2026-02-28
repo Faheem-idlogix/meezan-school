@@ -9,8 +9,8 @@
           <li class="breadcrumb-item active">Notices</li>
         </ol></nav>
       </div>
-      <a href="{{ route('notice.create') }}" class="btn btn-primary">
-        <i class="bi bi-megaphone me-1"></i> New Notice
+      <a href="{{ route('notice.create') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>New Notice
       </a>
     </div>
 
@@ -53,7 +53,7 @@
                         <a href="{{ route('notice.edit', $notice) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-fill"></i></a>
                         <form action="{{ route('notice.destroy', $notice) }}" method="POST" onsubmit="return confirm('Delete this notice?')">
                           @method('DELETE') @csrf
-                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash3"></i></button>
+                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash-fill"></i></button>
                         </form>
                       </div>
                     </td>

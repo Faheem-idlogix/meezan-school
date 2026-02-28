@@ -156,10 +156,10 @@
         {{-- ─── Action Buttons ──────────────────────────────────────── --}}
         <div class="d-flex gap-2 justify-content-end border-top pt-3">
           <a href="{{ route('diary.index') }}" class="btn btn-outline-secondary px-4">
-            <i class="bi bi-x-circle me-1"></i>Cancel
+            <i class="bi bi-x-lg me-1"></i>Cancel
           </a>
           <button type="submit" class="btn btn-primary px-5">
-            <i class="bi bi-save me-1"></i>Save Diary
+            <i class="bi bi-check-lg me-1"></i>Save Diary
           </button>
         </div>
 

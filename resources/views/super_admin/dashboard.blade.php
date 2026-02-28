@@ -38,7 +38,7 @@
               </td>
               <td>{{ $school->subscription_end?->format('d M Y') ?? 'No expiry' }}</td>
               <td>
-                <a href="{{ route('super_admin.schools.edit', $school) }}" class="fee-btn fee-btn-partial" title="Edit"><i class="bi bi-pencil"></i></a>
+                <a href="{{ route('super_admin.schools.edit', $school) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-fill"></i></a>
               </td>
             </tr>
             @empty

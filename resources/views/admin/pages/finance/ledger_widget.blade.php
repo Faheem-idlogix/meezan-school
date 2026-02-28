@@ -55,7 +55,7 @@
                 <td>
                     <form action="{{ route('finance.voucher.destroy', $voucher) }}" method="POST" onsubmit="return confirm('Delete this voucher?');">
                         @csrf @method('DELETE')
-                        <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
                     </form>
                 </td>
             </tr>

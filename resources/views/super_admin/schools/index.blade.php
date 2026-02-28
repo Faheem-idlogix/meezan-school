@@ -36,9 +36,9 @@
               <td>{{ $school->subscription_end?->format('d M Y') ?? '—' }}</td>
               <td>
                 <div class="d-flex gap-1">
-                  <a href="{{ route('super_admin.schools.edit', $school) }}" class="fee-btn fee-btn-partial" title="Edit"><i class="bi bi-pencil"></i></a>
+                  <a href="{{ route('super_admin.schools.edit', $school) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-fill"></i></a>
                   <form action="{{ route('super_admin.schools.destroy', $school) }}" method="POST" onsubmit="return confirm('Remove this school?')">@csrf @method('DELETE')
-                    <button class="fee-btn fee-btn-cancel" title="Remove"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" title="Remove"><i class="bi bi-trash-fill"></i></button>
                   </form>
                 </div>
               </td>

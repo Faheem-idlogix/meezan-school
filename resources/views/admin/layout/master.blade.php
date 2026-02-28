@@ -13,13 +13,6 @@
   <link rel="icon" type="image/x-icon" href="{{asset("WSTheme/WsImg/WSFavicon.png")}}" />
   <link href="{{asset("resources/css/app.css")}}" rel="stylesheet">
   <!-- <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon"> -->
-  {{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> --}}
-
-  <!-- Include Toastr CSS and JS files -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-
-
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -33,7 +26,7 @@
   <link href="{{asset("assets/vendor/quill/quill.bubble.css")}}"  rel="stylesheet">
   <link href="{{asset("assets/vendor/remixicon/remixicon.css")}}"  rel="stylesheet">
   <link href="{{asset("assets/vendor/simple-datatables/style.css")}}"  rel="stylesheet">
-  <script src="{{asset("assets/vendor/jquery/jquery-3.6.4.min.js")}}"></script>
+  <script src="{{asset("assets/vendor/jquery/jquery-3.7.1.min.js")}}"></script>
   <link href="{{asset("assets/vendor/select2/dist/css/select2.min.css")}}" rel="stylesheet" />
    <script src="{{asset("assets/vendor/select2/dist/js/select2.min.js")}}"></script>
 
@@ -283,50 +276,6 @@
       border-color: var(--ea-primary); box-shadow: 0 0 0 .2rem rgba(var(--ea-primary-rgb),.15);
     }
 
-    /* ── Fee Action Buttons — creative pill icon buttons ── */
-    .fee-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px; height: 30px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      font-size: .82rem;
-      transition: all .2s ease;
-      position: relative;
-    }
-    .fee-btn-cancel {
-      background: rgba(220,53,69,.1);
-      color: #dc3545;
-    }
-    .fee-btn-cancel:hover {
-      background: #dc3545;
-      color: #fff;
-      box-shadow: 0 4px 12px rgba(220,53,69,.4);
-      transform: scale(1.15);
-    }
-    .fee-btn-partial {
-      background: rgba(65,84,241,.1);
-      color: var(--ea-primary);
-    }
-    .fee-btn-partial:hover {
-      background: var(--ea-primary);
-      color: #fff;
-      box-shadow: 0 4px 12px rgba(65,84,241,.4);
-      transform: scale(1.15);
-    }
-    .fee-btn-full {
-      background: rgba(25,135,84,.1);
-      color: #198754;
-    }
-    .fee-btn-full:hover {
-      background: linear-gradient(135deg,#198754,#22c55e);
-      color: #fff;
-      box-shadow: 0 4px 12px rgba(25,135,84,.4);
-      transform: scale(1.15);
-    }
-
     /* ── Card-header title with left accent bar ── */
     .card-header {
       border-left: 4px solid var(--ea-primary);
@@ -339,7 +288,8 @@
   </style>
   @yield("css")
   <!-- =======================================================
-  * Template Name: NiceAdmin - v2.2.2
+  * Template Name: NiceAdmin
+  * Updated: Jun 2025 with Bootstrap v5.3.8
   * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
@@ -642,6 +592,13 @@
         </a>
       </li>
 
+      <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('activity_logs.*') ? '' : 'collapsed' }}" href="{{ route('activity_logs.index') }}">
+          <i class="bi bi-clock-history"></i>
+          <span>Activity Logs</span>
+        </a>
+      </li>
+
       @if(Auth::user()->role === 'super_admin')
       <li class="nav-heading">Super Admin</li>
       <li class="nav-item">
@@ -656,13 +613,6 @@
         </ul>
       </li>
       @endif
-
-    </ul>
-
-  </aside><!-- End Sidebar-->
-          <span>Settings & WhatsApp</span>
-        </a>
-      </li>
 
     </ul>
 

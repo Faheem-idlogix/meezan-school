@@ -17,7 +17,18 @@ class ExamResultController extends Controller
      */
     public function index()
     {
-        $exam_results = ExamResult::with(['exam', 'student', 'subject', 'classRoom'])->get();
+        // Group results by student — show unique student+exam+class combos
+        $exam_results = ExamResult::with(['exam', 'student', 'classRoom'])
+            ->select('student_id', 'exam_id', 'class_id')
+            ->selectRaw('COUNT(*) as subject_count')
+            ->selectRaw('SUM(total_marks) as total_marks_sum')
+            ->selectRaw('SUM(obtained_marks) as obtained_marks_sum')
+            ->groupBy('student_id', 'exam_id', 'class_id')
+            ->get();
+
+        // Eager load relationships on the grouped results
+        $exam_results->load(['student', 'exam', 'classRoom']);
+
         return view('admin.pages.exam_result.index', compact('exam_results'));
     }
 
@@ -129,6 +140,47 @@ class ExamResultController extends Controller
                 ->with('error', 'Error saving exam results: ' . $e->getMessage())
                 ->withInput();
         }
+    }
+
+    /**
+     * Show all subjects for a student in an exam (detail page).
+     */
+    public function studentDetail($studentId, $examId)
+    {
+        $results = ExamResult::with(['subject', 'student.classroom', 'exam'])
+            ->where('student_id', $studentId)
+            ->where('exam_id', $examId)
+            ->get();
+
+        if ($results->isEmpty()) {
+            return redirect()->route('exam_result.index')->with('error', 'No results found.');
+        }
+
+        $student   = $results->first()->student;
+        $exam      = $results->first()->exam;
+        $classRoom = $student->classroom;
+
+        // Add computed fields
+        $results = $results->map(function ($res) {
+            $total = (float) ($res->total_marks ?? 0);
+            $obt   = (float) ($res->obtained_marks ?? 0);
+            $pct   = $total > 0 ? round(($obt / $total) * 100, 2) : 0;
+            [$grade, $remark] = $this->gradeLabel($pct);
+            $res->percentage = $pct;
+            $res->grade      = $grade;
+            $res->remark     = $remark;
+            return $res;
+        });
+
+        $totalMax   = $results->sum('total_marks');
+        $totalObt   = $results->sum('obtained_marks');
+        $percentage = $totalMax > 0 ? round(($totalObt / $totalMax) * 100, 2) : 0;
+        [$overallGrade, $overallRemark] = $this->gradeLabel($percentage);
+
+        return view('admin.pages.exam_result.student_detail', compact(
+            'results', 'student', 'exam', 'classRoom',
+            'totalMax', 'totalObt', 'percentage', 'overallGrade', 'overallRemark'
+        ));
     }
 
     /**

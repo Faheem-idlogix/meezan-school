@@ -13,7 +13,7 @@
       </nav>
     </div>
       <div class="col-lg-2">
-        <a href="{{ route('session.create') }}" class="btn btn-primary">Add Session</a>
+        <a href="{{ route('session.create') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Session</a>
       </div>
     </div><!-- End Page Title -->
 
@@ -62,15 +62,13 @@
                     </td>
                     <td>{{ $item->start_date }}</td>
                     <td>{{ $item->end_date }}</td>
-                    <td>  
-                      <div class="btn-group">
-                      <form action="{{route('session.destroy', $item)}}" method="post">
-                       @method('delete')
-                       @csrf
-                     <button type="submit"><i class="bi bi-trash-fill"></i></button>
-                     </form>
-                  
-                     </div>
+                    <td>
+                      <div class="d-flex gap-1">
+                        <form action="{{ route('session.destroy', $item) }}" method="POST" onsubmit="return confirm('Delete this session?')">
+                          @method('DELETE') @csrf
+                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash-fill"></i></button>
+                        </form>
+                      </div>
                     </td>
                   </tr>
                       

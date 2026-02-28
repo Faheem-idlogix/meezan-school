@@ -38,6 +38,7 @@ class TimetableController extends Controller
             }
         }
 
+        $days = $this->days;
         return view('admin.pages.timetable.index', compact('classes', 'sessions', 'classId', 'sessionId', 'timetable', 'days'));
     }
 

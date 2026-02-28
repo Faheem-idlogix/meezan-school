@@ -7,7 +7,7 @@
       <nav><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ route('payroll.index') }}">Payroll</a></li><li class="breadcrumb-item active">Payslip</li></ol></nav>
     </div>
     <div class="d-flex gap-2">
-      <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-danger btn-sm"><i class="bi bi-file-pdf me-1"></i>PDF</a>
+      <a href="{{ route('payroll.payslip', $payroll) }}" class="btn btn-outline-danger btn-sm"><i class="bi bi-file-earmark-pdf-fill me-1"></i>PDF</a>
       @if($payroll->status !== 'paid')
       <form action="{{ route('payroll.markPaid', $payroll) }}" method="POST" class="d-inline">
         @csrf @method('PUT')

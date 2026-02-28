@@ -53,7 +53,7 @@
                 <div class="row mb-3">
                  
                   <div class="col-lg-12">
-                    <button type="submit" class="btn btn-primary">Add Class Subject</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Add Class Subject</button>
                   </div>
                 </div>
 

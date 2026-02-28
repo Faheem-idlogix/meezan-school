@@ -48,7 +48,7 @@
                 <div class="row mb-3">
                  
                   <div class="col-lg-12">
-                    <button type="submit" class="btn btn-primary">Update Exam</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Update Exam</button>
                   </div>
                 </div>
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use App\Models\ActivityLog;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
@@ -47,8 +48,24 @@ class LoginController extends Controller
      */
     protected function authenticated($request, $user)
     {
+        ActivityLog::log('login', 'User logged in: ' . $user->name . ' (' . $user->email . ')');
+
         return redirect()->intended($this->redirectPath())
             ->with('success', 'Welcome back, ' . $user->name . '!');
+    }
+
+    /**
+     * Log the user out of the application.
+     */
+    public function logout(\Illuminate\Http\Request $request)
+    {
+        ActivityLog::log('logout', 'User logged out: ' . auth()->user()->name . ' (' . auth()->user()->email . ')');
+
+        $this->guard()->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
     }
 
     /**

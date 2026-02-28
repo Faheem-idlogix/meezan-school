@@ -13,7 +13,7 @@
             </nav>
     </div>
       <div class="col-lg-2">
-        <a href="{{ route('exam.create') }}" class="btn btn-primary">Add Exam</a>
+        <a href="{{ route('exam.create') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Exam</a>
 
         </div>
     </div><!-- End Page Title -->
@@ -51,14 +51,13 @@
                     <td>{{ $item->name }}</td>
                     <td>{{ $item->date }}</td>
                     <td>
-                    <div class="btn-group">
-                      <form action="{{route('exam.destroy', $item)}}" method="post">
-                       @method('delete')
-                       @csrf
-                     <button type="submit"><i class="bi bi-trash-fill"></i></button>
-                     </form>
-                     <a href="{{ route('exam.edit', $item) }}" ><i class="bi bi-pencil-fill"></i></a>
-                    </div>
+                      <div class="d-flex gap-1">
+                        <a href="{{ route('exam.edit', $item) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+                        <form action="{{ route('exam.destroy', $item) }}" method="POST" onsubmit="return confirm('Delete this exam?')">
+                          @method('DELETE') @csrf
+                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash-fill"></i></button>
+                        </form>
+                      </div>
                     </td>
                   </tr>
                   @endforeach

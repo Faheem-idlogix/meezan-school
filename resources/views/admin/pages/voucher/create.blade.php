@@ -86,7 +86,7 @@
                         <input type="number" step="0.01" class="form-control" id="amount" name="amount" value="{{ $voucher->amount ?? '0.00' }}" readonly>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">{{ isset($voucher) ? 'Update Voucher' : 'Create Voucher' }}</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>{{ isset($voucher) ? 'Update Voucher' : 'Create Voucher' }}</button>
                 </form>
     
                 </div>

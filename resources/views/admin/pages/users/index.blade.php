@@ -99,7 +99,7 @@
                         <td>
                           <div class="d-flex gap-1">
                             <button class="btn btn-sm btn-outline-success" onclick="restoreUser({{ $user->id }})"><i class="bi bi-arrow-counterclockwise"></i> Restore</button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="forceDeleteUser({{ $user->id }})"><i class="bi bi-trash3"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="forceDeleteUser({{ $user->id }})"><i class="bi bi-trash-fill"></i></button>
                           </div>
                         </td>
                       </tr>

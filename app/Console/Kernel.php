@@ -12,7 +12,24 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Daily database backup at 2:00 AM — email zip to configured address
+        $schedule->command('db:backup --keep=7')
+                 ->dailyAt('02:00')
+                 ->withoutOverlapping()
+                 ->onOneServer()
+                 ->appendOutputTo(storage_path('logs/backup.log'));
+
+        // Weekly full backup on Sundays at 3:00 AM with longer retention
+        $schedule->command('db:backup --keep=30')
+                 ->weeklyOn(0, '03:00')
+                 ->withoutOverlapping()
+                 ->onOneServer()
+                 ->appendOutputTo(storage_path('logs/backup.log'));
+
+        // Clean old activity logs older than 180 days (monthly)
+        $schedule->call(function () {
+            \App\Models\ActivityLog::where('created_at', '<', now()->subDays(180))->delete();
+        })->monthly()->appendOutputTo(storage_path('logs/cleanup.log'));
     }
 
     /**
@@ -24,5 +41,4 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
-    
 }

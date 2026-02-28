@@ -37,7 +37,7 @@
             <i class="bi bi-x-circle me-1"></i>Clear
           </a>
         @endif
-        <a href="{{ route('diary.create') }}" class="btn btn-success btn-sm px-3">
+        <a href="{{ route('diary.create') }}" class="btn btn-primary btn-sm px-3">
           <i class="bi bi-plus-lg me-1"></i>New Entry
         </a>
       </div>
@@ -159,14 +159,14 @@
                       <td style="padding:.5rem 1rem">
                         <div class="d-flex align-items-center gap-1">
                           <a href="{{ route('diary.edit', $diary) }}"
-                             class="btn btn-sm btn-outline-secondary py-0 px-2" title="Edit">
-                            <i class="bi bi-pencil" style="font-size:.8rem"></i>
+                             class="btn btn-sm btn-outline-primary" title="Edit">
+                            <i class="bi bi-pencil-fill"></i>
                           </a>
                           <form action="{{ route('diary.destroy', $diary) }}" method="POST"
                                 onsubmit="return confirm('Delete this subject entry?')" class="m-0">
                             @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-outline-danger py-0 px-2" title="Delete">
-                              <i class="bi bi-trash" style="font-size:.8rem"></i>
+                            <button class="btn btn-sm btn-outline-danger" title="Delete">
+                              <i class="bi bi-trash-fill"></i>
                             </button>
                           </form>
                         </div>

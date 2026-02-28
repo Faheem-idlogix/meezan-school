@@ -53,17 +53,16 @@
                     <td>{{ $item->classroom->class_name }}</td>
 
                   
-                    <td>  
-                      <div class="btn-group">
-                      <form action="{{route('voucher_destroy', $item->class_fee_voucher_id)}}" method="post">
-                       @method('delete')
-                       @csrf
-                     <button type="submit"><i class="bi bi-trash-fill"></i></button>
-                     </form>
-                     <a href="{{route('class_edit', $item->class_fee_voucher_id)}}"> <i class="bi bi-pencil-fill"></i></a>
-                     <a href="{{route('generate_fee_invoice', $item->class_fee_voucher_id)}}"  target="_blank"> <i class="bi bi-printer"></i></a>
-                     <a href="{{route('class_fee', $item->class_fee_voucher_id)}}"> <i class="bi bi-eye-fill"></i></a>
-                     </div>
+                    <td>
+                      <div class="d-flex gap-1">
+                        <a href="{{ route('class_fee', $item->class_fee_voucher_id) }}" class="btn btn-sm btn-outline-info" title="View"><i class="bi bi-eye-fill"></i></a>
+                        <a href="{{ route('class_edit', $item->class_fee_voucher_id) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+                        <a href="{{ route('generate_fee_invoice', $item->class_fee_voucher_id) }}" class="btn btn-sm btn-outline-secondary" title="Print" target="_blank"><i class="bi bi-printer-fill"></i></a>
+                        <form action="{{ route('voucher_destroy', $item->class_fee_voucher_id) }}" method="POST" onsubmit="return confirm('Delete this invoice?')">
+                          @method('DELETE') @csrf
+                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash-fill"></i></button>
+                        </form>
+                      </div>
                     </td>
                   </tr>
                       

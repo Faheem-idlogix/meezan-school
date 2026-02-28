@@ -13,7 +13,7 @@
         </nav>
     </div>
       <div class="col-lg-2">
-        <a href="{{ route('class_subject.create') }}" class="btn btn-primary">Add Class Subject</a>
+        <a href="{{ route('class_subject.create') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Add Class Subject</a>
         </div>
     </div><!-- End Page Title -->
     <section class="section">
@@ -50,14 +50,13 @@
                     <td>{{ $item->classRoom->class_name }}</td>
                     <td>{{ $item->subject->subject_name }}</td>
                     <td>
-                    <div class="btn-group">
-                      <form action="{{route('class_subject.destroy', $item)}}" method="post">
-                       @method('delete')
-                       @csrf
-                     <button type="submit"><i class="bi bi-trash-fill"></i></button>
-                     </form>
-                    </div>
-                  </td>
+                      <div class="d-flex gap-1">
+                        <form action="{{ route('class_subject.destroy', $item) }}" method="POST" onsubmit="return confirm('Delete this class subject?')">
+                          @method('DELETE') @csrf
+                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash-fill"></i></button>
+                        </form>
+                      </div>
+                    </td>
                   </tr>
                   @endforeach
                 </tbody>

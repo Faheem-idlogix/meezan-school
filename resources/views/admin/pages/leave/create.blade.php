@@ -55,7 +55,7 @@
         </div>
         <div class="d-flex gap-2 mt-4 justify-content-end">
           <a href="{{ route('leave.index') }}" class="btn btn-outline-secondary">Cancel</a>
-          <button type="submit" class="btn btn-primary px-4"><i class="bi bi-send me-1"></i>Submit</button>
+          <button type="submit" class="btn btn-primary px-4"><i class="bi bi-check-lg me-1"></i>Submit</button>
         </div>
       </form>
     </div>

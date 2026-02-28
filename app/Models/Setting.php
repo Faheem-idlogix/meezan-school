@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\LogsActivity;
 
 class Setting extends Model
 {
+    use SoftDeletes, LogsActivity;
+
     protected $guarded = ['id'];
 
     public static function get(string $key, $default = null)
