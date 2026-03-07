@@ -157,10 +157,10 @@
 
 <div class="page">
     <div class="header">
-        <img src="img/logo/school_logo.ico" alt="School Logo" style="width:60px; height:60px; display:block; margin: 0 auto 10px auto;">
+        <img src="{{ school_logo(true) }}" alt="School Logo" style="width:60px; height:60px; display:block; margin: 0 auto 10px auto;">
     </div>
     <div class="school-name">
-        The Meezan School System 149/9.L Sahiwal
+        {{ setting('school_name', 'School') }} {{ setting('school_address', '') }}
     </div>
 
     <div class="report-title">

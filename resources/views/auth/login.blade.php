@@ -12,9 +12,9 @@
                  style="width:48px;height:48px;background:rgba(255,255,255,.15);">
               <i class="bi bi-mortarboard-fill text-white fs-4"></i>
             </div>
-            <span class="fw-bold text-white fs-4">Meezan School</span>
+            <span class="fw-bold text-white fs-4">{{ setting('school_name', 'School') }}</span>
           </div>
-          <p class="text-white-50 small mb-0">School Management System</p>
+          <p class="text-white-50 small mb-0">{{ setting('school_tagline', 'School Management System') }}</p>
         </div>
 
         {{-- Card --}}

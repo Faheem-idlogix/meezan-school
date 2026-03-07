@@ -16,7 +16,7 @@
 <body>
     <div class="header">
         <h2 style="margin:0">Database Backup</h2>
-        <p style="margin:5px 0 0;opacity:.8">Meezan School Management System</p>
+        <p style="margin:5px 0 0;opacity:.8">{{ setting('school_name', 'School') }} Management System</p>
     </div>
     <div class="content">
         <p>A scheduled database backup has been created and is attached to this email.</p>
@@ -32,7 +32,7 @@
         <p><strong>Note:</strong> This backup is automatically generated. Please store it in a safe location. Old backups are automatically cleaned up after 7 days.</p>
     </div>
     <div class="footer">
-        &copy; {{ date('Y') }} Meezan School &mdash; Automated Backup System
+        &copy; {{ date('Y') }} {{ setting('school_name', 'School') }} &mdash; Automated Backup System
     </div>
 </body>
 </html>

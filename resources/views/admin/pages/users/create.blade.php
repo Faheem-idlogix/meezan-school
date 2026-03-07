@@ -30,14 +30,15 @@
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Role <span class="text-danger">*</span></label>
-                    <select name="role" class="form-select @error('role') is-invalid @enderror">
+                    <select name="role_id" class="form-select @error('role_id') is-invalid @enderror">
                       <option value="">Select Role</option>
-                      <option value="admin"      {{ old('role') === 'admin'      ? 'selected' : '' }}>Admin</option>
-                      <option value="teacher"    {{ old('role') === 'teacher'    ? 'selected' : '' }}>Teacher</option>
-                      <option value="student"    {{ old('role') === 'student'    ? 'selected' : '' }}>Student</option>
-                      <option value="accountant" {{ old('role') === 'accountant' ? 'selected' : '' }}>Accountant</option>
+                      @foreach($roles as $role)
+                        <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                          {{ $role->display_name }}
+                        </option>
+                      @endforeach
                     </select>
-                    @error('role')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    @error('role_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Password <span class="text-danger">*</span></label>

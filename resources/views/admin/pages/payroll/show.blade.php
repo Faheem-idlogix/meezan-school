@@ -24,7 +24,7 @@
 
       {{-- Header --}}
       <div class="text-center mb-4 pb-3 border-bottom">
-        <h4 class="fw-bold text-primary mb-0">Meezan School System</h4>
+        <h4 class="fw-bold text-primary mb-0">{{ setting('school_name', 'School') }}</h4>
         <p class="text-muted small mb-2">Salary Slip — {{ $payroll->month_name }} {{ $payroll->year }}</p>
         @if($payroll->status === 'paid')
           <span class="badge bg-success px-3 py-1">✓ PAID</span>

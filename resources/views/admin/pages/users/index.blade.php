@@ -58,10 +58,15 @@
                         </td>
                         <td>{{ $user->email }}</td>
                         <td>
-                          @php $roleColors = ['admin'=>'bg-purple','teacher'=>'bg-primary','student'=>'bg-success','accountant'=>'bg-warning text-dark']; @endphp
-                          <span class="badge {{ $roleColors[$user->role ?? 'admin'] ?? 'bg-secondary' }}">
-                            {{ ucfirst($user->role ?? 'admin') }}
-                          </span>
+                          @php $roleColors = ['admin'=>'bg-purple','teacher'=>'bg-primary','student'=>'bg-success','accountant'=>'bg-warning text-dark','super_admin'=>'bg-danger','receptionist'=>'bg-info']; @endphp
+                          @foreach($user->roles as $r)
+                            <span class="badge {{ $roleColors[$r->name] ?? 'bg-secondary' }}">
+                              {{ $r->display_name }}
+                            </span>
+                          @endforeach
+                          @if($user->roles->isEmpty())
+                            <span class="badge bg-secondary">{{ ucfirst($user->role ?? 'none') }}</span>
+                          @endif
                         </td>
                         <td>
                           <div class="d-flex gap-1">

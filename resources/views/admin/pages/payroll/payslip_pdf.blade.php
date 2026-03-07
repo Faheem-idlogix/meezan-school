@@ -25,7 +25,7 @@
 </head>
 <body>
   <div class="header">
-    <h2>Meezan School System</h2>
+    <h2>{{ setting('school_name', 'School') }}</h2>
     <p>SALARY SLIP &mdash; {{ $payroll->month_name }} {{ $payroll->year }}
        &nbsp;&nbsp;
        <span class="{{ $payroll->status === 'paid' ? 'badge-paid' : 'badge-draft' }}">{{ strtoupper($payroll->status) }}</span>

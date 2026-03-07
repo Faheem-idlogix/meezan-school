@@ -100,9 +100,9 @@
     <div class="challan">
       
                     <div class="row col-md-12">
-                        <img src="{{ public_path('img/logo/school_logo.jpg') }}" style="width: 50px; height: 50px; margin-right: 20px;">
-                        <h3 class="school-name">Meezan School System</h3>
-                        <p class="address">Address: nai wala bangla. Contact No : 0301999000</p>
+                        <img src="{{ school_logo(true) }}" style="width: 50px; height: 50px; margin-right: 20px;">
+                        <h3 class="school-name">{{ setting('school_name', 'School') }}</h3>
+                        <p class="address">Address: {{ setting('school_address', '') }}. Contact No : {{ setting('school_phone', '') }}</p>
                         <h4 class="heading">Fee Challan - School Copy</h4>
                     </div>
         {{-- </div> --}}
@@ -150,9 +150,9 @@
     <!-- Student Copy 1 -->
     <div class="challan">
         <div class="row col-md-12">
-            <img src="{{ public_path('img/logo/school_logo.jpg') }}" style="width: 50px; height: 50px; margin-right: 20px;">
-            <h3 class="school-name">Meezan School System</h3>
-            <p class="address">Address: nai wala bangla. Contact No : 0301999000</p>
+            <img src="{{ school_logo(true) }}" style="width: 50px; height: 50px; margin-right: 20px;">
+            <h3 class="school-name">{{ setting('school_name', 'School') }}</h3>
+            <p class="address">Address: {{ setting('school_address', '') }}. Contact No : {{ setting('school_phone', '') }}</p>
             <h4 class="heading">Fee Challan - Student Copy</h4>
         </div>
         <table class="fee-info-item">
@@ -197,9 +197,9 @@
      <div class="challan">
       
         <div class="row col-md-12">
-            <img src="{{ public_path('img/logo/school_logo.jpg') }}" style="width: 50px; height: 50px; margin-right: 20px;">
-            <h3 class="school-name">Meezan School System</h3>
-            <p class="address">Address: nai wala bangla. Contact No : 0301999000</p>
+            <img src="{{ school_logo(true) }}" style="width: 50px; height: 50px; margin-right: 20px;">
+            <h3 class="school-name">{{ setting('school_name', 'School') }}</h3>
+            <p class="address">Address: {{ setting('school_address', '') }}. Contact No : {{ setting('school_phone', '') }}</p>
             <h4 class="heading">Fee Challan - School Copy</h4>
         </div>
 {{-- </div> --}}
@@ -245,9 +245,9 @@
 <!-- Student Copy 1 -->
         <div class="challan">
         <div class="row col-md-12">
-        <img src="{{ public_path('img/logo/school_logo.jpg') }}" style="width: 50px; height: 50px; margin-right: 20px;">
-        <h3 class="school-name">Meezan School System</h3>
-        <p class="address">Address: nai wala bangla. Contact No : 0301999000</p>
+        <img src="{{ school_logo(true) }}" style="width: 50px; height: 50px; margin-right: 20px;">
+        <h3 class="school-name">{{ setting('school_name', 'School') }}</h3>
+        <p class="address">Address: {{ setting('school_address', '') }}. Contact No : {{ setting('school_phone', '') }}</p>
         <h4 class="heading">Fee Challan - Student Copy</h4>
         </div>
         <table class="fee-info-item">

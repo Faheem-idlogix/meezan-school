@@ -28,11 +28,15 @@
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">Role</label>
-                    <select name="role" class="form-select">
-                      @foreach(['admin','teacher','student','accountant'] as $r)
-                      <option value="{{ $r }}" {{ ($user->role ?? 'admin') === $r ? 'selected' : '' }}>{{ ucfirst($r) }}</option>
+                    <select name="role_id" class="form-select @error('role_id') is-invalid @enderror">
+                      <option value="">Select Role</option>
+                      @foreach($roles as $role)
+                        <option value="{{ $role->id }}" {{ (old('role_id') ?? optional($user->roles->first())->id) == $role->id ? 'selected' : '' }}>
+                          {{ $role->display_name }}
+                        </option>
                       @endforeach
                     </select>
+                    @error('role_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                   </div>
                   <div class="col-md-6">
                     <label class="form-label">New Password <small class="text-muted">(leave blank to keep)</small></label>

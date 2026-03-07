@@ -20,17 +20,28 @@ class SettingController extends Controller
     {
         $request->validate([
             'school_name'       => 'nullable|string|max:255',
-            'school_phone'      => 'nullable|string|max:20',
-            'school_address'    => 'nullable|string',
+            'school_phone'      => 'nullable|string|max:30',
+            'school_address'    => 'nullable|string|max:500',
+            'school_email'      => 'nullable|email|max:255',
+            'school_tagline'    => 'nullable|string|max:255',
+            'school_logo'       => 'nullable|image|mimes:jpg,jpeg,png,ico,svg,webp|max:2048',
             'whatsapp_provider' => 'nullable|in:twilio,wati,ultramsg',
             'whatsapp_api_key'  => 'nullable|string',
             'whatsapp_from'     => 'nullable|string',
             'whatsapp_instance' => 'nullable|string',
         ]);
 
-        foreach ($request->except(['_token', '_method']) as $key => $value) {
+        // Handle logo upload
+        if ($request->hasFile('school_logo')) {
+            $path = $request->file('school_logo')->store('school', 'public');
+            Setting::set('school_logo', $path);
+        }
+
+        foreach ($request->except(['_token', '_method', 'school_logo']) as $key => $value) {
             Setting::set($key, $value);
         }
+
+        flush_settings_cache();
 
         return redirect()->route('settings.index')->with('success', 'Settings saved successfully');
     }
@@ -67,7 +78,7 @@ class SettingController extends Controller
         $sent     = 0;
 
         foreach ($students as $student) {
-            $message = "📢 *{$notice->title}*\n\n{$notice->content}\n\n— Meezan School";
+            $message = "📢 *{$notice->title}*\n\n{$notice->content}\n\n— " . setting('school_name', 'School');
             $res     = $this->dispatchWhatsApp($provider, $student->whatsapp_number, $message);
             if ($res['success']) $sent++;
         }

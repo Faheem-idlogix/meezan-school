@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Meezan School System</title>
+  <title>@yield('title', setting('school_name', 'School Management System'))</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -303,8 +303,8 @@
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="{{ route('home') }}" class="logo d-flex align-items-center">
-        <img src="{{asset("img/logo/school_logo.ico")}}" alt="">
-         <span class="d-none d-lg-block">Meezan School</span> 
+        <img src="{{ school_logo() }}" alt="">
+         <span class="d-none d-lg-block">{{ setting('school_name', 'School') }}</span> 
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
@@ -325,73 +325,95 @@
           </a>
         </li><!-- End Search Icon-->
 
-        {{-- <li class="nav-item dropdown">
-
-          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+        {{-- ═══════ Notification Bell ═══════ --}}
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown" id="notificationBell">
             <i class="bi bi-bell"></i>
-            <span class="badge bg-primary badge-number">4</span>
+            <span class="badge bg-danger badge-number" id="notifCount" style="display:none;">0</span>
           </a>
 
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-            <li class="dropdown-header">
-              You have 4 new notifications
-              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications" style="min-width:340px;">
+            <li class="dropdown-header d-flex justify-content-between align-items-center">
+              <span>Notifications <span class="badge rounded-pill bg-primary ms-1" id="notifCountHeader">0</span></span>
+              <div>
+                <a href="#" id="markAllReadBtn" class="text-primary small me-2"><i class="bi bi-check-all"></i> Read All</a>
+                <a href="{{ route('notifications.my') }}" class="badge rounded-pill bg-primary p-2">View All</a>
+              </div>
             </li>
-            <li>
-              <hr class="dropdown-divider">
+            <li><hr class="dropdown-divider"></li>
+
+            <div id="notifDropdownList">
+              <li class="notification-item text-center py-3">
+                <small class="text-muted">Loading...</small>
+              </li>
+            </div>
+
+            <li><hr class="dropdown-divider"></li>
+            <li class="dropdown-footer text-center">
+              <a href="{{ route('notifications.my') }}">View all notifications</a>
             </li>
-
-           
-
           </ul>
+        </li>{{-- End Notification Bell --}}
 
-        </li> 
-
-        
-
-        </li><!-- End Messages Nav --> --}}
-
+        {{-- ═══════ User Profile Dropdown ═══════ --}}
         <li class="nav-item dropdown pe-3">
-
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-          
+            @php
+              $initials = collect(explode(' ', Auth::user()->name))->map(fn($w) => strtoupper(substr($w,0,1)))->take(2)->join('');
+              $avatarColors = ['#4154f1','#2eca6a','#ff771d','#e74c3c','#9b59b6','#1abc9c','#f39c12','#3498db'];
+              $avatarBg = $avatarColors[Auth::user()->id % count($avatarColors)];
+            @endphp
+            <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+                 style="width:34px;height:34px;font-size:13px;background:{{ $avatarBg }};">
+              {{ $initials }}
+            </div>
             <span class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->name }}</span>
-          </a><!-- End Profile Iamge Icon -->
+          </a>
 
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style="min-width:220px;">
             <li class="dropdown-header">
               <h6>{{ Auth::user()->name }}</h6>
-              
+              <span class="text-muted small">
+                @if(Auth::user()->roles->count())
+                  {{ Auth::user()->roles->first()->display_name }}
+                @else
+                  {{ ucfirst(Auth::user()->role ?? 'User') }}
+                @endif
+              </span>
             </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
+            <li><hr class="dropdown-divider"></li>
 
-            <!-- <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-person"></i>
-                <span>My Profile</span>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{{ route('profile.index') }}">
+                <i class="bi bi-person me-2"></i> My Profile
               </a>
-            </li> -->
-            <li>
-              <hr class="dropdown-divider">
             </li>
+            <li><hr class="dropdown-divider"></li>
 
             <li>
-              <a class="dropdown-item" href="{{ route('logout') }}"
-              onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();">
-                            <i class="bi bi-box-arrow-right"></i>
-              {{ __('Sign Out') }}
-          </a>
-
-          <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-              @csrf
-          </form>
+              <a class="dropdown-item d-flex align-items-center" href="{{ route('profile.change-password') }}">
+                <i class="bi bi-key me-2"></i> Change Password
+              </a>
             </li>
+            <li><hr class="dropdown-divider"></li>
 
-          </ul><!-- End Profile Dropdown Items -->
-        </li><!-- End Profile Nav -->
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{{ route('notifications.my') }}">
+                <i class="bi bi-bell me-2"></i> My Notifications
+                <span class="badge bg-danger ms-auto" id="notifCountProfile" style="display:none;">0</span>
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center text-danger" href="{{ route('logout') }}"
+                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+              </a>
+              <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+            </li>
+          </ul>
+        </li>{{-- End Profile Dropdown --}}
 
       </ul>
     </nav><!-- End Icons Navigation -->
@@ -403,216 +425,48 @@
 
     <ul class="sidebar-nav" id="sidebar-nav">
 
-      <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('home') ? '' : 'collapsed' }}" href="{{ route('home') }}">
-          <i class="bi bi-grid-1x2-fill"></i>
-          <span>Dashboard</span>
-        </a>
-      </li>
+      @foreach($sidebarMenu as $item)
+        @if(($item['type'] ?? null) === 'heading')
+          {{-- Section Heading --}}
+          <li class="nav-heading">{{ $item['label'] }}</li>
 
-      {{-- ═══════════ ACADEMIC ═══════════ --}}
-      <li class="nav-heading">Academic</li>
+        @elseif(isset($item['children']))
+          {{-- Dropdown Menu --}}
+          @php
+            $childRoutes = collect($item['children'])->pluck('route')->filter()->toArray();
+            $isOpen = false;
+            foreach ($childRoutes as $cr) {
+              if (request()->routeIs($cr) || request()->routeIs($cr . '.*')) {
+                $isOpen = true;
+                break;
+              }
+            }
+          @endphp
+          <li class="nav-item">
+            <a class="nav-link {{ $isOpen ? '' : 'collapsed' }}" data-bs-target="#{{ $item['id'] }}" data-bs-toggle="collapse" href="#">
+              <i class="{{ $item['icon'] }}"></i><span>{{ $item['label'] }}</span><i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="{{ $item['id'] }}" class="nav-content collapse {{ $isOpen ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+              @foreach($item['children'] as $child)
+                <li>
+                  <a href="{{ route($child['route']) }}" class="{{ request()->routeIs($child['route']) || request()->routeIs($child['route'] . '.*') ? 'active' : '' }}">
+                    <i class="bi bi-circle"></i><span>{{ $child['label'] }}</span>
+                  </a>
+                </li>
+              @endforeach
+            </ul>
+          </li>
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-students" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-people-fill"></i><span>Students</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-students" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('student.index') }}"><i class="bi bi-circle"></i><span>All Students</span></a></li>
-          <li><a href="{{ route('student.create') }}"><i class="bi bi-circle"></i><span>Add Student</span></a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-teachers" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-person-workspace"></i><span>Teachers</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-teachers" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('teacher.index') }}"><i class="bi bi-circle"></i><span>All Teachers</span></a></li>
-          <li><a href="{{ route('teacher.create') }}"><i class="bi bi-circle"></i><span>Add Teacher</span></a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-classes" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-journal-text"></i><span>Classes & Subjects</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-classes" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('class.index') }}"><i class="bi bi-circle"></i><span>All Classes</span></a></li>
-          <li><a href="{{ route('class.create') }}"><i class="bi bi-circle"></i><span>Add Class</span></a></li>
-          <li><a href="{{ route('subject.index') }}"><i class="bi bi-circle"></i><span>Subjects</span></a></li>
-          <li><a href="{{ route('class_subject.index') }}"><i class="bi bi-circle"></i><span>Class Subjects</span></a></li>
-          <li><a href="{{ route('session.index') }}"><i class="bi bi-circle"></i><span>Sessions</span></a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-timetable" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-calendar3"></i><span>Timetable</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-timetable" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('timetable.index') }}"><i class="bi bi-circle"></i><span>View Timetable</span></a></li>
-          <li><a href="{{ route('timetable.create') }}"><i class="bi bi-circle"></i><span>Add Period</span></a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-attendance" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-calendar-check-fill"></i><span>Attendance</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-attendance" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('attendance') }}"><i class="bi bi-circle"></i><span>Mark Attendance</span></a></li>
-          <li><a href="{{ route('get_attendance_report') }}"><i class="bi bi-circle"></i><span>Attendance Report</span></a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-leave" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-calendar-x-fill"></i><span>Leave Management</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-leave" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('leave.index') }}"><i class="bi bi-circle"></i><span>All Leaves</span></a></li>
-          <li><a href="{{ route('leave.create') }}"><i class="bi bi-circle"></i><span>Add Leave Request</span></a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-exams" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-pencil-square"></i><span>Exams & Results</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-exams" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('exam.index') }}"><i class="bi bi-circle"></i><span>Exam List</span></a></li>
-          <li><a href="{{ route('exam.create') }}"><i class="bi bi-circle"></i><span>Add Exam</span></a></li>
-          <li><a href="{{ route('exam_result.index') }}"><i class="bi bi-circle"></i><span>Results</span></a></li>
-          <li><a href="{{ route('result_card') }}"><i class="bi bi-circle"></i><span>Result Card</span></a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-diary" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-journal-bookmark-fill"></i><span>Daily Diary</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-diary" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('diary.index') }}"><i class="bi bi-circle"></i><span>View Diary</span></a></li>
-          <li><a href="{{ route('diary.create') }}"><i class="bi bi-circle"></i><span>New Entry</span></a></li>
-        </ul>
-      </li>
-
-      {{-- ═══════════ FINANCE ═══════════ --}}
-
-      <li class="nav-heading">Finance</li>
-      <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('finance.*') ? '' : 'collapsed' }}" href="{{ route('finance.index') }}">
-          <i class="bi bi-graph-up-arrow"></i><span>Finance Hub</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-finance" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-cash-coin"></i><span>Fee Management</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-finance" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('fee_voucher_create') }}"><i class="bi bi-circle"></i><span>Create Monthly Invoice</span></a></li>
-          <li><a href="{{ route('fee_voucher') }}"><i class="bi bi-circle"></i><span>Monthly Invoices</span></a></li>
-          <li><a href="{{ route('create_student_fee') }}"><i class="bi bi-circle"></i><span>Student Voucher</span></a></li>
-          <li><a href="{{ route('voucher.index') }}"><i class="bi bi-circle"></i><span>Journal Vouchers</span></a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-payroll" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-cash-stack"></i><span>Payroll</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-payroll" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('payroll.index') }}"><i class="bi bi-circle"></i><span>Monthly Payroll</span></a></li>
-          <li><a href="{{ route('payroll.create') }}"><i class="bi bi-circle"></i><span>Generate Payroll</span></a></li>
-          <li><a href="{{ route('payroll.advances') }}"><i class="bi bi-circle"></i><span>Salary Advances</span></a></li>
-        </ul>
-      </li>
-
-      {{-- ═══════════ COMMUNICATION ═══════════ --}}
-      <li class="nav-heading">Communication</li>
-
-      <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('whatsapp.*') ? '' : 'collapsed' }}" href="{{ route('whatsapp.index') }}">
-          <i class="bi bi-whatsapp"></i><span>WhatsApp Hub</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-notices" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-megaphone-fill"></i><span>Notices</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-notices" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('notice.index') }}"><i class="bi bi-circle"></i><span>All Notices</span></a></li>
-          <li><a href="{{ route('notice.create') }}"><i class="bi bi-circle"></i><span>New Notice</span></a></li>
-        </ul>
-      </li>
-
-      {{-- ═══════════ REPORTS & DOCS ═══════════ --}}
-      <li class="nav-heading">Reports & Docs</li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-reports" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-bar-chart-line-fill"></i><span>Reports</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-reports" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('reports.index') }}"><i class="bi bi-circle"></i><span>Reports Hub</span></a></li>
-          <li><a href="{{ route('reports.finance') }}"><i class="bi bi-circle"></i><span>Finance Report</span></a></li>
-          <li><a href="{{ route('reports.fees') }}"><i class="bi bi-circle"></i><span>Fee Collection</span></a></li>
-          <li><a href="{{ route('reports.attendance') }}"><i class="bi bi-circle"></i><span>Attendance Report</span></a></li>
-          <li><a href="{{ route('reports.students') }}"><i class="bi bi-circle"></i><span>Student Report</span></a></li>
-          <li><a href="{{ route('reports.exams') }}"><i class="bi bi-circle"></i><span>Exam Report</span></a></li>
-          <li><a href="{{ route('reports.archived') }}"><i class="bi bi-circle"></i><span>Archived Records</span></a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('documentation') ? '' : 'collapsed' }}" href="{{ route('documentation') }}">
-          <i class="bi bi-book-fill"></i><span>Documentation</span>
-        </a>
-      </li>
-
-      {{-- ═══════════ ADMINISTRATION ═══════════ --}}
-      <li class="nav-heading">Administration</li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-users" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-shield-lock-fill"></i><span>User Management</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-users" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('users.index') }}"><i class="bi bi-circle"></i><span>All Users</span></a></li>
-          <li><a href="{{ route('users.create') }}"><i class="bi bi-circle"></i><span>Add User</span></a></li>
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('settings.*') ? '' : 'collapsed' }}" href="{{ route('settings.index') }}">
-          <i class="bi bi-gear-fill"></i>
-          <span>Settings & WhatsApp</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('activity_logs.*') ? '' : 'collapsed' }}" href="{{ route('activity_logs.index') }}">
-          <i class="bi bi-clock-history"></i>
-          <span>Activity Logs</span>
-        </a>
-      </li>
-
-      @if(Auth::user()->role === 'super_admin')
-      <li class="nav-heading">Super Admin</li>
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#nav-superadmin" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-buildings"></i><span>Schools</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="nav-superadmin" class="nav-content collapse" data-bs-parent="#sidebar-nav">
-          <li><a href="{{ route('super_admin.dashboard') }}"><i class="bi bi-circle"></i><span>Super Dashboard</span></a></li>
-          <li><a href="{{ route('super_admin.schools') }}"><i class="bi bi-circle"></i><span>Manage Schools</span></a></li>
-          <li><a href="{{ route('super_admin.schools.create') }}"><i class="bi bi-circle"></i><span>Add School</span></a></li>
-          <li><a href="{{ route('super_admin.plans') }}"><i class="bi bi-circle"></i><span>Plans</span></a></li>
-        </ul>
-      </li>
-      @endif
+        @else
+          {{-- Single Link --}}
+          <li class="nav-item">
+            <a class="nav-link {{ request()->routeIs($item['route']) || request()->routeIs($item['route'] . '.*') ? '' : 'collapsed' }}" href="{{ route($item['route']) }}">
+              <i class="{{ $item['icon'] }}"></i>
+              <span>{{ $item['label'] }}</span>
+            </a>
+          </li>
+        @endif
+      @endforeach
 
     </ul>
 
@@ -623,14 +477,14 @@
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
     <div class="copyright">
-      &copy; Copyright <strong><span>Meezan School System</span></strong>. All Rights Reserved
+      &copy; Copyright <strong><span>{{ setting('school_name', 'School Management System') }}</span></strong>. All Rights Reserved
     </div>
     <div class="credits">
       <!-- All the links in the footer should remain intact. -->
       <!-- You can delete the links only if you purchased the pro version. -->
       <!-- Licensing information: https://bootstrapmade.com/license/ -->
       <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
-      Designed by <a href="#">Meezan School System</a>
+      Designed by <a href="#">{{ setting('school_name', 'School Management System') }}</a>
     </div>
   </footer><!-- End Footer -->
 
@@ -671,6 +525,68 @@
         input.value = "";
       }
     }
+
+    /* ═══════ Notification Bell AJAX ═══════ */
+    function loadNotifications() {
+        fetch("{{ route('notifications.navbar-data') }}")
+            .then(r => r.json())
+            .then(data => {
+                // Update badge counts
+                const cnt = data.unread_count;
+                ['notifCount','notifCountHeader','notifCountProfile'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.textContent = cnt;
+                        el.style.display = cnt > 0 ? '' : 'none';
+                    }
+                });
+
+                // Render dropdown list
+                const list = document.getElementById('notifDropdownList');
+                if (!data.notifications.length) {
+                    list.innerHTML = '<li class="notification-item text-center py-3"><small class="text-muted">No notifications</small></li>';
+                    return;
+                }
+
+                list.innerHTML = data.notifications.map(n => `
+                    <li>
+                        <a class="notification-item d-flex align-items-start gap-2 px-3 py-2 text-decoration-none ${n.read ? '' : 'bg-light'}"
+                           href="${n.link || '#'}" onclick="markNotifRead(${n.id})">
+                            <i class="${n.type_icon} mt-1"></i>
+                            <div class="flex-grow-1">
+                                <h4 class="mb-0" style="font-size:.85rem;font-weight:600;color:#012970;">${n.title}</h4>
+                                <p class="mb-0 text-muted" style="font-size:.78rem;">${n.message}</p>
+                                <p class="mb-0" style="font-size:.72rem;color:#899bbd;">
+                                    <i class="bi bi-clock me-1"></i>${n.time} &middot; ${n.sender}
+                                </p>
+                            </div>
+                            ${!n.read ? '<span class="badge bg-primary rounded-pill" style="font-size:.6rem;height:fit-content;">NEW</span>' : ''}
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                `).join('');
+            })
+            .catch(() => {});
+    }
+
+    function markNotifRead(id) {
+        fetch("/notifications/" + id + "/mark-read", {
+            method: "POST",
+            headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}", "Accept": "application/json" }
+        }).then(() => loadNotifications());
+    }
+
+    document.getElementById('markAllReadBtn')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        fetch("{{ route('notifications.mark-all-read') }}", {
+            method: "POST",
+            headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}", "Accept": "application/json" }
+        }).then(() => loadNotifications());
+    });
+
+    // Load on page ready & refresh every 30s
+    loadNotifications();
+    setInterval(loadNotifications, 30000);
   </script>
   @yield("script")
   @yield("scripts")

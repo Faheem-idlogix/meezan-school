@@ -93,8 +93,8 @@
     <div class="challan">
         {{-- <img src="http://127.0.0.1:8000/img/logo/school_logo.ico" alt="Your Image"> --}}
 
-        <h3>Meezan School System</h3>
-        <p class="address">Adress: nai wala bangla. Contact No : 0301999000</p>
+        <h3>{{ setting('school_name', 'School') }}</h3>
+        <p class="address">Address: {{ setting('school_address', '') }}. Contact No : {{ setting('school_phone', '') }}</p>
         <h4>Fee Challan - School Copy</h4>
         <!-- Fee Information -->
         <table class="fee-info-item">
@@ -178,8 +178,8 @@
 
      <!-- School Copy -->
      <div class="challan">
-        <h3>Meezan School System</h3>
-        <p class="address">Adress: nai wala bangla. Contact No : 0301999000</p>
+        <h3>{{ setting('school_name', 'School') }}</h3>
+        <p class="address">Address: {{ setting('school_address', '') }}. Contact No : {{ setting('school_phone', '') }}</p>
 
         <h4>Fee Challan - School Copy</h4>
         <table class="fee-info-item">

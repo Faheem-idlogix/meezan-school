@@ -3,17 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
+use App\Models\AdmissionEnquiry;
 use App\Models\Attendance;
 use App\Models\ClassRoom;
 use App\Models\Exam;
 use App\Models\ExamResult;
+use App\Models\FeeInstallment;
+use App\Models\FeeInstallmentPlan;
 use App\Models\Notice;
+use App\Models\StudentBehavior;
 use App\Models\Teacher;
 use App\Models\Voucher;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\StudentFee;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
 
 class HomeController extends Controller
@@ -244,6 +249,64 @@ class HomeController extends Controller
             ->groupBy('class_rooms.id', 'class_rooms.class_name')
             ->get();
 
+        // ══════════ SMART DASHBOARD — New Module Stats ══════════
+
+        // Admission stats (safe — check table exists)
+        $admissionStats = ['total' => 0, 'enquiry' => 0, 'test_scheduled' => 0, 'approved' => 0, 'enrolled' => 0, 'rejected' => 0];
+        if (Schema::hasTable('admission_enquiries')) {
+            $admissionStats = [
+                'total'          => AdmissionEnquiry::count(),
+                'enquiry'        => AdmissionEnquiry::where('status', 'enquiry')->count(),
+                'test_scheduled' => AdmissionEnquiry::where('status', 'test_scheduled')->count(),
+                'approved'       => AdmissionEnquiry::where('status', 'approved')->count(),
+                'enrolled'       => AdmissionEnquiry::where('status', 'enrolled')->count(),
+                'rejected'       => AdmissionEnquiry::where('status', 'rejected')->count(),
+            ];
+        }
+
+        // Behavior stats
+        $behaviorStats = ['positive' => 0, 'negative' => 0, 'neutral' => 0];
+        if (Schema::hasTable('student_behaviors')) {
+            $behaviorStats = [
+                'positive' => StudentBehavior::where('type', 'positive')->count(),
+                'negative' => StudentBehavior::where('type', 'negative')->count(),
+                'neutral'  => StudentBehavior::where('type', 'neutral')->count(),
+            ];
+        }
+
+        // Fee defaulters — students with overdue installments
+        $feeDefaulters = collect();
+        $overdueInstallments = 0;
+        if (Schema::hasTable('fee_installments')) {
+            $overdueInstallments = FeeInstallment::where('status', 'overdue')
+                ->orWhere(function($q) { $q->where('status', 'pending')->where('due_date', '<', now()); })
+                ->count();
+            $feeDefaulters = FeeInstallmentPlan::whereHas('installments', function($q) {
+                    $q->where('status', 'overdue')
+                      ->orWhere(function($q2) { $q2->where('status', 'pending')->where('due_date', '<', now()); });
+                })
+                ->with(['student', 'installments'])
+                ->take(10)
+                ->get();
+        }
+
+        // Exam analytics — latest exam performance
+        $examAnalytics = ['avg_percentage' => 0, 'total_results' => 0, 'pass_count' => 0, 'fail_count' => 0];
+        $latestExam = Exam::latest()->first();
+        if ($latestExam) {
+            $results = ExamResult::where('exam_id', $latestExam->id)->get();
+            $examAnalytics['total_results'] = $results->count();
+            if ($results->count() > 0) {
+                $examAnalytics['avg_percentage'] = round($results->avg(function($r) {
+                    return ($r->total_marks ?? 100) > 0 ? ($r->obtain_marks / ($r->total_marks ?? 100)) * 100 : 0;
+                }), 1);
+                $examAnalytics['pass_count'] = $results->filter(function($r) {
+                    return ($r->total_marks ?? 100) > 0 && ($r->obtain_marks / ($r->total_marks ?? 100)) >= 0.33;
+                })->count();
+                $examAnalytics['fail_count'] = $examAnalytics['total_results'] - $examAnalytics['pass_count'];
+            }
+        }
+
         return view('admin.dashboard.dashboard', compact(
             'totalStudents', 'totalTeachers', 'classrooms',
             'totalFee', 'feeReceived', 'feeOutstanding', 'students',
@@ -252,7 +315,9 @@ class HomeController extends Controller
             'monthlyChart', 'recentExpenses',
             'totalExams', 'recentNotices', 'recentLogs',
             'attendanceToday', 'attendanceUnmarked', 'classAttendance',
-            'periodKey', 'periodLabel', 'dateFrom', 'dateTo'
+            'periodKey', 'periodLabel', 'dateFrom', 'dateTo',
+            'admissionStats', 'behaviorStats', 'feeDefaulters', 'overdueInstallments',
+            'examAnalytics', 'latestExam'
         ));
     }
 

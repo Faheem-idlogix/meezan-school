@@ -32,4 +32,19 @@ class ClassRoom extends Model
     {
         return $this->hasMany(ClassSubject::class, 'class_id');
     }
+
+    public function feeStructures()
+    {
+        return $this->hasMany(FeeStructure::class, 'class_room_id');
+    }
+
+    public function lateFeeRules()
+    {
+        return $this->hasMany(LateFeeRule::class, 'class_room_id');
+    }
+
+    public function examSchedules()
+    {
+        return $this->hasMany(ExamSchedule::class, 'class_room_id');
+    }
 }

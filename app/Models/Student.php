@@ -40,4 +40,43 @@ class Student extends Model
     {
         return $this->hasMany(ExamResult::class, 'student_id');
     }
+
+    // ── Student Lifecycle relationships ──
+
+    public function documents()
+    {
+        return $this->hasMany(StudentDocument::class);
+    }
+
+    public function behaviors()
+    {
+        return $this->hasMany(StudentBehavior::class);
+    }
+
+    public function transferCertificates()
+    {
+        return $this->hasMany(TransferCertificate::class);
+    }
+
+    public function admissionEnquiry()
+    {
+        return $this->belongsTo(AdmissionEnquiry::class);
+    }
+
+    // ── Advanced Fee relationships ──
+
+    public function feeDiscounts()
+    {
+        return $this->hasMany(StudentFeeDiscount::class);
+    }
+
+    public function installmentPlans()
+    {
+        return $this->hasMany(FeeInstallmentPlan::class);
+    }
+
+    public function feeReminders()
+    {
+        return $this->hasMany(FeeReminder::class);
+    }
 }

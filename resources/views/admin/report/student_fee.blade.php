@@ -112,10 +112,10 @@
                 <!-- School Copy -->
                 <td>
                     <div class="header">
-                        <img src="{{ public_path('img/logo/school_logo.jpg') }}">
-                        <p class="school-name">The Meezan School</p>
-                        <p class="address">Chak No.149/9L</p>
-                        <p class="address">Contact/WhatsApp: 03406581549</p>
+                        <img src="{{ school_logo(true) }}">
+                        <p class="school-name">{{ setting('school_name', 'School') }}</p>
+                        <p class="address">{{ setting('school_address', '') }}</p>
+                        <p class="address">Contact/WhatsApp: {{ setting('school_phone', '') }}</p>
                         <h3>Fee Voucher - {{ $item->fee_month }}<</h3>
                         <h3>School Copy </h3>
                     </div>
@@ -155,10 +155,10 @@
                 <!-- Student Copy -->
                 <td>
                     <div class="header">
-                        <img src="{{ public_path('img/logo/school_logo.jpg') }}">
-                        <p class="school-name">The Meezan School</p>
-                        <p class="address">Chak No.149/9L</p>
-                        <p class="address">Contact/WhatsApp: 03406581549</p>
+                        <img src="{{ school_logo(true) }}">
+                        <p class="school-name">{{ setting('school_name', 'School') }}</p>
+                        <p class="address">{{ setting('school_address', '') }}</p>
+                        <p class="address">Contact/WhatsApp: {{ setting('school_phone', '') }}</p>
                        <h3>Fee Voucher - {{ $item->fee_month }}<</h3>
                         <h3>Student Copy</h3>
                     </div>

@@ -31,7 +31,7 @@
 
   {{-- Hero --}}
   <div class="doc-hero">
-    <h2>Meezan School Management System</h2>
+    <h2>{{ setting('school_name', 'School') }} Management System</h2>
     <p>Complete documentation covering all modules, features, and workflows of the school management platform.</p>
   </div>
 
@@ -71,7 +71,7 @@
           <i class="bi bi-info-circle-fill"></i> System Overview
         </div>
         <div class="card-body">
-          <p>Meezan School Management System is a comprehensive web-based solution built on <strong>Laravel 10</strong> with <strong>Bootstrap 5</strong>, <strong>Chart.js</strong>, and <strong>jQuery</strong>. It provides end-to-end management for schools including student enrollment, fee collection, attendance tracking, exam management, payroll, and more.</p>
+          <p>{{ setting('school_name', 'School') }} Management System is a comprehensive web-based solution built on <strong>Laravel 10</strong> with <strong>Bootstrap 5</strong>, <strong>Chart.js</strong>, and <strong>jQuery</strong>. It provides end-to-end management for schools including student enrollment, fee collection, attendance tracking, exam management, payroll, and more.</p>
           <div class="module-list">
             <li><div class="mi" style="background:#e8f5e9;color:#2e7d32"><i class="bi bi-check-lg"></i></div><div><strong>Role-Based Access</strong><small>Admin, Teacher, Accountant, and Super Admin roles with different permissions and dashboards.</small></div></li>
             <li><div class="mi" style="background:#e3f2fd;color:#1565c0"><i class="bi bi-shield-check"></i></div><div><strong>Soft Delete Support</strong><small>All critical records (students, teachers, vouchers, etc.) use soft deletes — nothing is permanently lost.</small></div></li>

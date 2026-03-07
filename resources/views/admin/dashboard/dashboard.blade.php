@@ -474,6 +474,90 @@
         </div>
       </div>
 
+      {{-- ══════════ ROW 6B — SMART DASHBOARD WIDGETS ══════════ --}}
+      <div class="row g-3">
+        {{-- Admission Pipeline --}}
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body pt-3">
+              <h5 class="card-title"><i class="bi bi-person-plus-fill me-1 text-primary"></i>Admission Pipeline</h5>
+              <div class="d-flex flex-column gap-2">
+                <div class="d-flex justify-content-between"><span>Enquiries</span><span class="badge bg-secondary">{{ $admissionStats['enquiry'] ?? 0 }}</span></div>
+                <div class="d-flex justify-content-between"><span>Test Scheduled</span><span class="badge bg-info">{{ $admissionStats['test_scheduled'] ?? 0 }}</span></div>
+                <div class="d-flex justify-content-between"><span>Approved</span><span class="badge bg-success">{{ $admissionStats['approved'] ?? 0 }}</span></div>
+                <div class="d-flex justify-content-between"><span>Enrolled</span><span class="badge bg-primary">{{ $admissionStats['enrolled'] ?? 0 }}</span></div>
+                <div class="d-flex justify-content-between"><span>Rejected</span><span class="badge bg-danger">{{ $admissionStats['rejected'] ?? 0 }}</span></div>
+                <hr class="my-1">
+                <div class="d-flex justify-content-between fw-bold"><span>Total</span><span>{{ $admissionStats['total'] ?? 0 }}</span></div>
+              </div>
+              <a href="{{ route('admission.index') }}" class="btn btn-outline-primary btn-sm mt-2 w-100">View All Enquiries</a>
+            </div>
+          </div>
+        </div>
+
+        {{-- Fee Defaulters --}}
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body pt-3">
+              <h5 class="card-title"><i class="bi bi-exclamation-triangle-fill me-1 text-danger"></i>Fee Alerts</h5>
+              @if($overdueInstallments > 0)
+              <div class="alert alert-danger py-2 mb-2">
+                <strong>{{ $overdueInstallments }}</strong> overdue installments found!
+              </div>
+              @endif
+              @if($feeDefaulters->count() > 0)
+              <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                  <thead><tr><th>Student</th><th>Due</th></tr></thead>
+                  <tbody>
+                    @foreach($feeDefaulters->take(5) as $plan)
+                    <tr>
+                      <td><small>{{ $plan->student->student_name ?? '—' }}</small></td>
+                      <td><small class="text-danger fw-bold">Rs. {{ number_format($plan->remaining_amount) }}</small></td>
+                    </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+              @else
+              <div class="text-center text-muted py-3"><i class="bi bi-check-circle fs-1 text-success d-block mb-1"></i><small>No overdue payments</small></div>
+              @endif
+              <a href="{{ route('fee-installments.index') }}" class="btn btn-outline-danger btn-sm mt-2 w-100">View Installment Plans</a>
+            </div>
+          </div>
+        </div>
+
+        {{-- Exam Analytics + Behavior --}}
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body pt-3">
+              <h5 class="card-title"><i class="bi bi-graph-up me-1 text-success"></i>Exam & Behavior</h5>
+              @if($latestExam)
+              <p class="mb-2"><small class="text-muted">Latest Exam:</small> <strong>{{ $latestExam->exam_name }}</strong></p>
+              <div class="d-flex gap-3 mb-2">
+                <div class="text-center flex-fill"><div class="fs-5 fw-bold text-primary">{{ $examAnalytics['avg_percentage'] }}%</div><small>Avg Score</small></div>
+                <div class="text-center flex-fill"><div class="fs-5 fw-bold text-success">{{ $examAnalytics['pass_count'] }}</div><small>Passed</small></div>
+                <div class="text-center flex-fill"><div class="fs-5 fw-bold text-danger">{{ $examAnalytics['fail_count'] }}</div><small>Failed</small></div>
+              </div>
+              @else
+              <p class="text-muted">No exams yet</p>
+              @endif
+              <hr class="my-2">
+              <p class="mb-1"><small class="text-muted">Student Behavior:</small></p>
+              <div class="d-flex gap-3">
+                <div class="text-center flex-fill"><div class="fs-6 fw-bold text-success">{{ $behaviorStats['positive'] }}</div><small>Positive</small></div>
+                <div class="text-center flex-fill"><div class="fs-6 fw-bold text-danger">{{ $behaviorStats['negative'] }}</div><small>Negative</small></div>
+                <div class="text-center flex-fill"><div class="fs-6 fw-bold text-secondary">{{ $behaviorStats['neutral'] }}</div><small>Neutral</small></div>
+              </div>
+              <div class="d-flex gap-2 mt-2">
+                <a href="{{ route('report-cards.generate') }}" class="btn btn-outline-success btn-sm flex-fill">Report Cards</a>
+                <a href="{{ route('behavior.index') }}" class="btn btn-outline-info btn-sm flex-fill">Behavior</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {{-- ══════════ ROW 7 — FEE REPORT TABLE ══════════ --}}
       <div class="row g-3">
         <div class="col-lg-12">

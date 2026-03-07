@@ -17,23 +17,70 @@
           <div class="card shadow-sm border-0 mb-4">
             <div class="card-body p-4">
               <h5 class="card-title mb-4"><i class="bi bi-building me-2"></i>School Information</h5>
-              <form action="{{ route('settings.update') }}" method="POST">
+              <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf @method('PUT')
                 <div class="row g-3">
-                  <div class="col-12">
-                    <label class="form-label">School Name</label>
-                    <input type="text" name="school_name" class="form-control" value="{{ $settings['school_name']->value ?? '' }}">
+
+                  {{-- Current Logo Preview --}}
+                  <div class="col-12 text-center">
+                    <div class="mb-2">
+                      @if($settings['school_logo']->value ?? false)
+                        <img src="{{ asset('storage/' . $settings['school_logo']->value) }}" alt="School Logo"
+                             style="max-height:80px; border-radius:8px; border:2px solid #dee2e6; padding:4px;">
+                      @else
+                        <div class="d-inline-flex align-items-center justify-content-center rounded bg-light text-muted" style="width:80px;height:80px;">
+                          <i class="bi bi-image fs-1"></i>
+                        </div>
+                      @endif
+                    </div>
+                    <small class="text-muted">Current Logo</small>
                   </div>
+
+                  {{-- Logo Upload --}}
                   <div class="col-12">
-                    <label class="form-label">School Phone</label>
-                    <input type="text" name="school_phone" class="form-control" value="{{ $settings['school_phone']->value ?? '' }}">
+                    <label class="form-label">School Logo</label>
+                    <input type="file" name="school_logo" class="form-control @error('school_logo') is-invalid @enderror"
+                           accept="image/*">
+                    <small class="text-muted">JPG, PNG, ICO, SVG — Max 2 MB</small>
+                    @error('school_logo')<div class="invalid-feedback">{{ $message }}</div>@enderror
                   </div>
+
                   <div class="col-12">
-                    <label class="form-label">School Address</label>
-                    <textarea name="school_address" class="form-control" rows="3">{{ $settings['school_address']->value ?? '' }}</textarea>
+                    <label class="form-label">School Name <span class="text-danger">*</span></label>
+                    <input type="text" name="school_name" class="form-control"
+                           value="{{ $settings['school_name']->value ?? '' }}"
+                           placeholder="e.g. The Meezan School">
                   </div>
+
                   <div class="col-12">
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Save Settings</button>
+                    <label class="form-label">Tagline</label>
+                    <input type="text" name="school_tagline" class="form-control"
+                           value="{{ $settings['school_tagline']->value ?? '' }}"
+                           placeholder="e.g. Educating Tomorrow's Leaders">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label">Phone / WhatsApp</label>
+                    <input type="text" name="school_phone" class="form-control"
+                           value="{{ $settings['school_phone']->value ?? '' }}"
+                           placeholder="e.g. 03001234567">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="school_email" class="form-control"
+                           value="{{ $settings['school_email']->value ?? '' }}"
+                           placeholder="e.g. info@school.com">
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label">Address</label>
+                    <textarea name="school_address" class="form-control" rows="2"
+                              placeholder="e.g. Chak No.149/9L, Sahiwal">{{ $settings['school_address']->value ?? '' }}</textarea>
+                  </div>
+
+                  <div class="col-12">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Save School Info</button>
                   </div>
                 </div>
               </form>
@@ -90,7 +137,7 @@
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Message</label>
-                  <input type="text" id="testMsg" class="form-control" placeholder="Test message from Meezan School">
+                  <input type="text" id="testMsg" class="form-control" placeholder="Test message from {{ setting('school_name', 'School') }}">
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                   <button onclick="sendTestWhatsapp()" class="btn btn-success w-100">

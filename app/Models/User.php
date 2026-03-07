@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 use App\Traits\LogsActivity;
+use App\Traits\HasRolesAndPermissions;
 
 class User extends Authenticatable
 {
@@ -19,13 +20,15 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    use SoftDeletes, LogsActivity;
+    use SoftDeletes, LogsActivity, HasRolesAndPermissions;
 
     protected $fillable = [
         'name',
         'email',
         'password',
         'user_type_id',
+        'role',
+        'school_id',
     ];
 
     /**
