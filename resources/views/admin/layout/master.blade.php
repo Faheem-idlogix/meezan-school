@@ -285,13 +285,23 @@
     ::-webkit-scrollbar-thumb:hover { background: var(--ea-primary); }
 
     /* ── Select2 override ── */
+    .select2-container { width: 100% !important; }
     .select2-container--default .select2-selection--single {
       border: 1px solid #dee2e6; border-radius: var(--ea-radius); height: 38px; display: flex; align-items: center;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+      line-height: 38px; padding-left: 12px; color: #444;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 38px;
     }
     .select2-container--default.select2-container--focus .select2-selection--single,
     .select2-container--default.select2-container--open .select2-selection--single {
       border-color: var(--ea-primary); box-shadow: 0 0 0 .2rem rgba(var(--ea-primary-rgb),.15);
     }
+    .select2-dropdown { border-color: #dee2e6; border-radius: var(--ea-radius); z-index: 9999; }
+    .select2-results__option--highlighted[aria-selected] { background: var(--ea-primary) !important; }
+    .select2-search--dropdown .select2-search__field { border: 1px solid #dee2e6; border-radius: var(--ea-radius); padding: 6px 10px; }
 
     /* ── Card-header title with left accent bar ── */
     .card-header {
@@ -668,6 +678,29 @@
       const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
     }
   })();
+  </script>
+
+  {{-- Global Select2: make every <select> searchable --}}
+  <script>
+    $(document).ready(function(){
+        $('select').not('.no-select2').each(function(){
+            var $el = $(this);
+            if ($el.data('select2')) return;           // already initialised
+            var opts = { width: '100%', placeholder: $el.find('option[value=""]').text() || 'Select…', allowClear: !$el.prop('required') };
+            var $modal = $el.closest('.modal');
+            if ($modal.length) opts.dropdownParent = $modal; // fix z-index inside modals
+            $el.select2(opts);
+        });
+
+        // Re-init when a Bootstrap modal is shown (for dynamically loaded selects)
+        $(document).on('shown.bs.modal', function(e){
+            $(e.target).find('select').not('.no-select2').each(function(){
+                var $el = $(this);
+                if ($el.data('select2')) return;
+                $el.select2({ width: '100%', placeholder: $el.find('option[value=""]').text() || 'Select…', allowClear: !$el.prop('required'), dropdownParent: $(e.target) });
+            });
+        });
+    });
   </script>
 
   @yield("script")

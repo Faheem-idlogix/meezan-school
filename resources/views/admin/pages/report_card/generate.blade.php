@@ -22,7 +22,7 @@
                                 <select name="exam_id" class="form-select" required>
                                     <option value="">-- Select Exam --</option>
                                     @foreach($exams as $exam)
-                                    <option value="{{ $exam->id }}">{{ $exam->exam_name }}</option>
+                                    <option value="{{ $exam->id }}">{{ $exam->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -53,7 +53,7 @@
                                 <select name="exam_id" class="form-select" required>
                                     <option value="">-- Select Exam --</option>
                                     @foreach($exams as $exam)
-                                    <option value="{{ $exam->id }}">{{ $exam->exam_name }}</option>
+                                    <option value="{{ $exam->id }}">{{ $exam->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -73,7 +73,7 @@
                                 <select name="exam_id" class="form-select" required>
                                     <option value="">-- Select Exam --</option>
                                     @foreach($exams as $exam)
-                                    <option value="{{ $exam->id }}">{{ $exam->exam_name }}</option>
+                                    <option value="{{ $exam->id }}">{{ $exam->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

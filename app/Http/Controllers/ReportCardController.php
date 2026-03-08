@@ -19,9 +19,9 @@ class ReportCardController extends Controller
     public function config()
     {
         $configs = ReportCardConfig::with('classRoom', 'gradingSystem')->get();
-        $classes = ClassRoom::all();
+        $classRooms = ClassRoom::all();
         $gradingSystems = GradingSystem::active()->get();
-        return view('admin.pages.report_card.config', compact('configs', 'classes', 'gradingSystems'));
+        return view('admin.pages.report_card.config', compact('configs', 'classRooms', 'gradingSystems'));
     }
 
     /**
@@ -78,65 +78,64 @@ class ReportCardController extends Controller
             'exam_id'    => 'required|exists:exams,id',
         ]);
 
-        $student = Student::with('classroom')->findOrFail($request->student_id);
-        $exam = Exam::with('gradingSystem.gradeRules')->findOrFail($request->exam_id);
+        $student   = Student::with('classroom')->findOrFail($request->student_id);
+        $exam      = Exam::findOrFail($request->exam_id);
+        $classRoom = $student->classroom;
 
-        $results = ExamResult::where('student_id', $student->id)
+        // Pull all results for this student in this exam
+        $results = ExamResult::with('subject')
+            ->where('student_id', $student->id)
             ->where('exam_id', $exam->id)
-            ->with('subject')
             ->get();
 
-        // Calculate grades if grading system exists
-        $gradingSystem = $exam->gradingSystem ?? GradingSystem::where('is_default', true)->first();
+        // Add computed fields: percentage, grade, remark
+        $results = $results->map(function ($res) {
+            $total = (float) ($res->total_marks ?? 0);
+            $obt   = (float) ($res->obtained_marks ?? 0);
+            $pct   = $total > 0 ? round(($obt / $total) * 100, 2) : 0;
+            [$grade, $remark] = $this->gradeLabel($pct);
+            $res->percentage = $pct;
+            $res->grade      = $grade;
+            $res->remark     = $remark;
+            return $res;
+        });
 
-        $totalMarks = 0;
-        $obtainedMarks = 0;
+        $totalMax   = $results->sum('total_marks');
+        $totalObt   = $results->sum('obtained_marks');
+        $percentage = $totalMax > 0 ? round(($totalObt / $totalMax) * 100, 2) : 0;
+        [$overallGrade, $overallRemark] = $this->gradeLabel($percentage);
+        $rollNo = 'MS-' . str_pad((string) $student->id, 4, '0', STR_PAD_LEFT);
 
-        foreach ($results as $result) {
-            $totalMarks += $result->total_marks;
-            $obtainedMarks += $result->obtained_marks;
+        $pdf = Pdf::loadView('admin.pages.report_card.pdf', compact(
+            'student', 'classRoom', 'exam', 'results',
+            'totalMax', 'totalObt', 'percentage',
+            'overallGrade', 'overallRemark', 'rollNo'
+        ));
 
-            if ($gradingSystem && $result->total_marks > 0) {
-                $percentage = ($result->obtained_marks / $result->total_marks) * 100;
-                $gradeRule = $gradingSystem->getGradeForPercentage($percentage);
+        return $pdf->stream('Report-Card-' . ($student->slug ?? $student->id) . '-' . $exam->name . '.pdf');
+    }
 
-                $result->calculated_grade = $gradeRule ? $gradeRule->grade : 'N/A';
-                $result->calculated_gp = $gradeRule ? $gradeRule->grade_point : 0;
-                $result->calculated_percentage = round($percentage, 2);
+    /**
+     * Grade label helper (matches ExamResultController logic).
+     */
+    private function gradeLabel(float $percentage): array
+    {
+        $scale = [
+            ['min' => 90, 'grade' => 'A+', 'remark' => 'Excellent'],
+            ['min' => 80, 'grade' => 'A',  'remark' => 'Very Good'],
+            ['min' => 70, 'grade' => 'B',  'remark' => 'Good'],
+            ['min' => 60, 'grade' => 'C',  'remark' => 'Average'],
+            ['min' => 50, 'grade' => 'D',  'remark' => 'Average'],
+            ['min' => 0,  'grade' => 'F',  'remark' => 'Fail'],
+        ];
+
+        foreach ($scale as $row) {
+            if ($percentage >= $row['min']) {
+                return [$row['grade'], $row['remark']];
             }
         }
 
-        $overallPercentage = $totalMarks > 0 ? round(($obtainedMarks / $totalMarks) * 100, 2) : 0;
-        $overallGrade = null;
-        $gpa = 0;
-
-        if ($gradingSystem) {
-            $overallGrade = $gradingSystem->getGradeForPercentage($overallPercentage);
-            $gpa = $results->count() > 0 ? round($results->avg('calculated_gp'), 2) : 0;
-        }
-
-        // Get config
-        $config = ReportCardConfig::where('class_room_id', $student->class_room_id)->first()
-            ?? ReportCardConfig::where('is_default', true)->first()
-            ?? new ReportCardConfig();
-
-        // Attendance summary
-        $attendanceCount = $student->attendance()
-            ->whereYear('created_at', now()->year)
-            ->count();
-        $presentCount = $student->attendance()
-            ->whereYear('created_at', now()->year)
-            ->whereIn('attendance', ['1', 1])
-            ->count();
-
-        $pdf = Pdf::loadView('admin.pages.report_card.pdf', compact(
-            'student', 'exam', 'results', 'gradingSystem',
-            'totalMarks', 'obtainedMarks', 'overallPercentage',
-            'overallGrade', 'gpa', 'config',
-            'attendanceCount', 'presentCount'
-        ));
-
-        return $pdf->stream('Report-Card-' . $student->slug . '-' . $exam->name . '.pdf');
+        return ['N/A', ''];
     }
 
     /**

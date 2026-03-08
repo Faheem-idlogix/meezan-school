@@ -126,6 +126,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('attendance_store', [AttendanceController::class, 'store'])->name('attendance_store');
         Route::get('attendance_report', [AttendanceController::class, 'attendanceReport'])->name('attendance_report');
         Route::get('get_attendance_report', [AttendanceController::class, 'show'])->name('get_attendance_report');
+        Route::get('attendance/dashboard-stats', [AttendanceController::class, 'dashboardStats'])->name('attendance.dashboard-stats');
+        Route::get('attendance/class-students', [AttendanceController::class, 'classStudents'])->name('attendance.class-students');
     });
 
     // ===================== EXAMS =====================

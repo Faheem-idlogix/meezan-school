@@ -34,6 +34,9 @@
   .att-stat{text-align:center;padding:.7rem .5rem;border-radius:8px}
   .att-stat .att-val{font-size:1.4rem;font-weight:700}
   .att-stat .att-lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;font-weight:600;color:#6c757d}
+  .att-class-row:hover{background:rgba(65,84,241,.04)}
+  @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  .spin{animation:spin 1s linear infinite;display:inline-block}
 
   /* Chart wrapper – fixed compact height */
   .chart-wrapper{position:relative;height:220px;width:100%}
@@ -187,87 +190,82 @@
         </div>
       </div>
 
-      {{-- ══════════ ROW 3 — ATTENDANCE ══════════ --}}
+      {{-- ══════════ ROW 3 — ATTENDANCE (AJAX-powered) ══════════ --}}
       <div class="row g-3 mb-4">
         <div class="col-12">
           <div class="card">
-            <div class="card-header d-flex align-items-center justify-content-between">
-              <h5 class="card-title mb-0"><i class="bi bi-clipboard-check me-2 text-success"></i>Attendance
-                <span class="text-muted fw-normal small ms-1">| {{ $periodLabel }}</span>
+            <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+              <h5 class="card-title mb-0">
+                <i class="bi bi-clipboard-check me-2 text-success"></i>Attendance
+                <span class="text-muted fw-normal small ms-1" id="att-period-label">| Loading…</span>
               </h5>
-              <a href="{{ route('attendance') }}" class="btn btn-sm btn-outline-success">Manage Attendance</a>
+              <div class="d-flex gap-2 flex-wrap align-items-center">
+                <div class="btn-group btn-group-sm" id="att-filter-btns">
+                  <button class="btn btn-outline-success active" data-filter="today">Today</button>
+                  <button class="btn btn-outline-success" data-filter="yesterday">Yesterday</button>
+                  <button class="btn btn-outline-success" data-filter="this_month">This Month</button>
+                  <button class="btn btn-outline-success" data-filter="last_month">Last Month</button>
+                </div>
+                <a href="{{ route('attendance') }}" class="btn btn-sm btn-outline-success">Manage</a>
+              </div>
             </div>
             <div class="card-body pt-3">
-              <div class="row g-3">
-                <div class="col-xl col-md-4 col-6">
-                  <div class="att-stat" style="background:rgba(25,135,84,.08)">
-                    <div class="att-val text-success">{{ $attendanceToday['present'] }}</div>
-                    <div class="att-lbl">Present</div>
-                  </div>
-                </div>
-                <div class="col-xl col-md-4 col-6">
-                  <div class="att-stat" style="background:rgba(220,53,69,.08)">
-                    <div class="att-val text-danger">{{ $attendanceToday['absent'] }}</div>
-                    <div class="att-lbl">Absent</div>
-                  </div>
-                </div>
-                <div class="col-xl col-md-4 col-6">
-                  <div class="att-stat" style="background:rgba(253,126,20,.08)">
-                    <div class="att-val text-warning">{{ $attendanceToday['leave'] }}</div>
-                    <div class="att-lbl">On Leave</div>
-                  </div>
-                </div>
-                <div class="col-xl col-md-4 col-6">
-                  <div class="att-stat" style="background:rgba(13,202,240,.08)">
-                    <div class="att-val" style="color:#0dcaf0">{{ $attendanceToday['late'] }}</div>
-                    <div class="att-lbl">Late</div>
-                  </div>
-                </div>
-                <div class="col-xl col-md-4 col-6">
-                  <div class="att-stat" style="background:rgba(108,117,125,.08)">
-                    <div class="att-val text-secondary">{{ $attendanceUnmarked < 0 ? 0 : $attendanceUnmarked }}</div>
-                    <div class="att-lbl">Unmarked</div>
-                  </div>
-                </div>
-                <div class="col-xl col-md-4 col-6">
-                  <div class="att-stat" style="background:rgba(65,84,241,.08)">
-                    <div class="att-val text-primary">{{ $attendanceToday['rate'] }}%</div>
-                    <div class="att-lbl">Att. Rate</div>
-                  </div>
-                </div>
+              {{-- Stat cards --}}
+              <div class="row g-3" id="att-stats-row">
+                <div class="col-xl col-md-4 col-6"><div class="att-stat" style="background:rgba(25,135,84,.08)"><div class="att-val text-success" id="att-present">0</div><div class="att-lbl">Present</div></div></div>
+                <div class="col-xl col-md-4 col-6"><div class="att-stat" style="background:rgba(220,53,69,.08)"><div class="att-val text-danger" id="att-absent">0</div><div class="att-lbl">Absent</div></div></div>
+                <div class="col-xl col-md-4 col-6"><div class="att-stat" style="background:rgba(253,126,20,.08)"><div class="att-val text-warning" id="att-leave">0</div><div class="att-lbl">On Leave</div></div></div>
+                <div class="col-xl col-md-4 col-6"><div class="att-stat" style="background:rgba(13,202,240,.08)"><div class="att-val" style="color:#0dcaf0" id="att-late">0</div><div class="att-lbl">Late</div></div></div>
+                <div class="col-xl col-md-4 col-6"><div class="att-stat" style="background:rgba(108,117,125,.08)"><div class="att-val text-secondary" id="att-unmarked">0</div><div class="att-lbl">Unmarked</div></div></div>
+                <div class="col-xl col-md-4 col-6"><div class="att-stat" style="background:rgba(65,84,241,.08)"><div class="att-val text-primary" id="att-rate">0%</div><div class="att-lbl">Att. Rate</div></div></div>
               </div>
 
               {{-- Class-wise breakdown --}}
-              @if($classAttendance->count())
               <hr class="mt-3 mb-2">
-              <p class="text-muted small mb-2 fw-semibold"><i class="bi bi-building me-1"></i>Class-wise Breakdown</p>
+              <p class="text-muted small mb-2 fw-semibold"><i class="bi bi-building me-1"></i>Class-wise Breakdown <small class="text-info">(click a class to see students)</small></p>
               <div class="table-responsive">
                 <table class="table table-sm table-hover mb-0" style="font-size:.82rem">
                   <thead class="table-light">
                     <tr>
-                      <th>Class</th><th class="text-center">Present</th><th class="text-center">Absent</th><th class="text-center">Total</th><th class="text-center">Rate</th>
+                      <th>Class</th>
+                      <th class="text-center">Present</th>
+                      <th class="text-center">Absent</th>
+                      <th class="text-center">Leave</th>
+                      <th class="text-center">Late</th>
+                      <th class="text-center">Total</th>
+                      <th class="text-center">Rate</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    @foreach($classAttendance as $ca)
-                    <tr>
-                      <td class="fw-semibold">{{ $ca->class_name }}</td>
-                      <td class="text-center text-success fw-semibold">{{ $ca->present }}</td>
-                      <td class="text-center text-danger fw-semibold">{{ $ca->absent }}</td>
-                      <td class="text-center">{{ $ca->total }}</td>
-                      <td class="text-center">
-                        @php $r = $ca->total > 0 ? round(($ca->present / $ca->total)*100,1) : 0; @endphp
-                        <div class="progress" style="height:6px;min-width:60px">
-                          <div class="progress-bar {{ $r >= 80 ? 'bg-success' : ($r >= 50 ? 'bg-warning' : 'bg-danger') }}" style="width:{{ $r }}%"></div>
-                        </div>
-                        <small class="text-muted">{{ $r }}%</small>
-                      </td>
-                    </tr>
-                    @endforeach
+                  <tbody id="att-class-tbody">
+                    <tr><td colspan="7" class="text-center text-muted py-3"><i class="bi bi-arrow-repeat spin me-1"></i>Loading…</td></tr>
                   </tbody>
                 </table>
               </div>
-              @endif
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{-- Student Attendance Modal --}}
+      <div class="modal fade" id="classAttModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title"><i class="bi bi-people me-2"></i><span id="modal-class-name">Class</span></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+              <div class="p-3 bg-light border-bottom" id="modal-summary"></div>
+              <div class="table-responsive">
+                <table class="table table-sm table-hover mb-0" style="font-size:.82rem">
+                  <thead class="table-light">
+                    <tr id="modal-thead"></tr>
+                  </thead>
+                  <tbody id="modal-students-tbody">
+                    <tr><td colspan="8" class="text-center py-4">Loading…</td></tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -732,5 +730,134 @@
   document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
       new bootstrap.Tooltip(el, { trigger: 'hover' });
   });
+
+  // ══════════ ATTENDANCE DASHBOARD — AJAX ══════════
+  (function(){
+    var currentFilter = 'today';
+    var attModal = new bootstrap.Modal(document.getElementById('classAttModal'));
+
+    // Load stats on page load
+    loadAttendanceStats('today');
+
+    // Filter button clicks
+    $('#att-filter-btns').on('click', 'button', function(){
+      $('#att-filter-btns button').removeClass('active');
+      $(this).addClass('active');
+      currentFilter = $(this).data('filter');
+      loadAttendanceStats(currentFilter);
+    });
+
+    function loadAttendanceStats(filter) {
+      $.ajax({
+        url: "{{ route('attendance.dashboard-stats') }}",
+        data: { filter: filter },
+        success: function(d) {
+          $('#att-period-label').text('| ' + d.label);
+          $('#att-present').text(d.present.toLocaleString());
+          $('#att-absent').text(d.absent.toLocaleString());
+          $('#att-leave').text(d.leave.toLocaleString());
+          $('#att-late').text(d.late.toLocaleString());
+          $('#att-unmarked').text(d.unmarked.toLocaleString());
+          $('#att-rate').text(d.rate + '%');
+
+          var tbody = '';
+          if(d.classes.length === 0){
+            tbody = '<tr><td colspan="7" class="text-center text-muted py-3">No attendance data for this period</td></tr>';
+          } else {
+            d.classes.forEach(function(c){
+              var r = c.total > 0 ? (c.present / c.total * 100).toFixed(1) : 0;
+              var barClass = r >= 80 ? 'bg-success' : (r >= 50 ? 'bg-warning' : 'bg-danger');
+              var name = c.class_name + (c.section_name ? ' - ' + c.section_name : '');
+              tbody += '<tr class="att-class-row" role="button" data-class-id="' + c.class_id + '" style="cursor:pointer">' +
+                '<td class="fw-semibold"><i class="bi bi-arrow-right-short text-primary me-1"></i>' + name + '</td>' +
+                '<td class="text-center text-success fw-semibold">' + c.present + '</td>' +
+                '<td class="text-center text-danger fw-semibold">' + c.absent + '</td>' +
+                '<td class="text-center text-warning fw-semibold">' + c.on_leave + '</td>' +
+                '<td class="text-center" style="color:#0dcaf0">' + c.late + '</td>' +
+                '<td class="text-center">' + c.total + '</td>' +
+                '<td class="text-center"><div class="progress" style="height:6px;min-width:60px"><div class="progress-bar ' + barClass + '" style="width:' + r + '%"></div></div><small class="text-muted">' + r + '%</small></td>' +
+                '</tr>';
+            });
+          }
+          $('#att-class-tbody').html(tbody);
+        }
+      });
+    }
+
+    // Click class row → show student modal
+    $(document).on('click', '.att-class-row', function(){
+      var classId = $(this).data('class-id');
+      $('#modal-class-name').text('Loading…');
+      $('#modal-students-tbody').html('<tr><td colspan="8" class="text-center py-4"><i class="bi bi-arrow-repeat spin me-1"></i>Loading students…</td></tr>');
+      $('#modal-summary').html('');
+      attModal.show();
+
+      $.ajax({
+        url: "{{ route('attendance.class-students') }}",
+        data: { class_id: classId, filter: currentFilter },
+        success: function(d) {
+          $('#modal-class-name').text(d.class_name + ' — ' + d.label);
+
+          var isSingle = d.students.length > 0 && d.students[0].is_single;
+
+          // Summary
+          var pCount = 0, aCount = 0, lCount = 0, ltCount = 0, uCount = 0;
+          d.students.forEach(function(s){
+            if(isSingle){
+              if(s.status==='present') pCount++;
+              else if(s.status==='absent') aCount++;
+              else if(s.status==='leave') lCount++;
+              else if(s.status==='late') ltCount++;
+              else uCount++;
+            } else {
+              pCount += s.present; aCount += s.absent; lCount += s.leave; ltCount += s.late;
+            }
+          });
+          var summaryHtml = '<div class="d-flex gap-3 flex-wrap" style="font-size:.82rem">' +
+            '<span><i class="bi bi-people me-1"></i><strong>' + d.students.length + '</strong> Students</span>' +
+            '<span class="text-success"><i class="bi bi-check-circle me-1"></i>Present: <strong>' + pCount + '</strong></span>' +
+            '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>Absent: <strong>' + aCount + '</strong></span>' +
+            '<span class="text-warning"><i class="bi bi-dash-circle me-1"></i>Leave: <strong>' + lCount + '</strong></span>' +
+            '<span style="color:#0dcaf0"><i class="bi bi-clock me-1"></i>Late: <strong>' + ltCount + '</strong></span>';
+          if(isSingle) summaryHtml += '<span class="text-secondary"><i class="bi bi-question-circle me-1"></i>Unmarked: <strong>' + uCount + '</strong></span>';
+          summaryHtml += '</div>';
+          $('#modal-summary').html(summaryHtml);
+
+          // Table header
+          var thead = '<th>#</th><th>Student Name</th><th>Father Name</th>';
+          if(isSingle){
+            thead += '<th class="text-center">Status</th>';
+          } else {
+            thead += '<th class="text-center">Present</th><th class="text-center">Absent</th><th class="text-center">Leave</th><th class="text-center">Late</th><th class="text-center">Rate</th>';
+          }
+          $('#modal-thead').html(thead);
+
+          // Table body
+          var rows = '';
+          if(d.students.length === 0){
+            rows = '<tr><td colspan="8" class="text-center text-muted py-3">No students found</td></tr>';
+          } else {
+            d.students.forEach(function(s, i){
+              rows += '<tr><td>' + (i+1) + '</td><td class="fw-semibold">' + s.name + '</td><td>' + (s.father || '—') + '</td>';
+              if(isSingle){
+                var badge = {present:'bg-success',absent:'bg-danger',leave:'bg-warning text-dark',late:'bg-info',unmarked:'bg-secondary'};
+                var label = s.status.charAt(0).toUpperCase() + s.status.slice(1);
+                rows += '<td class="text-center"><span class="badge ' + (badge[s.status]||'bg-secondary') + '">' + label + '</span></td>';
+              } else {
+                var barCl = s.rate >= 80 ? 'bg-success' : (s.rate >= 50 ? 'bg-warning' : 'bg-danger');
+                rows += '<td class="text-center text-success fw-semibold">' + s.present + '</td>' +
+                  '<td class="text-center text-danger fw-semibold">' + s.absent + '</td>' +
+                  '<td class="text-center text-warning fw-semibold">' + s.leave + '</td>' +
+                  '<td class="text-center" style="color:#0dcaf0">' + s.late + '</td>' +
+                  '<td class="text-center"><div class="progress d-inline-flex" style="height:6px;width:50px;vertical-align:middle"><div class="progress-bar ' + barCl + '" style="width:' + s.rate + '%"></div></div> <small>' + s.rate + '%</small></td>';
+              }
+              rows += '</tr>';
+            });
+          }
+          $('#modal-students-tbody').html(rows);
+        }
+      });
+    });
+  })();
 </script>
 @endsection
