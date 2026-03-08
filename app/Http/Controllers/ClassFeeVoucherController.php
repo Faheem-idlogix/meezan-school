@@ -139,12 +139,15 @@ class ClassFeeVoucherController extends Controller
         ->whereHas('student', function ($q) {
             $q->whereNull('deleted_at');
         })->get();
-        $pdf = PDF::loadView('admin.report.student_fee',  ['data' => $data])
-                  ->setPaper('a4', 'landscape'); // make it horizontal  
+
+        $view = setting('invoice_layout', 'basic') === 'detailed'
+            ? 'admin.report.student_fee_advanced'
+            : 'admin.report.student_fee';
+
+        $pdf = PDF::loadView($view, ['data' => $data])
+                  ->setPaper('a4', 'landscape');
         $pdf->render();
     
-        // Output the generated PDF to the browser or save it to a file
         return $pdf->stream('voucher.pdf');
-        // return $pdf->download('itsolutionstuff.pdf');    }
-          }
+    }
 }

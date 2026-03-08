@@ -168,6 +168,7 @@ class MenuService
                     ['label' => 'Discounts & Scholarships','route' => 'fee-discounts.index',     'permission' => 'fee_discounts.view'],
                     ['label' => 'Installment Plans',      'route' => 'fee-installments.index',   'permission' => 'fee_installments.view'],
                     ['label' => 'Late Fee Rules',         'route' => 'late-fee-rules.index',     'permission' => 'late_fee.view'],
+                    ['label' => 'Voucher Status',          'route' => 'voucher-status.index',     'permission' => 'fees.view'],
                 ],
             ],
 
@@ -225,13 +226,17 @@ class MenuService
                 'id'     => 'nav-reports',
                 'permission' => ['reports.view'],
                 'children' => [
-                    ['label' => 'Reports Hub',      'route' => 'reports.index',      'permission' => 'reports.view'],
-                    ['label' => 'Finance Report',   'route' => 'reports.finance',    'permission' => 'reports.finance'],
-                    ['label' => 'Fee Collection',   'route' => 'reports.fees',       'permission' => 'reports.fees'],
-                    ['label' => 'Attendance Report', 'route' => 'reports.attendance', 'permission' => 'reports.attendance'],
-                    ['label' => 'Student Report',   'route' => 'reports.students',   'permission' => 'reports.students'],
-                    ['label' => 'Exam Report',      'route' => 'reports.exams',      'permission' => 'reports.exams'],
-                    ['label' => 'Archived Records', 'route' => 'reports.archived',   'permission' => 'reports.view'],
+                    ['label' => 'Reports Hub',       'route' => 'reports.index',       'permission' => 'reports.view'],
+                    ['label' => 'Finance Report',    'route' => 'reports.finance',     'permission' => 'reports.finance'],
+                    ['label' => 'Fee Collection',    'route' => 'reports.fees',        'permission' => 'reports.fees'],
+                    ['label' => 'Attendance Report', 'route' => 'reports.attendance',  'permission' => 'reports.attendance'],
+                    ['label' => 'Student Report',    'route' => 'reports.students',    'permission' => 'reports.students'],
+                    ['label' => 'Exam Report',       'route' => 'reports.exams',       'permission' => 'reports.exams'],
+                    ['label' => 'Voucher Status',    'route' => 'voucher-status.index','permission' => 'fees.view'],
+                    ['label' => 'Monthly Invoices',  'route' => 'fee_voucher',         'permission' => 'fees.view'],
+                    ['label' => 'Journal Vouchers',  'route' => 'voucher.index',       'permission' => 'fees.view'],
+                    ['label' => 'Report Cards',      'route' => 'report-cards.generate','permission' => 'report_cards.view'],
+                    ['label' => 'Archived Records',  'route' => 'reports.archived',    'permission' => 'reports.view'],
                 ],
             ],
 
@@ -243,7 +248,7 @@ class MenuService
             ],
 
             // ══════════ SECTION: Administration ══════════
-            ['type' => 'heading', 'label' => 'Administration', 'permission' => ['users.view', 'roles.view', 'settings.view', 'activity_logs.view']],
+            ['type' => 'heading', 'label' => 'Administration', 'permission' => ['users.view', 'roles.view', 'settings.view', 'activity_logs.view', 'error_logs.view']],
 
             [
                 'label'  => 'User Management',
@@ -272,6 +277,13 @@ class MenuService
                 'icon'   => 'bi bi-gear-fill',
                 'route'  => 'settings.index',
                 'permission' => 'settings.view',
+            ],
+
+            [
+                'label'  => 'Error Logs',
+                'icon'   => 'bi bi-bug-fill',
+                'route'  => 'error-logs.index',
+                'permission' => 'error_logs.view',
             ],
 
             [

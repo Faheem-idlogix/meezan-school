@@ -1,6 +1,44 @@
 {{-- ══════════ COMPOSE MESSAGE TAB ══════════ --}}
 <div class="row g-4">
 
+  {{-- ── Rate Limit Info Banner ── --}}
+  <div class="col-12">
+    <div class="d-flex flex-wrap gap-3 align-items-center p-3" style="background:linear-gradient(135deg,#f8faff,#eef2ff);border:1px solid #dce3f0;border-radius:10px">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-speedometer2 text-primary" style="font-size:1.3rem"></i>
+        <span class="fw-semibold" style="font-size:.85rem;color:#012970">Rate Limits</span>
+      </div>
+      <div class="d-flex gap-3 flex-wrap" style="font-size:.82rem">
+        <span>
+          <i class="bi bi-calendar-day text-success me-1"></i>Today:
+          <strong class="{{ $usage['daily_remaining'] <= 20 ? 'text-danger' : 'text-success' }}">{{ $usage['today_sent'] }}</strong> / {{ $usage['daily_limit'] }}
+          <span class="text-muted">({{ $usage['daily_remaining'] }} left)</span>
+        </span>
+        <span class="text-muted">|</span>
+        <span>
+          <i class="bi bi-calendar-month text-primary me-1"></i>This Month:
+          <strong class="{{ $usage['monthly_remaining'] <= 100 ? 'text-danger' : 'text-primary' }}">{{ $usage['month_sent'] }}</strong> / {{ $usage['monthly_limit'] }}
+          <span class="text-muted">({{ $usage['monthly_remaining'] }} left)</span>
+        </span>
+        @if($pendingJobs > 0)
+        <span class="text-muted">|</span>
+        <span>
+          <i class="bi bi-hourglass-split text-warning me-1"></i>In Queue: <strong class="text-warning">{{ $pendingJobs }}</strong>
+        </span>
+        @endif
+      </div>
+    </div>
+    @if($usage['daily_remaining'] <= 0)
+    <div class="alert alert-danger mt-2 mb-0 py-2" style="font-size:.82rem">
+      <i class="bi bi-exclamation-octagon me-1"></i><strong>Daily limit reached!</strong> No more messages can be sent today. Limit resets at midnight.
+    </div>
+    @elseif($usage['daily_remaining'] <= 20)
+    <div class="alert alert-warning mt-2 mb-0 py-2" style="font-size:.82rem">
+      <i class="bi bi-exclamation-triangle me-1"></i>Only <strong>{{ $usage['daily_remaining'] }}</strong> messages remaining for today.
+    </div>
+    @endif
+  </div>
+
   {{-- ── Send to Selected Recipients ── --}}
   <div class="col-lg-7">
     <div class="compose-area">

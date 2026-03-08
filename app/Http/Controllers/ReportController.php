@@ -23,6 +23,20 @@ class ReportController extends Controller
         $this->middleware('auth');
     }
 
+    /**
+     * Resolve the view path based on report_view_mode setting.
+     * If 'advanced' → admin.pages.reports.advanced.{name}
+     * Otherwise     → admin.pages.reports.{name}
+     */
+    private function reportView(string $name): string
+    {
+        $mode = setting('report_view_mode', 'basic');
+        if ($mode === 'advanced') {
+            return "admin.pages.reports.advanced.{$name}";
+        }
+        return "admin.pages.reports.{$name}";
+    }
+
     /* ── Reports Hub ── */
     public function index()
     {
@@ -34,7 +48,7 @@ class ReportController extends Controller
             'exams'          => Exam::count(),
             'trashed'        => Student::onlyTrashed()->count() + Teacher::onlyTrashed()->count() + Voucher::onlyTrashed()->count(),
         ];
-        return view('admin.pages.reports.index', compact('stats'));
+        return view($this->reportView('index'), compact('stats'));
     }
 
     /* ── Finance Report ── */
@@ -82,7 +96,7 @@ class ReportController extends Controller
             ];
         })->values();
 
-        return view('admin.pages.reports.finance', compact(
+        return view($this->reportView('finance'), compact(
             'vouchers','totalIncome','totalExpense','profitLoss',
             'monthly','byCategory','periodKey','periodLabel','from','to'
         ));
@@ -126,7 +140,7 @@ class ReportController extends Controller
 
         $classrooms = ClassRoom::orderBy('class_name')->get();
 
-        return view('admin.pages.reports.attendance', compact(
+        return view($this->reportView('attendance'), compact(
             'records','totalRecords','present','absent','leave','late','rate',
             'classWise','studentWise','classrooms','classFilter',
             'periodKey','periodLabel','from','to'
@@ -156,7 +170,7 @@ class ReportController extends Controller
 
         $trashedStudents = Student::onlyTrashed()->with('classroom')->orderByDesc('deleted_at')->get();
 
-        return view('admin.pages.reports.students', compact(
+        return view($this->reportView('students'), compact(
             'students','active','inactive','male','female',
             'classrooms','classDist','trashedStudents','classFilter','showTrashed'
         ));
@@ -185,7 +199,7 @@ class ReportController extends Controller
                     'total'=>$t,'obtained'=>$o,'pct'=>$t>0?round(($o/$t)*100,1):0];
         })->sortByDesc('pct')->take(10)->values();
 
-        return view('admin.pages.reports.exams', compact(
+        return view($this->reportView('exams'), compact(
             'exams','results','examSummary','topPerformers','examFilter'
         ));
     }
@@ -217,7 +231,7 @@ class ReportController extends Controller
                 'unpaid'=>$mr->where('status','unpaid')->count()]);
         }
 
-        return view('admin.pages.reports.fees', compact(
+        return view($this->reportView('fees'), compact(
             'feeRecords','totalBilled','totalReceived','outstanding',
             'paidCount','unpaidCount','pendingCount',
             'monthlyFee','periodKey','periodLabel','from','to'

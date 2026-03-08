@@ -11,8 +11,8 @@ class LateFeeRuleController extends Controller
     public function index()
     {
         $rules = LateFeeRule::with('classRoom')->orderBy('class_room_id')->get();
-        $classes = ClassRoom::all();
-        return view('admin.pages.late_fee.index', compact('rules', 'classes'));
+        $classRooms = ClassRoom::all();
+        return view('admin.pages.late_fee.index', compact('rules', 'classRooms'));
     }
 
     public function store(Request $request)

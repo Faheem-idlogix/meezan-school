@@ -44,32 +44,46 @@
 
     {{-- ══════════ STATS ROW ══════════ --}}
     <div class="row g-3 mb-4">
-      <div class="col-xl-3 col-md-6">
+      <div class="col-xl-2 col-md-4">
         <div class="wa-stat wa-green">
-          <div class="wa-lbl">Students on WhatsApp</div>
+          <div class="wa-lbl">Students on WA</div>
           <div class="wa-val">{{ $studentWhatsapp }} / {{ $studentTotal }}</div>
           <i class="bi bi-whatsapp wa-ico"></i>
         </div>
       </div>
-      <div class="col-xl-3 col-md-6">
+      <div class="col-xl-2 col-md-4">
         <div class="wa-stat wa-blue">
-          <div class="wa-lbl">Teachers on WhatsApp</div>
+          <div class="wa-lbl">Teachers on WA</div>
           <div class="wa-val">{{ $teacherWhatsapp }} / {{ $teacherTotal }}</div>
           <i class="bi bi-person-badge wa-ico"></i>
         </div>
       </div>
-      <div class="col-xl-3 col-md-6">
+      <div class="col-xl-2 col-md-4">
         <div class="wa-stat wa-orange">
           <div class="wa-lbl">Messages Sent</div>
           <div class="wa-val">{{ $logStats['sent'] }}</div>
           <i class="bi bi-send wa-ico"></i>
         </div>
       </div>
-      <div class="col-xl-3 col-md-6">
+      <div class="col-xl-2 col-md-4">
         <div class="wa-stat wa-red">
           <div class="wa-lbl">Failed Messages</div>
           <div class="wa-val">{{ $logStats['failed'] }}</div>
           <i class="bi bi-exclamation-triangle wa-ico"></i>
+        </div>
+      </div>
+      <div class="col-xl-2 col-md-4">
+        <div class="wa-stat" style="background:linear-gradient(135deg,#6f42c1 0%,#a470e8 100%);color:#fff">
+          <div class="wa-lbl">Queued / Pending</div>
+          <div class="wa-val">{{ $logStats['queued'] }}</div>
+          <i class="bi bi-hourglass-split wa-ico"></i>
+        </div>
+      </div>
+      <div class="col-xl-2 col-md-4">
+        <div class="wa-stat" style="background:linear-gradient(135deg,#20c997 0%,#6edbb5 100%);color:#fff">
+          <div class="wa-lbl">Today Remaining</div>
+          <div class="wa-val">{{ $usage['daily_remaining'] }}</div>
+          <i class="bi bi-speedometer2 wa-ico"></i>
         </div>
       </div>
     </div>

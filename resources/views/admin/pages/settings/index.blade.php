@@ -170,6 +170,78 @@
           </div>
         </div>
 
+        {{-- Report & Invoice View Settings --}}
+        <div class="col-lg-6">
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+              <h5 class="card-title mb-4"><i class="bi bi-file-earmark-bar-graph me-2"></i>Report & Invoice Settings</h5>
+              <form action="{{ route('settings.update') }}" method="POST">
+                @csrf @method('PUT')
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label">Invoice / Reports View Mode</label>
+                    <select name="report_view_mode" class="form-select">
+                      <option value="basic" {{ ($settings['report_view_mode']?->value ?? 'basic') === 'basic' ? 'selected' : '' }}>
+                        Basic View — Standard reports layout
+                      </option>
+                      <option value="advanced" {{ ($settings['report_view_mode']?->value ?? 'basic') === 'advanced' ? 'selected' : '' }}>
+                        Advanced View — Detailed reports with charts & breakdowns
+                      </option>
+                    </select>
+                    <small class="text-muted d-block mt-1">
+                      <i class="bi bi-info-circle me-1"></i>
+                      <strong>Basic:</strong> Standard summary-style reports and invoices.<br>
+                      <strong>Advanced:</strong> Detailed view with breakdowns, charts, export options, and extended analytics.
+                    </small>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label">Invoice Layout</label>
+                    <select name="invoice_layout" class="form-select">
+                      <option value="compact" {{ ($settings['invoice_layout']?->value ?? 'compact') === 'compact' ? 'selected' : '' }}>
+                        Compact — Single-page invoice
+                      </option>
+                      <option value="detailed" {{ ($settings['invoice_layout']?->value ?? 'compact') === 'detailed' ? 'selected' : '' }}>
+                        Detailed — Full breakdown with fee components
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="form-check form-switch">
+                      <input type="hidden" name="show_fee_breakdown" value="0">
+                      <input class="form-check-input" type="checkbox" name="show_fee_breakdown" value="1"
+                             id="showFeeBreakdown" {{ ($settings['show_fee_breakdown']?->value ?? '0') === '1' ? 'checked' : '' }}>
+                      <label class="form-check-label" for="showFeeBreakdown">Show fee breakdown on invoices</label>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="form-check form-switch">
+                      <input type="hidden" name="show_payment_history" value="0">
+                      <input class="form-check-input" type="checkbox" name="show_payment_history" value="1"
+                             id="showPaymentHistory" {{ ($settings['show_payment_history']?->value ?? '0') === '1' ? 'checked' : '' }}>
+                      <label class="form-check-label" for="showPaymentHistory">Show payment history on student invoices</label>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Save Report Settings</button>
+                  </div>
+                </div>
+              </form>
+
+              {{-- Current Mode Indicator --}}
+              <div class="mt-3 p-3 rounded {{ ($settings['report_view_mode']?->value ?? 'basic') === 'advanced' ? 'bg-primary bg-opacity-10' : 'bg-light' }}">
+                <small>
+                  <i class="bi bi-eye me-1"></i>
+                  Currently active: <strong>{{ ucfirst($settings['report_view_mode']?->value ?? 'basic') }} View</strong>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 </main>

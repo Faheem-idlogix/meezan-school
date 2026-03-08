@@ -87,6 +87,23 @@
     }
     .search-bar .search-form input:focus { outline: none; border-color: var(--ea-primary); }
     .search-bar .search-form button { color: var(--ea-primary); }
+    /* Live search dropdown */
+    .search-bar { position: relative; }
+    .live-search-results {
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: #fff; border: 1px solid #e0e7ff; border-radius: 10px;
+      box-shadow: 0 6px 24px rgba(0,0,0,.12); max-height: 380px; overflow-y: auto;
+      z-index: 9999; display: none;
+    }
+    .live-search-results .search-cat { font-size:.7rem; font-weight:700; color:#888; text-transform:uppercase; padding:8px 14px 4px; }
+    .live-search-results a.search-item {
+      display:flex; align-items:center; gap:10px; padding:7px 14px; color:#333;
+      text-decoration:none; font-size:.85rem; transition:background .15s;
+    }
+    .live-search-results a.search-item:hover, .live-search-results a.search-item.active { background:#f0f4ff; }
+    .live-search-results a.search-item i { font-size:1.1rem; width:22px; text-align:center; }
+    .live-search-results .search-item-title { font-weight:500; }
+    .live-search-results .search-item-sub  { font-size:.75rem; color:#888; }
     /* Profile avatar circle */
     .nav-profile .nav-profile-img {
       width: 34px; height: 34px;
@@ -310,10 +327,11 @@
     </div><!-- End Logo -->
 
     <div class="search-bar">
-      <form class="search-form d-flex align-items-center" method="POST" action="#">
-        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+      <form class="search-form d-flex align-items-center" method="GET" action="{{ route('global.search') }}">
+        <input type="text" name="q" id="globalSearchInput" value="{{ request('q') }}" placeholder="Search students, vouchers, invoices..." title="Enter search keyword" autocomplete="off">
         <button type="submit" title="Search"><i class="bi bi-search"></i></button>
       </form>
+      <div class="live-search-results" id="liveSearchResults"></div>
     </div><!-- End Search Bar -->
 
     <nav class="header-nav ms-auto">
@@ -588,6 +606,70 @@
     loadNotifications();
     setInterval(loadNotifications, 30000);
   </script>
+
+  {{-- ═══════ Live Search Autocomplete ═══════ --}}
+  <script>
+  (function(){
+    const input   = document.getElementById('globalSearchInput');
+    const box     = document.getElementById('liveSearchResults');
+    if(!input || !box) return;
+
+    let timer = null, activeIdx = -1;
+
+    input.addEventListener('input', function(){
+      clearTimeout(timer);
+      const q = this.value.trim();
+      if(q.length < 2){ box.innerHTML=''; box.style.display='none'; return; }
+      timer = setTimeout(()=> fetchResults(q), 300);
+    });
+
+    input.addEventListener('keydown', function(e){
+      const items = box.querySelectorAll('a.search-item');
+      if(!items.length) return;
+      if(e.key==='ArrowDown'){ e.preventDefault(); activeIdx = Math.min(activeIdx+1, items.length-1); highlight(items); }
+      else if(e.key==='ArrowUp'){ e.preventDefault(); activeIdx = Math.max(activeIdx-1, 0); highlight(items); }
+      else if(e.key==='Enter' && activeIdx>=0){ e.preventDefault(); items[activeIdx].click(); }
+      else if(e.key==='Escape'){ box.style.display='none'; activeIdx=-1; }
+    });
+
+    document.addEventListener('click', function(e){
+      if(!e.target.closest('.search-bar')) { box.style.display='none'; activeIdx=-1; }
+    });
+
+    function highlight(items){
+      items.forEach((el,i)=> el.classList.toggle('active', i===activeIdx));
+      if(items[activeIdx]) items[activeIdx].scrollIntoView({block:'nearest'});
+    }
+
+    function fetchResults(q){
+      fetch("{{ route('global.search.suggest') }}?q=" + encodeURIComponent(q), {
+        headers: { 'Accept':'application/json', 'X-Requested-With':'XMLHttpRequest' }
+      })
+      .then(r => r.json())
+      .then(data => {
+        activeIdx = -1;
+        if(!data.length){ box.innerHTML='<div class="p-3 text-center text-muted" style="font-size:.85rem">No results found</div>'; box.style.display='block'; return; }
+        let html='', lastCat='';
+        data.forEach(item => {
+          if(item.cat !== lastCat){ html += '<div class="search-cat">'+item.cat+'</div>'; lastCat = item.cat; }
+          html += '<a class="search-item" href="'+item.url+'">'
+                + '<i class="'+item.icon+'"></i>'
+                + '<div><div class="search-item-title">'+escHtml(item.title)+'</div>'
+                + (item.sub ? '<div class="search-item-sub">'+escHtml(item.sub)+'</div>' : '')
+                + '</div></a>';
+        });
+        box.innerHTML = html;
+        box.style.display = 'block';
+      })
+      .catch(()=>{ box.style.display='none'; });
+    }
+
+    function escHtml(s){
+      const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+    }
+  })();
+  </script>
+
   @yield("script")
   @yield("scripts")
 </body>

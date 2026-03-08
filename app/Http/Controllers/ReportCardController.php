@@ -64,7 +64,8 @@ class ReportCardController extends Controller
     {
         $exams = Exam::orderByDesc('date')->get();
         $classes = ClassRoom::all();
-        return view('admin.pages.report_card.generate', compact('exams', 'classes'));
+        $students = Student::with('classroom')->whereNull('deleted_at')->orderBy('student_name')->get();
+        return view('admin.pages.report_card.generate', compact('exams', 'classes', 'students'));
     }
 
     /**

@@ -42,6 +42,9 @@ use App\Http\Controllers\ExamScheduleController;
 use App\Http\Controllers\ReportCardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\GlobalSearchController;
+use App\Http\Controllers\VoucherStatusController;
+use App\Http\Controllers\SystemErrorLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -227,6 +230,19 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('activity-logs', [ActivityLogController::class, 'destroy'])->name('activity_logs.destroy');
     });
 
+    // ===================== ERROR LOGS =====================
+    Route::middleware('permission:error_logs.view')->group(function () {
+        Route::get('error-logs', [SystemErrorLogController::class, 'index'])->name('error-logs.index');
+        Route::get('error-logs/{errorLog}', [SystemErrorLogController::class, 'show'])->name('error-logs.show');
+        Route::delete('error-logs', [SystemErrorLogController::class, 'destroy'])->name('error-logs.destroy');
+    });
+
+    // ===================== VOUCHER STATUS =====================
+    Route::middleware('permission:fees.view')->group(function () {
+        Route::get('voucher-status', [VoucherStatusController::class, 'index'])->name('voucher-status.index');
+        Route::get('voucher-status/export', [VoucherStatusController::class, 'export'])->name('voucher-status.export');
+    });
+
     // ===================== ADMISSION / ENQUIRY =====================
     Route::middleware('permission:admission.view')->group(function () {
         Route::resource('admission', AdmissionController::class);
@@ -340,4 +356,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('profile', [NotificationController::class, 'updateProfile'])->name('profile.update');
     Route::get('profile/change-password', [NotificationController::class, 'showChangePassword'])->name('profile.change-password');
     Route::post('profile/change-password', [NotificationController::class, 'updatePassword'])->name('profile.update-password');
+
+    // ===================== GLOBAL SEARCH =====================
+    Route::get('search', [GlobalSearchController::class, 'index'])->name('global.search');
+    Route::get('search/suggest', [GlobalSearchController::class, 'suggest'])->name('global.search.suggest');
 });

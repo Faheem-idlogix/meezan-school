@@ -1,8 +1,152 @@
-# Exam Result System - Implementation Summary
+# Meezan School — Implementation Summary
 
-## ✅ Completed Requirements
+## Recently Added Modules
 
-### 1. ✅ Class Selection First
+This document covers all features implemented in the recent development rounds (Rounds 1-4).
+
+---
+
+## Round 1 — Core Feature Additions
+
+### 1. Global Search (`GlobalSearchController`)
+- **Route:** `GET /global-search` + `GET /global-search/suggest` (AJAX)
+- **Features:**
+  - Cross-module search: Students, Teachers, Fee Vouchers, Monthly Invoices, Classes, Notices
+  - AJAX live-search dropdown in navbar with keyboard navigation
+  - Searches student_name, father_name, student_id_no, teacher_name, teacher_email, voucher_no, class_name, notice title
+- **Files:** `GlobalSearchController.php`, `search/index.blade.php`, navbar JS in `master.blade.php`
+
+### 2. Voucher Status (`VoucherStatusController`)
+- **Route:** `GET /voucher-status` + `GET /voucher-status/export` (CSV)
+- **Features:**
+  - Summary cards: Total / Paid / Unpaid / Pending counts
+  - Financial summary: Filtered Billed / Received / Outstanding Balance amounts
+  - Collection rate progress bar (paid vs unpaid visual)
+  - 6 filters: Status, Class, Fee Month, Date From, Date To, Search
+  - Table with: Voucher#, Student, Father, Class, Month, Dates, Fee, Received, Balance, Status
+  - **Export CSV** with all filtered data
+  - **Print** with clean print stylesheet
+- **Files:** `VoucherStatusController.php`, `voucher_status/index.blade.php`
+- **Permission:** `fees.view`
+
+### 3. System Error Logs (`SystemErrorLogController`)
+- **Route:** `GET /error-logs`, `GET /error-logs/{id}`, `DELETE /error-logs`
+- **Features:**
+  - Auto-captures PHP errors/exceptions via `Handler.php`
+  - Filters: type, severity, date range, search
+  - Detail modal (centered, scrollable) with stack trace
+  - Clear by date range or truncate all
+- **Files:** `SystemErrorLogController.php`, `error_logs/index.blade.php`, `SystemErrorLog` model
+- **Permission:** `error_logs.view`
+
+### 4. Settings — Report & Invoice Section
+- **Settings added:**
+  - `report_view_mode` — basic / advanced (switches report blade files)
+  - `invoice_layout` — compact / detailed (switches PDF fee challan template)
+  - `show_fee_breakdown` — toggle component breakdown on invoices
+  - `show_payment_history` — toggle payment history on invoices
+- **File:** `settings/index.blade.php` (with null-safe `?->` operators)
+
+---
+
+## Round 2 — Bug Fixes
+
+- Fixed Teacher search columns (`teacher_name`, `teacher_email`, `contact_no`)
+- Added AJAX live-search dropdown to navbar
+- Ran `RolePermissionSeeder` for new permissions
+- Fixed null-safe settings access with `?->` operator
+
+---
+
+## Round 3 — Bug Fixes
+
+- Fixed `roll_no` column error → replaced with `student_id_no`
+- Fixed `$errors` MessageBag conflict → renamed to `$errorLogs` in controller + view
+- Fixed error detail modal alignment → centered, scrollable, word-break
+
+---
+
+## Round 4 — Advanced Reports System
+
+### Advanced Report Views (6 files)
+
+All located at `resources/views/admin/pages/reports/advanced/`:
+
+| View | Features |
+|------|----------|
+| **index.blade.php** | Reports Hub — all reports, vouchers, invoices, academic reports in card grid |
+| **finance.blade.php** | 6 stat cards, monthly trend chart + net profit line, category pie, voucher detail table, CSV export |
+| **fees.blade.php** | Collection rate bar, billed vs received chart, status pie, class-wise breakdown, full fee records |
+| **attendance.blade.php** | Gauge bar, status distribution chart, class-wise progress, student-wise table with Good/Moderate/Critical |
+| **students.blade.php** | Gender pie, class distribution bar chart, full student table with archived highlighting |
+| **exams.blade.php** | Score distribution pie (A/B/C/F), exam summary with progress bars, top 10 with rank badges |
+
+### ReportController Setting Switch
+- Added `reportView(string $name)` private method
+- Checks `setting('report_view_mode', 'basic')`
+- Returns `admin.pages.reports.advanced.{name}` or `admin.pages.reports.{name}`
+- Applied to: index, finance, fees, attendance, students, exams
+
+### Advanced Fee Challan PDF
+- **File:** `resources/views/admin/report/student_fee_advanced.blade.php`
+- Professional header with school logo, contact info
+- Color-coded status badges (Paid/Unpaid/Pending)
+- Itemized fee breakdown (only non-zero charges)
+- Payment summary with balance (when `show_fee_breakdown` enabled)
+- School Copy + Student Copy side-by-side
+- **Activated by:** `setting('invoice_layout') === 'detailed'` in `ClassFeeVoucherController`
+
+### Reports Sidebar Expansion
+4 new items added to Reports nav in `MenuService.php`:
+- Voucher Status → `voucher-status.index`
+- Monthly Invoices → `fee_voucher`
+- Journal Vouchers → `voucher.index`
+- Report Cards → `report-cards.generate`
+
+### Voucher Status Enhancement (Round 4 continued)
+- Added **amount-based summaries** (not just counts): Total Billed, Received, Outstanding
+- Added **collection rate progress bar** (paid vs unpaid visual)
+- Added **3 new table columns**: Father Name, Received, Balance
+- Added **Export CSV** route + controller method with all filters
+- Added **Print** button with clean `@media print` stylesheet
+- Filtered totals update dynamically with applied filters
+
+---
+
+## Routes Summary (New)
+
+```
+GET  /global-search             → GlobalSearchController@index
+GET  /global-search/suggest     → GlobalSearchController@suggest (AJAX)
+GET  /voucher-status            → VoucherStatusController@index
+GET  /voucher-status/export     → VoucherStatusController@export (CSV)
+GET  /error-logs                → SystemErrorLogController@index
+GET  /error-logs/{errorLog}     → SystemErrorLogController@show (JSON)
+DELETE /error-logs              → SystemErrorLogController@destroy
+```
+
+## Permission Keys (New)
+
+```
+error_logs.view, error_logs.delete
+voucher_status.view
+```
+
+---
+
+## How Settings Control Views
+
+```
+Settings → Report & Invoice View
+├── Report View Mode = "advanced"
+│   └── ReportController loads admin.pages.reports.advanced.* views
+├── Invoice Layout = "detailed"
+│   └── ClassFeeVoucherController loads student_fee_advanced.blade.php PDF
+├── Show Fee Breakdown = On
+│   └── Detailed challan shows balance calculation section
+└── Show Payment History = On
+    └── Student invoices show payment history
+```
 - Form starts with Exam and Class dropdowns
 - Students and subjects only appear AFTER class selection
 - Progressive UI reveal pattern

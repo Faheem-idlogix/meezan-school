@@ -145,6 +145,8 @@ class RolePermissionSeeder extends Seeder
             'notices.view',
             // Classes (view for fee mapping)
             'classes.view',
+            // Voucher Status
+            'voucher_status.view',
         ];
         $accountantRole->givePermission($accountantPerms);
         $this->command->info('✔ Accountant role → ' . count($accountantPerms) . ' permissions.');
@@ -388,6 +390,13 @@ class RolePermissionSeeder extends Seeder
             // ── Activity Logs ──
             ['name' => 'activity_logs.view',   'display_name' => 'View Activity Logs',   'module' => 'activity_logs', 'group' => 'Administration'],
             ['name' => 'activity_logs.delete', 'display_name' => 'Delete Activity Logs', 'module' => 'activity_logs', 'group' => 'Administration'],
+
+            // ── Error Logs ──
+            ['name' => 'error_logs.view',   'display_name' => 'View Error Logs',   'module' => 'error_logs', 'group' => 'Administration'],
+            ['name' => 'error_logs.delete', 'display_name' => 'Delete Error Logs', 'module' => 'error_logs', 'group' => 'Administration'],
+
+            // ── Voucher Status ──
+            ['name' => 'voucher_status.view', 'display_name' => 'View Voucher Status Overview', 'module' => 'voucher_status', 'group' => 'Finance'],
         ];
     }
 }
