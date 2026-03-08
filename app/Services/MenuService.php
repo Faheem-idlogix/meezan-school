@@ -293,6 +293,13 @@ class MenuService
                 'permission' => 'activity_logs.view',
             ],
 
+            [
+                'label'  => 'Database Backup',
+                'icon'   => 'bi bi-database-fill-gear',
+                'route'  => 'backup.index',
+                'role'   => ['admin', 'super_admin'],
+            ],
+
             // ══════════ SECTION: Super Admin ══════════
             ['type' => 'heading', 'label' => 'Super Admin', 'role' => 'super_admin'],
 
@@ -338,9 +345,10 @@ class MenuService
      */
     private static function filterItem(array $item, User $user): ?array
     {
-        // Check role-based items (super_admin section)
+        // Check role-based items (super_admin section, backup, etc.)
         if (isset($item['role'])) {
-            if (!$user->hasRole($item['role'])) {
+            $roles = is_array($item['role']) ? $item['role'] : [$item['role']];
+            if (!$user->hasAnyRole($roles)) {
                 return null;
             }
             // If it has children, filter them too

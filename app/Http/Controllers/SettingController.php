@@ -25,7 +25,7 @@ class SettingController extends Controller
             'school_email'      => 'nullable|email|max:255',
             'school_tagline'    => 'nullable|string|max:255',
             'school_logo'       => 'nullable|image|mimes:jpg,jpeg,png,ico,svg,webp|max:2048',
-            'whatsapp_provider' => 'nullable|in:twilio,wati,ultramsg',
+            'whatsapp_provider' => 'nullable|in:cloud_api,twilio,wati,ultramsg',
             'whatsapp_api_key'  => 'nullable|string',
             'whatsapp_from'     => 'nullable|string',
             'whatsapp_instance' => 'nullable|string',

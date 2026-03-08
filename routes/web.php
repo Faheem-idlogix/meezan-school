@@ -30,6 +30,7 @@ use App\Http\Controllers\WhatsAppController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\AdmissionController;
 use App\Http\Controllers\StudentDocumentController;
+use App\Http\Controllers\DatabaseBackupController;
 use App\Http\Controllers\StudentBehaviorController;
 use App\Http\Controllers\TransferCertificateController;
 use App\Http\Controllers\AlumniController;
@@ -184,6 +185,17 @@ Route::middleware(['auth'])->group(function () {
         Route::post('whatsapp/send-bulk', [WhatsAppController::class, 'sendBulk'])->name('whatsapp.sendBulk');
         Route::post('whatsapp/broadcast-notice', [WhatsAppController::class, 'broadcastNotice'])->name('whatsapp.broadcastNotice');
         Route::delete('whatsapp/clear-logs', [WhatsAppController::class, 'clearLogs'])->name('whatsapp.clearLogs');
+    });
+
+    // ===================== DATABASE BACKUP =====================
+    Route::middleware('can:manage-backup')->group(function () {
+        Route::get('backup', [DatabaseBackupController::class, 'index'])->name('backup.index');
+        Route::post('backup/create', [DatabaseBackupController::class, 'create'])->name('backup.create');
+        Route::get('backup/download/{filename}', [DatabaseBackupController::class, 'download'])->name('backup.download');
+        Route::post('backup/email', [DatabaseBackupController::class, 'email'])->name('backup.email');
+        Route::delete('backup/{filename}', [DatabaseBackupController::class, 'destroy'])->name('backup.destroy');
+        Route::post('backup/mail-settings', [DatabaseBackupController::class, 'saveMailSettings'])->name('backup.saveMailSettings');
+        Route::post('backup/test-mail', [DatabaseBackupController::class, 'testMail'])->name('backup.testMail');
     });
 
     // ===================== FINANCE HUB =====================
