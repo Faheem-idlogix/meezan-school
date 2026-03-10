@@ -37,8 +37,7 @@
     {{-- Header with Logo + School Name --}}
     <div class="header">
         @php
-            $logoPath = setting('school_logo');
-            $logoFull = $logoPath ? public_path('storage/' . $logoPath) : public_path('img/logo/school_logo.ico');
+            $logoFull = school_logo(true);
         @endphp
         @if(file_exists($logoFull))
         <img src="{{ $logoFull }}" alt="Logo" style="width:60px; height:60px; display:block; margin: 0 auto 6px auto;">

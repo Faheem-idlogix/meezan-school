@@ -25,7 +25,7 @@
                   <div class="col-12 text-center">
                     <div class="mb-2">
                       @if($settings['school_logo']->value ?? false)
-                        <img src="{{ asset('storage/' . $settings['school_logo']->value) }}" alt="School Logo"
+                        <img src="{{ asset($settings['school_logo']->value) }}" alt="School Logo"
                              style="max-height:80px; border-radius:8px; border:2px solid #dee2e6; padding:4px;">
                       @else
                         <div class="d-inline-flex align-items-center justify-content-center rounded bg-light text-muted" style="width:80px;height:80px;">

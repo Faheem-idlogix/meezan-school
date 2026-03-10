@@ -35,9 +35,17 @@ if (!function_exists('school_logo')) {
         $logo = setting('school_logo');
 
         if ($logo) {
-            return $publicPath
-                ? public_path('storage/' . $logo)
-                : asset('storage/' . $logo);
+            // Support both new path (uploads/school/...) and legacy path (school/...)
+            $diskPath = public_path($logo);
+            if (!file_exists($diskPath)) {
+                $diskPath = public_path('storage/' . $logo);
+            }
+
+            if (file_exists($diskPath)) {
+                return $publicPath
+                    ? $diskPath
+                    : asset($logo);
+            }
         }
 
         // Fallback to default logo

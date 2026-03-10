@@ -33,8 +33,10 @@ class SettingController extends Controller
 
         // Handle logo upload
         if ($request->hasFile('school_logo')) {
-            $path = $request->file('school_logo')->store('school', 'public');
-            Setting::set('school_logo', $path);
+            $file = $request->file('school_logo');
+            $filename = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/school'), $filename);
+            Setting::set('school_logo', 'uploads/school/' . $filename);
         }
 
         foreach ($request->except(['_token', '_method', 'school_logo']) as $key => $value) {

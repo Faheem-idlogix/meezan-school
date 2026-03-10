@@ -20,20 +20,20 @@ class FeeStructureController extends Controller
             $query->where('class_room_id', $request->class_room_id);
         }
 
-        $structures = $query->get();
-        $grouped = $structures->groupBy(fn($s) => $s->classRoom->class_name ?? 'Unassigned');
+        $feeStructures = $query->get();
+        $grouped = $feeStructures->groupBy(fn($s) => $s->classRoom->class_name ?? 'Unassigned');
         $classes = ClassRoom::all();
         $sessions = Session::all();
         $categories = FeeStructure::feeCategories();
 
         // Summary stats
         $stats = [
-            'total_structures' => $structures->count(),
-            'active'           => $structures->where('is_active', true)->count(),
-            'classes_covered'  => $structures->pluck('class_room_id')->unique()->count(),
+            'total_structures' => $feeStructures->count(),
+            'active'           => $feeStructures->where('is_active', true)->count(),
+            'classes_covered'  => $feeStructures->pluck('class_room_id')->unique()->count(),
         ];
 
-        return view('admin.pages.fee_structure.index', compact('structures', 'grouped', 'classes', 'sessions', 'categories', 'stats'));
+        return view('admin.pages.fee_structure.index', compact('feeStructures', 'grouped', 'classes', 'sessions', 'categories', 'stats'));
     }
 
     /**

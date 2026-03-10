@@ -28,9 +28,9 @@ class ExamScheduleController extends Controller
 
         $schedules = $query->get();
         $exams = Exam::orderByDesc('date')->get();
-        $classes = ClassRoom::all();
+        $classRooms = ClassRoom::all();
 
-        return view('admin.pages.exam_schedule.index', compact('schedules', 'exams', 'classes'));
+        return view('admin.pages.exam_schedule.index', compact('schedules', 'exams', 'classRooms'));
     }
 
     /**
