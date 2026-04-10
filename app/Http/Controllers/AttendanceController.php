@@ -183,7 +183,10 @@ class AttendanceController extends Controller
 
         // Class-wise breakdown
         $classData = Attendance::whereBetween('date', [$dateFrom, $dateTo])
-            ->join('class_rooms', 'attendances.class_room_id', '=', 'class_rooms.id')
+            ->join('class_rooms', function ($join) {
+                $join->on('attendances.class_room_id', '=', 'class_rooms.id')
+                     ->whereNull('class_rooms.deleted_at');
+            })
             ->selectRaw("
                 class_rooms.id as class_id,
                 class_rooms.class_name,

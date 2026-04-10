@@ -119,7 +119,7 @@ class StudentFeeController extends Controller
     public function edit($id)
     {
         //
-        $studentFee = StudentFee::with('class_fee_voucher', 'student')->find($id);
+        $studentFee = StudentFee::with(['class_fee_voucher', 'student.classroom'])->findOrFail($id);
         $class_room = ClassRoom::all();
         $student = Student::all();
         return view('admin.pages.student_fee.edit', compact('studentFee', 'class_room', 'student'));

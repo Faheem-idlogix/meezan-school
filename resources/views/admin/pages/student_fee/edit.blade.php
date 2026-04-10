@@ -27,7 +27,7 @@
                 <div class="row mb-3">
                   <div class="col-lg-6">
                     <label for="inputText" class="col-form-label">Student Name</label>
-                      <input type="text" value="{{$studentFee->student->student_name}}"  name="student_name" pattern="-?[0-9]+$" oninput="validateNumber(this)" placeholder="Enter the Stationery Charges"  class="form-control" disabled >
+                      <input type="text" value="{{$studentFee->student->student_name ?? 'N/A'}}"  name="student_name" pattern="-?[0-9]+$" oninput="validateNumber(this)" placeholder="Enter the Stationery Charges"  class="form-control" disabled >
                     </div>
                     <div class="col-lg-6">
                       <label for="status" class="col-form-label">Status</label>
@@ -41,7 +41,7 @@
                 <div class="row mb-3">
                   <div class="col-lg-6">
                     <label for="inputDate" class="col-form-label">Student Class<sup>*</sup></label>
-                    <input type="text" value="{{$studentFee->student->classroom->class_name}}"  name="student_class" pattern="-?[0-9]+$" oninput="validateNumber(this)" placeholder="Enter the Stationery Charges"  class="form-control" disabled>
+                    <input type="text" value="{{$studentFee->student->classroom->class_name ?? 'N/A'}}"  name="student_class" pattern="-?[0-9]+$" oninput="validateNumber(this)" placeholder="Enter the Stationery Charges"  class="form-control" disabled>
 
                     </div>
 

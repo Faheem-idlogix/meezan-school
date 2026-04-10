@@ -116,7 +116,7 @@
                         <p class="school-name">{{ setting('school_name', 'School') }}</p>
                         <p class="address">{{ setting('school_address', '') }}</p>
                         <p class="address">Contact/WhatsApp: {{ setting('school_phone', '') }}</p>
-                        <h3>Fee Voucher - {{ $item->fee_month }}<</h3>
+                        <h3>Fee Voucher - {{ $item->fee_month }}</h3>
                         <h3>School Copy </h3>
                     </div>
                     <table class="info-table">
@@ -125,8 +125,8 @@
                             <td><strong>Date: </strong>{{ $item->issue_date }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Father Name: </strong>{{ $item->student->father_name }}</td>
-                            <td><strong>Class: </strong>{{ $item->student->classroom->class_name.' '.$item->student->classroom->section_name ?? '' }}</td>
+                            <td><strong>Father Name: </strong>{{ $item->student->father_name ?? '' }}</td>
+                            <td><strong>Class: </strong>{{ ($item->student->classroom->class_name ?? '') . ' ' . ($item->student->classroom->section_name ?? '') }}</td>
                         </tr>
                         <tr>
                             <td><strong>Invoice No: </strong>{{ $item->voucher_no }}</td>
@@ -159,7 +159,7 @@
                         <p class="school-name">{{ setting('school_name', 'School') }}</p>
                         <p class="address">{{ setting('school_address', '') }}</p>
                         <p class="address">Contact/WhatsApp: {{ setting('school_phone', '') }}</p>
-                       <h3>Fee Voucher - {{ $item->fee_month }}<</h3>
+                       <h3>Fee Voucher - {{ $item->fee_month }}</h3>
                         <h3>Student Copy</h3>
                     </div>
                      <table class="info-table">
@@ -168,8 +168,8 @@
                             <td><strong>Date: </strong>{{ $item->issue_date }}</td>
                         </tr>
                         <tr>
-                            <td><strong>Father Name: </strong>{{ $item->student->father_name }}</td>
-                            <td><strong>Class: </strong>{{ $item->student->classroom->class_name.' '.$item->student->classroom->section_name ?? '' }}</td>
+                            <td><strong>Father Name: </strong>{{ $item->student->father_name ?? '' }}</td>
+                            <td><strong>Class: </strong>{{ ($item->student->classroom->class_name ?? '') . ' ' . ($item->student->classroom->section_name ?? '') }}</td>
                         </tr>
                         <tr>
                             <td><strong>Invoice No: </strong>{{ $item->voucher_no }}</td>

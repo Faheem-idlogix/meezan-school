@@ -86,6 +86,7 @@ class Notification extends Model
                     // Get teacher user IDs from timetable for this class
                     $teacherIds = \DB::table('timetables')
                         ->where('class_room_id', $this->target_class_id)
+                        ->whereNull('deleted_at')
                         ->distinct()
                         ->pluck('teacher_id');
                     // Map teacher emails to user accounts

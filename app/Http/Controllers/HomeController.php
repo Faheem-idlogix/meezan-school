@@ -111,9 +111,10 @@ class HomeController extends Controller
         $totalTeachers = Teacher::count();
         $classrooms    = ClassRoom::count();
 
-        // ── Fee stats (filtered by period months) ──
+        // ── Fee stats (filtered by period months, exclude deleted students) ──
         $feeQuery = StudentFee::whereIn('fee_month', $feeMonths)
-                        ->whereHas('class_fee_voucher');
+                        ->whereHas('class_fee_voucher')
+                        ->whereHas('student');
 
         $totalFee       = (clone $feeQuery)->sum('total_fee');
         $feeReceived    = (clone $feeQuery)->sum('received_payment_fee');
@@ -121,6 +122,7 @@ class HomeController extends Controller
         $students       = StudentFee::with(['student.classroom'])
                             ->whereIn('fee_month', $feeMonths)
                             ->whereHas('class_fee_voucher')
+                            ->whereHas('student')
                             ->get();
 
         // ── Voucher-based finance stats (filtered by period via voucher_date OR created_at) ──
@@ -169,6 +171,7 @@ class HomeController extends Controller
 
             $feeLabel = $cursor->format('F Y');
             $feeRow   = StudentFee::where('fee_month', $feeLabel)
+                ->whereHas('student')
                 ->selectRaw('SUM(received_payment_fee) as collected, SUM(total_fee) as billed')
                 ->first();
 
@@ -239,7 +242,10 @@ class HomeController extends Controller
                 $q->whereBetween('date', [$dateFrom->format('Y-m-d'), $dateTo->format('Y-m-d')])
                   ->orWhereBetween('date', [$dateFrom->format('d-m-Y'), $dateTo->format('d-m-Y')]);
             })
-            ->join('class_rooms', 'attendances.class_room_id', '=', 'class_rooms.id')
+            ->join('class_rooms', function ($join) {
+                $join->on('attendances.class_room_id', '=', 'class_rooms.id')
+                     ->whereNull('class_rooms.deleted_at');
+            })
             ->selectRaw("
                 class_rooms.class_name,
                 COUNT(*) as total,
@@ -341,10 +347,12 @@ class HomeController extends Controller
         $currentMonth = date('F Y');
         $totalFee     = StudentFee::where('fee_month', $currentMonth)
                             ->whereHas('class_fee_voucher')
+                            ->whereHas('student')
                             ->sum('total_fee');
         $students     = StudentFee::with('student')
                             ->where('fee_month', $currentMonth)
                             ->whereHas('class_fee_voucher')
+                            ->whereHas('student')
                             ->get();
         $totalStudents = Student::count();
 

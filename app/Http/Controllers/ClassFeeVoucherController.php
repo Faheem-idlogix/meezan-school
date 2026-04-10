@@ -23,7 +23,9 @@ class ClassFeeVoucherController extends Controller
     public function index()
     {
         //
-        $class_fee_voucher = ClassFeeVoucher::orderBy('class_fee_voucher_id', 'desc')->get();
+        $class_fee_voucher = ClassFeeVoucher::with('classroom')
+            ->whereHas('classroom')
+            ->orderBy('class_fee_voucher_id', 'desc')->get();
         return view('admin.pages.invoice.index', compact('class_fee_voucher'));
     }
 
@@ -52,7 +54,7 @@ class ClassFeeVoucherController extends Controller
 
         $class_name = ClassRoom::where('id', $request->class_room_id)->value('class_name');
         $section_name = ClassRoom::where('id', $request->class_room_id)->value('section_name');
-        $students = Student::where('class_room_id', $request->class_room_id)->get();
+        $students = Student::where('class_room_id', $request->class_room_id)->whereNull('deleted_at')->get();
         $total_fee = $request->stationery_charges +
         $request->test_series_charges +
         $request->exam_charges +
@@ -139,6 +141,11 @@ class ClassFeeVoucherController extends Controller
         ->whereHas('student', function ($q) {
             $q->whereNull('deleted_at');
         })->get();
+
+        if ($data->isEmpty()) {
+            return redirect()->route('fee_voucher')
+                ->with('error', 'No active students found for this voucher. All students may have been deleted.');
+        }
 
         $view = setting('invoice_layout', 'basic') === 'detailed'
             ? 'admin.report.student_fee_advanced'
