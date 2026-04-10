@@ -41,7 +41,7 @@ class ClassRoomController extends Controller
 
     public function edit($id)
     {
-        $class   = ClassRoom::find($id);
+        $class   = ClassRoom::findOrFail($id);
         $session = Session::where('status', 1)->get();
         return view('admin.pages.classroom.edit', compact('class', 'session'));
     }

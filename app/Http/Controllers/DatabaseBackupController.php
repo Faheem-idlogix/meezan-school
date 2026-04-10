@@ -6,6 +6,7 @@ use App\Mail\DatabaseBackupMail;
 use App\Models\ActivityLog;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class DatabaseBackupController extends Controller
@@ -40,11 +41,6 @@ class DatabaseBackupController extends Controller
     public function create()
     {
         $dbName    = config('database.connections.mysql.database');
-        $dbUser    = config('database.connections.mysql.username');
-        $dbPass    = config('database.connections.mysql.password');
-        $dbHost    = config('database.connections.mysql.host');
-        $dbPort    = config('database.connections.mysql.port', 3306);
-
         $timestamp = now()->format('Y-m-d_H-i-s');
         $backupDir = storage_path('app/backups');
         $sqlFile   = "{$backupDir}/{$dbName}_{$timestamp}.sql";
@@ -54,25 +50,12 @@ class DatabaseBackupController extends Controller
             mkdir($backupDir, 0755, true);
         }
 
-        // Find mysqldump
-        $mysqldump = $this->findMysqldump();
-        if (!$mysqldump) {
+        try {
+            $this->dumpDatabaseToFile($sqlFile);
+        } catch (\Exception $e) {
+            @unlink($sqlFile);
             return redirect()->route('backup.index')
-                ->with('error', 'mysqldump not found. Make sure MySQL tools are installed (XAMPP/Laragon/WAMP).');
-        }
-
-        // Run mysqldump
-        $passFlag = $dbPass ? "-p\"{$dbPass}\"" : '';
-        $command  = sprintf(
-            '"%s" --host="%s" --port=%s --user="%s" %s "%s" > "%s" 2>&1',
-            $mysqldump, $dbHost, $dbPort, $dbUser, $passFlag, $dbName, $sqlFile
-        );
-
-        exec($command, $output, $exitCode);
-
-        if ($exitCode !== 0) {
-            return redirect()->route('backup.index')
-                ->with('error', 'mysqldump failed: ' . implode(' ', $output));
+                ->with('error', 'Database dump failed: ' . $e->getMessage());
         }
 
         // Create zip
@@ -228,31 +211,54 @@ class DatabaseBackupController extends Controller
         ]);
     }
 
-    private function findMysqldump(): ?string
+    private function dumpDatabaseToFile(string $filePath): void
     {
-        $which = PHP_OS_FAMILY === 'Windows' ? 'where mysqldump 2>nul' : 'which mysqldump 2>/dev/null';
-        exec($which, $output, $exitCode);
-        if ($exitCode === 0 && !empty($output[0])) {
-            return trim($output[0]);
+        $pdo = \DB::connection()->getPdo();
+        $pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, true);
+        $dbName = config('database.connections.mysql.database');
+
+        $handle = fopen($filePath, 'w');
+        if (!$handle) {
+            throw new \RuntimeException('Cannot create backup file.');
         }
 
-        $paths = [
-            'C:\\xampp\\mysql\\bin\\mysqldump.exe',
-            'C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump.exe',
-            'C:\\Program Files\\MariaDB 10.11\\bin\\mysqldump.exe',
-        ];
+        fwrite($handle, "-- Database Backup: {$dbName}\n");
+        fwrite($handle, "-- Generated: " . now()->toDateTimeString() . "\n");
+        fwrite($handle, "-- --------------------------------------------------------\n\n");
+        fwrite($handle, "SET FOREIGN_KEY_CHECKS=0;\n");
+        fwrite($handle, "SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';\n\n");
 
-        foreach (glob('C:\\laragon\\bin\\mysql\\*\\bin\\mysqldump.exe') as $p) {
-            $paths[] = $p;
-        }
-        foreach (glob('C:\\wamp64\\bin\\mysql\\*\\bin\\mysqldump.exe') as $p) {
-            $paths[] = $p;
+        $tables = $pdo->query('SHOW TABLES')->fetchAll(\PDO::FETCH_COLUMN);
+
+        foreach ($tables as $table) {
+            // DROP + CREATE
+            $createStmt = $pdo->query("SHOW CREATE TABLE `{$table}`")->fetch(\PDO::FETCH_ASSOC);
+            fwrite($handle, "DROP TABLE IF EXISTS `{$table}`;\n");
+            fwrite($handle, $createStmt['Create Table'] . ";\n\n");
+
+            // DATA — fetch in chunks to avoid memory issues
+            $rowCount = $pdo->query("SELECT COUNT(*) FROM `{$table}`")->fetchColumn();
+            $chunkSize = 500;
+
+            for ($offset = 0; $offset < $rowCount; $offset += $chunkSize) {
+                $rows = $pdo->query("SELECT * FROM `{$table}` LIMIT {$chunkSize} OFFSET {$offset}")
+                            ->fetchAll(\PDO::FETCH_ASSOC);
+
+                foreach ($rows as $row) {
+                    $values = array_map(function ($value) use ($pdo) {
+                        if ($value === null) return 'NULL';
+                        return $pdo->quote($value);
+                    }, $row);
+
+                    $columns = implode('`, `', array_keys($row));
+                    fwrite($handle, "INSERT INTO `{$table}` (`{$columns}`) VALUES (" . implode(', ', $values) . ");\n");
+                }
+            }
+
+            fwrite($handle, "\n");
         }
 
-        foreach ($paths as $path) {
-            if (file_exists($path)) return $path;
-        }
-
-        return null;
+        fwrite($handle, "SET FOREIGN_KEY_CHECKS=1;\n");
+        fclose($handle);
     }
 }
