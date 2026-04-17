@@ -323,7 +323,10 @@ Route::middleware(['auth'])->group(function () {
 
     // ===================== EXAM SCHEDULES =====================
     Route::middleware('permission:exam_schedules.view')->group(function () {
-        Route::resource('exam-schedules', ExamScheduleController::class)->except(['show', 'edit', 'update']);
+        Route::get('exam-schedules/print', [ExamScheduleController::class, 'print'])->name('exam-schedules.print');
+        Route::get('exam-schedules/edit-group', [ExamScheduleController::class, 'editGroup'])->name('exam-schedules.edit-group');
+        Route::put('exam-schedules/update-group', [ExamScheduleController::class, 'updateGroup'])->name('exam-schedules.update-group');
+        Route::resource('exam-schedules', ExamScheduleController::class)->except(['show']);
     });
 
     // ===================== REPORT CARDS =====================

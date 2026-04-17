@@ -85,6 +85,10 @@
                            class="btn btn-sm btn-outline-info" title="View Details">
                           <i class="bi bi-eye-fill me-1"></i>Detail
                         </a>
+                        <a href="{{ route('report-cards.pdf', ['student_id' => $item->student_id, 'exam_id' => $item->exam_id]) }}"
+                           class="btn btn-sm btn-outline-secondary" title="Print Result Card" target="_blank">
+                          <i class="bi bi-printer me-1"></i>Print
+                        </a>
                       </div>
                     </td>
                     </tr>

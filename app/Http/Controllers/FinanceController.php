@@ -44,17 +44,22 @@ class FinanceController extends Controller
 
         // ── Fee Report for selected month ─────────────────────────────
         $monthName  = \Carbon\Carbon::createFromDate($year, $mon, 1)->format('F Y');
-        $feeRecords = StudentFee::with(['student.classroom'])
+        $feeRecordsAll = StudentFee::with(['student.classroom'])
             ->where('fee_month', $monthName)
             ->orderBy('student_id')
             ->get();
 
+        $feeRecords = StudentFee::with(['student.classroom'])
+            ->where('fee_month', $monthName)
+            ->orderBy('student_id')
+            ->paginate(20)->withQueryString();
+
         $feeSummary = [
-            'total'      => $feeRecords->sum('total_fee'),
-            'received'   => $feeRecords->sum('received_payment_fee'),
-            'outstanding'=> $feeRecords->sum('total_fee') - $feeRecords->sum('received_payment_fee'),
-            'paid_count' => $feeRecords->where('status', 'paid')->count(),
-            'unpaid_count'=> $feeRecords->where('status', 'unpaid')->count(),
+            'total'      => $feeRecordsAll->sum('total_fee'),
+            'received'   => $feeRecordsAll->sum('received_payment_fee'),
+            'outstanding'=> $feeRecordsAll->sum('total_fee') - $feeRecordsAll->sum('received_payment_fee'),
+            'paid_count' => $feeRecordsAll->where('status', 'paid')->count(),
+            'unpaid_count'=> $feeRecordsAll->where('status', 'unpaid')->count(),
         ];
 
         // ── All-time totals ───────────────────────────────────────────

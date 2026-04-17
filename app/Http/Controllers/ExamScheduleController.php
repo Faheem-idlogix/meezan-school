@@ -27,10 +27,16 @@ class ExamScheduleController extends Controller
         }
 
         $schedules = $query->get();
+
+        // Group by exam + class for display
+        $grouped = $schedules->groupBy(function ($item) {
+            return $item->exam_id . '-' . $item->class_room_id;
+        });
+
         $exams = Exam::orderByDesc('date')->get();
         $classRooms = ClassRoom::all();
 
-        return view('admin.pages.exam_schedule.index', compact('schedules', 'exams', 'classRooms'));
+        return view('admin.pages.exam_schedule.index', compact('grouped', 'exams', 'classRooms'));
     }
 
     /**
@@ -39,9 +45,9 @@ class ExamScheduleController extends Controller
     public function create()
     {
         $exams = Exam::orderByDesc('date')->get();
-        $classes = ClassRoom::all();
+        $classRooms = ClassRoom::all();
         $subjects = Subject::all();
-        return view('admin.pages.exam_schedule.create', compact('exams', 'classes', 'subjects'));
+        return view('admin.pages.exam_schedule.create', compact('exams', 'classRooms', 'subjects'));
     }
 
     /**
@@ -82,5 +88,105 @@ class ExamScheduleController extends Controller
     {
         $examSchedule->delete();
         return redirect()->back()->with('success', 'Schedule entry deleted.');
+    }
+
+    /**
+     * Edit all schedule entries for an exam + class group.
+     */
+    public function editGroup(Request $request)
+    {
+        $request->validate([
+            'exam_id'       => 'required|exists:exams,id',
+            'class_room_id' => 'required|exists:class_rooms,id',
+        ]);
+
+        $exam      = Exam::findOrFail($request->exam_id);
+        $classRoom = ClassRoom::findOrFail($request->class_room_id);
+
+        $schedules = ExamSchedule::with('subject')
+            ->where('exam_id', $request->exam_id)
+            ->where('class_room_id', $request->class_room_id)
+            ->orderBy('exam_date')
+            ->orderBy('start_time')
+            ->get();
+
+        $exams      = Exam::orderByDesc('date')->get();
+        $classRooms = ClassRoom::all();
+        $subjects   = Subject::all();
+
+        return view('admin.pages.exam_schedule.edit', compact('schedules', 'exam', 'classRoom', 'exams', 'classRooms', 'subjects'));
+    }
+
+    /**
+     * Update all schedule entries for an exam + class group.
+     */
+    public function updateGroup(Request $request)
+    {
+        $request->validate([
+            'exam_id'       => 'required|exists:exams,id',
+            'class_room_id' => 'required|exists:class_rooms,id',
+            'entries'       => 'required|array|min:1',
+            'entries.*.subject_id'  => 'required|exists:subjects,id',
+            'entries.*.exam_date'   => 'required|date',
+        ]);
+
+        $examId     = $request->exam_id;
+        $classRoomId = $request->class_room_id;
+
+        // Collect IDs that are being kept
+        $keepIds = collect($request->entries)->pluck('id')->filter()->all();
+
+        // Delete entries removed by user
+        ExamSchedule::where('exam_id', $examId)
+            ->where('class_room_id', $classRoomId)
+            ->whereNotIn('id', $keepIds)
+            ->delete();
+
+        // Update existing + create new
+        foreach ($request->entries as $entry) {
+            $data = [
+                'exam_id'       => $examId,
+                'class_room_id' => $classRoomId,
+                'subject_id'    => $entry['subject_id'],
+                'exam_date'     => $entry['exam_date'],
+                'start_time'    => $entry['start_time'] ?? null,
+                'end_time'      => $entry['end_time'] ?? null,
+                'room'          => $entry['room'] ?? null,
+                'total_marks'   => $entry['total_marks'] ?? null,
+                'passing_marks' => $entry['passing_marks'] ?? null,
+            ];
+
+            if (!empty($entry['id'])) {
+                ExamSchedule::where('id', $entry['id'])->update($data);
+            } else {
+                ExamSchedule::create($data);
+            }
+        }
+
+        return redirect()->route('exam-schedules.index', ['exam_id' => $examId])
+            ->with('success', 'Exam schedule updated successfully.');
+    }
+
+    /**
+     * Print exam schedule (date-sheet) for a given exam + class.
+     */
+    public function print(Request $request)
+    {
+        $request->validate([
+            'exam_id'       => 'required|exists:exams,id',
+            'class_room_id' => 'required|exists:class_rooms,id',
+        ]);
+
+        $exam      = Exam::findOrFail($request->exam_id);
+        $classRoom = ClassRoom::findOrFail($request->class_room_id);
+
+        $schedules = ExamSchedule::with('subject')
+            ->where('exam_id', $request->exam_id)
+            ->where('class_room_id', $request->class_room_id)
+            ->orderBy('exam_date')
+            ->orderBy('start_time')
+            ->get();
+
+        return view('admin.pages.exam_schedule.print', compact('schedules', 'exam', 'classRoom'));
     }
 }

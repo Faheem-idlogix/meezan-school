@@ -49,9 +49,10 @@
                   <tr>
                     <th>{{ $sr_no++ }}</th>
                     <td>{{ $item->name }}</td>
-                    <td>{{ $item->date }}</td>
+                    <td>{{ $item->date ? $item->date->format('d M Y') : '—' }}</td>
                     <td>
                       <div class="d-flex gap-1">
+                        <a href="{{ route('exam-schedules.index', ['exam_id' => $item->id]) }}" class="btn btn-sm btn-outline-info" title="View Schedule"><i class="bi bi-calendar-event"></i></a>
                         <a href="{{ route('exam.edit', $item) }}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil-fill"></i></a>
                         <form action="{{ route('exam.destroy', $item) }}" method="POST" onsubmit="return confirm('Delete this exam?')">
                           @method('DELETE') @csrf

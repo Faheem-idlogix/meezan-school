@@ -735,8 +735,10 @@
   <!-- Skin System JS -->
   <script src="{{asset("js/skin-system.js")}}"></script>
 
+</script>
   @yield("script")
   @yield("scripts")
+  @stack('scripts')
 </body>
 
 </html>

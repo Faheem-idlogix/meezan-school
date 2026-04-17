@@ -16,7 +16,7 @@
                             <select name="exam_id" class="form-select @error('exam_id') is-invalid @enderror" required>
                                 <option value="">-- Select Exam --</option>
                                 @foreach($exams as $exam)
-                                <option value="{{ $exam->id }}" {{ old('exam_id') == $exam->id ? 'selected' : '' }}>{{ $exam->exam_name }}</option>
+                                <option value="{{ $exam->id }}" {{ old('exam_id') == $exam->id ? 'selected' : '' }}>{{ $exam->name }}</option>
                                 @endforeach
                             </select>
                             @error('exam_id')<div class="invalid-feedback">{{ $message }}</div>@enderror

@@ -129,7 +129,9 @@ class AttendanceController extends Controller
     {
         $first_date = $request->first_date;
         $last_date = $request->last_date;
-        $attendance = Attendance::with(['student', 'classRoom'])
+        $attendance = Attendance::with(['student' => function($q) {
+                $q->withTrashed();
+            }, 'classRoom'])
             ->where('class_room_id', $request->class_id)
             ->whereBetween('date', [$request->first_date, $request->last_date])
             ->get()

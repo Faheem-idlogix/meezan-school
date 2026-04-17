@@ -48,7 +48,7 @@
         <tbody>
             @foreach($feeRecords as $fee)
             <tr>
-                <td>{{ $loop->iteration }}</td>
+                <td>{{ ($feeRecords->currentPage() - 1) * $feeRecords->perPage() + $loop->iteration }}</td>
                 <td>{{ $fee->student->student_name ?? '' }}</td>
                 <td>{{ $fee->student->classroom->class_name ?? '' }}</td>
                 <td>{{ number_format($fee->total_fee) }}</td>
@@ -69,4 +69,7 @@
             @endforeach
         </tbody>
     </table>
+    <div class="mt-3">
+        {{ $feeRecords->appends(['tab' => 'fee'])->links() }}
+    </div>
 </div>
