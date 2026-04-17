@@ -242,6 +242,11 @@
           </div>
         </div>
 
+        {{-- Appearance / Skin Picker --}}
+        <div class="col-lg-6">
+          @include('admin.partials.appearance-module')
+        </div>
+
       </div>
     </section>
 </main>

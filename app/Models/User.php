@@ -29,6 +29,7 @@ class User extends Authenticatable
         'user_type_id',
         'role',
         'school_id',
+        'skin',
     ];
 
     /**

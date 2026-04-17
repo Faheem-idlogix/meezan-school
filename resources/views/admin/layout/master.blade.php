@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-skin="{{ auth()->check() && auth()->user()->skin ? auth()->user()->skin : config('skins.default', 'cyber') }}">
 
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <title>@yield('title', setting('school_name', 'School Management System'))</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
+
+  {{-- Restore skin from localStorage before any paint to prevent flash --}}
+  <script>
+    (function(){
+      var s = localStorage.getItem('meezan_skin');
+      if(s) document.documentElement.setAttribute('data-skin', s);
+    })();
+  </script>
 
   <!-- Favicons -->
   <link rel="icon" type="image/x-icon" href="{{asset("WSTheme/WsImg/WSFavicon.png")}}" />
@@ -34,6 +43,8 @@
 
   <!-- Template Main CSS File -->
   <link href="{{asset("assets/css/style.css")}}"  rel="stylesheet">
+  <!-- Skin System CSS -->
+  <link href="{{asset("css/skins.css")}}"  rel="stylesheet">
   <style>
     /* ============================================================
        EliteAdmin Skin — Meezan School System
@@ -434,6 +445,13 @@
             <li><hr class="dropdown-divider"></li>
 
             <li>
+              <a class="dropdown-item d-flex align-items-center" href="{{ route('appearance.index') }}">
+                <i class="bi bi-palette me-2"></i> Appearance
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
               <a class="dropdown-item d-flex align-items-center text-danger" href="{{ route('logout') }}"
                  onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 <i class="bi bi-box-arrow-right me-2"></i> Sign Out
@@ -463,10 +481,21 @@
           @php
             $childRoutes = collect($item['children'])->pluck('route')->filter()->toArray();
             $isOpen = false;
+            // Check exact child routes
             foreach ($childRoutes as $cr) {
               if (request()->routeIs($cr) || request()->routeIs($cr . '.*')) {
                 $isOpen = true;
                 break;
+              }
+            }
+            // Also check route prefixes (e.g. student.show should open Students menu)
+            if (!$isOpen) {
+              $prefixes = collect($childRoutes)->map(fn($r) => explode('.', $r)[0])->unique();
+              foreach ($prefixes as $px) {
+                if (request()->routeIs($px . '.*')) {
+                  $isOpen = true;
+                  break;
+                }
               }
             }
           @endphp
@@ -702,6 +731,9 @@
         });
     });
   </script>
+
+  <!-- Skin System JS -->
+  <script src="{{asset("js/skin-system.js")}}"></script>
 
   @yield("script")
   @yield("scripts")

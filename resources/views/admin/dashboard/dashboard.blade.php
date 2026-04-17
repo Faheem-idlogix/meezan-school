@@ -6,35 +6,35 @@
   .bi-check-circle-fill{color:green;margin-left:10px}
 
   /* Quick-link cards */
-  .quick-link{display:flex;align-items:center;gap:.85rem;padding:1rem 1.2rem;border-radius:8px;background:#f8faff;border:1px solid #e9ecef;transition:all .2s;text-decoration:none;color:#012970}
-  .quick-link:hover{background:#eef2ff;border-color:var(--ea-primary);transform:translateY(-2px);box-shadow:0 4px 12px rgba(65,84,241,.12)}
+  .quick-link{display:flex;align-items:center;gap:.85rem;padding:1rem 1.2rem;border-radius:8px;background:var(--skin-card-bg,#f8faff);border:1px solid var(--skin-border-subtle,#e9ecef);transition:all .2s;text-decoration:none;color:var(--skin-text-primary,#012970)}
+  .quick-link:hover{background:var(--skin-hover-bg,#eef2ff);border-color:var(--skin-accent,var(--ea-primary));transform:translateY(-2px);box-shadow:0 4px 12px rgba(var(--skin-accent-rgb,65,84,241),.12)}
   .quick-link .ql-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
   .quick-link .ql-label{font-size:.82rem;font-weight:600}
-  .quick-link .ql-sub{font-size:.72rem;color:#6c757d;font-weight:400}
+  .quick-link .ql-sub{font-size:.72rem;color:var(--skin-text-muted,#6c757d);font-weight:400}
 
   /* Mini stat – distinct colored cards */
-  .mini-stat{padding:.85rem 1rem;border-radius:8px;border:1px solid #e9ecef;border-left:4px solid #6c757d;position:relative}
+  .mini-stat{padding:.85rem 1rem;border-radius:8px;border:1px solid var(--skin-border-subtle,#e9ecef);border-left:4px solid #6c757d;position:relative}
   .mini-stat .ms-icon{position:absolute;top:.85rem;right:1rem;font-size:1.3rem;opacity:.35}
-  .mini-stat .ms-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;font-weight:600;color:#6c757d;margin-bottom:2px}
-  .mini-stat .ms-value{font-size:1.2rem;font-weight:700}
+  .mini-stat .ms-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;font-weight:600;color:var(--skin-text-muted,#6c757d);margin-bottom:2px}
+  .mini-stat .ms-value{font-size:1.2rem;font-weight:700;color:var(--skin-text-primary,inherit)}
   .mini-stat.ms-income{border-left-color:#198754;background:linear-gradient(135deg,rgba(25,135,84,.04),rgba(25,135,84,.1))}
   .mini-stat.ms-expense{border-left-color:#dc3545;background:linear-gradient(135deg,rgba(220,53,69,.04),rgba(220,53,69,.1))}
-  .mini-stat.ms-profit{border-left-color:#4154f1;background:linear-gradient(135deg,rgba(65,84,241,.04),rgba(65,84,241,.1))}
+  .mini-stat.ms-profit{border-left-color:var(--skin-accent,#4154f1);background:linear-gradient(135deg,rgba(var(--skin-accent-rgb,65,84,241),.04),rgba(var(--skin-accent-rgb,65,84,241),.1))}
   .mini-stat.ms-outstanding{border-left-color:#fd7e14;background:linear-gradient(135deg,rgba(253,126,20,.04),rgba(253,126,20,.1))}
   .mini-stat.ms-vouchers{border-left-color:#6f42c1;background:linear-gradient(135deg,rgba(111,66,193,.04),rgba(111,66,193,.1))}
   .mini-stat.ms-exams{border-left-color:#0dcaf0;background:linear-gradient(135deg,rgba(13,202,240,.04),rgba(13,202,240,.1))}
 
   /* Period filter bar */
-  .period-bar{background:#fff;border:1px solid #e9ecef;border-radius:10px;padding:.6rem 1rem;margin-bottom:1.2rem}
-  .period-bar .btn-period{display:inline-block;padding:.35rem .8rem;font-size:.78rem;font-weight:600;border-radius:6px;border:1px solid #dee2e6;background:#fff;color:#495057;transition:all .2s;text-decoration:none}
-  .period-bar .btn-period:hover{background:#eef2ff;border-color:#4154f1;color:#4154f1}
-  .period-bar .btn-period.active{background:#4154f1;border-color:#4154f1;color:#fff}
+  .period-bar{background:var(--skin-card-bg,#fff);border:1px solid var(--skin-border-subtle,#e9ecef);border-radius:10px;padding:.6rem 1rem;margin-bottom:1.2rem}
+  .period-bar .btn-period{display:inline-block;padding:.35rem .8rem;font-size:.78rem;font-weight:600;border-radius:6px;border:1px solid var(--skin-border-subtle,#dee2e6);background:var(--skin-card-bg,#fff);color:var(--skin-text-primary,#495057);transition:all .2s;text-decoration:none}
+  .period-bar .btn-period:hover{background:var(--skin-hover-bg,#eef2ff);border-color:var(--skin-accent,#4154f1);color:var(--skin-accent,#4154f1)}
+  .period-bar .btn-period.active{background:var(--skin-accent,#4154f1);border-color:var(--skin-accent,#4154f1);color:#fff}
 
   /* Attendance card */
   .att-stat{text-align:center;padding:.7rem .5rem;border-radius:8px}
   .att-stat .att-val{font-size:1.4rem;font-weight:700}
-  .att-stat .att-lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;font-weight:600;color:#6c757d}
-  .att-class-row:hover{background:rgba(65,84,241,.04)}
+  .att-stat .att-lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;font-weight:600;color:var(--skin-text-muted,#6c757d)}
+  .att-class-row:hover{background:rgba(var(--skin-accent-rgb,65,84,241),.04)}
   @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
   .spin{animation:spin 1s linear infinite;display:inline-block}
 

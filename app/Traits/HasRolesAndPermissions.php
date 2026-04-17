@@ -98,6 +98,11 @@ trait HasRolesAndPermissions
             return true;
         }
 
+        // Legacy fallback: admin/super_admin in legacy role column
+        if (in_array($this->role, ['admin', 'super_admin'])) {
+            return true;
+        }
+
         // Check direct permissions
         if ($this->directPermissions()->where('name', $permission)->exists()) {
             return true;
@@ -116,6 +121,11 @@ trait HasRolesAndPermissions
     public function hasAnyPermission(array $permissions): bool
     {
         if ($this->hasRole('super_admin')) {
+            return true;
+        }
+
+        // Legacy fallback
+        if (in_array($this->role, ['admin', 'super_admin'])) {
             return true;
         }
 

@@ -190,7 +190,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ===================== DATABASE BACKUP =====================
-    Route::middleware('can:manage-backup')->group(function () {
+    Route::middleware('permission:database_backup.view')->group(function () {
         Route::get('backup', [DatabaseBackupController::class, 'index'])->name('backup.index');
         Route::post('backup/create', [DatabaseBackupController::class, 'create'])->name('backup.create');
         Route::get('backup/download/{filename}', [DatabaseBackupController::class, 'download'])->name('backup.download');
@@ -370,6 +370,17 @@ Route::middleware(['auth'])->group(function () {
     Route::put('profile', [NotificationController::class, 'updateProfile'])->name('profile.update');
     Route::get('profile/change-password', [NotificationController::class, 'showChangePassword'])->name('profile.change-password');
     Route::post('profile/change-password', [NotificationController::class, 'updatePassword'])->name('profile.update-password');
+
+    // ===================== SKIN / APPEARANCE =====================
+    Route::get('appearance', function () {
+        return view('admin.pages.appearance.index');
+    })->name('appearance.index');
+
+    Route::post('user/skin', function (\Illuminate\Http\Request $request) {
+        $request->validate(['skin' => 'required|string|in:cyber,glass,luxury,minimal,ocean,rose']);
+        $request->user()->update(['skin' => $request->skin]);
+        return response()->json(['ok' => true, 'skin' => $request->skin]);
+    })->name('user.skin');
 
     // ===================== GLOBAL SEARCH =====================
     Route::get('search', [GlobalSearchController::class, 'index'])->name('global.search');

@@ -280,6 +280,20 @@ class MenuService
             ],
 
             [
+                'label'  => 'Database Backup',
+                'icon'   => 'bi bi-database-fill-down',
+                'route'  => 'backup.index',
+                'permission' => 'database_backup.view',
+            ],
+
+            [
+                'label'  => 'Appearance',
+                'icon'   => 'bi bi-palette-fill',
+                'route'  => 'appearance.index',
+                'permission' => null, // every authenticated user
+            ],
+
+            [
                 'label'  => 'Error Logs',
                 'icon'   => 'bi bi-bug-fill',
                 'route'  => 'error-logs.index',
