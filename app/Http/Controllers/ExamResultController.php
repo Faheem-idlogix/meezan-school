@@ -7,8 +7,9 @@ use App\Models\Exam;
 use App\Models\Student;
 use App\Models\ClassSubject;
 use App\Models\ClassRoom;
+use App\Models\Attendance;
 use Illuminate\Http\Request;
-use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\DB;
 
 class ExamResultController extends Controller
 {
@@ -51,21 +52,28 @@ class ExamResultController extends Controller
             // Verify class exists
             $classRoom = ClassRoom::findOrFail($classId);
 
-            // Get students enrolled in this class
+            // Get active students enrolled in this class
             $students = Student::where('class_room_id', $classId)
+                ->where(function ($q) {
+                    $q->where('student_status', 'active')
+                      ->orWhere('student_status', '1');
+                })
                 ->select('id', 'student_name')
+                ->orderBy('student_name')
                 ->get();
 
             // Get subjects assigned to this class
             $subjects = ClassSubject::where('class_id', $classId)
                 ->with('subject:id,subject_name')
                 ->get()
+                ->filter(fn($cs) => $cs->subject !== null)
                 ->map(function ($classSubject) {
                     return [
                         'id' => $classSubject->subject->id,
                         'name' => $classSubject->subject->subject_name,
                     ];
-                });
+                })
+                ->values();
 
             return response()->json([
                 'success' => true,
@@ -112,13 +120,21 @@ class ExamResultController extends Controller
                 ])->exists();
 
                 if (!$exists) {
+                    $total = (float) $mark['total_marks'];
+                    $obtained = (float) $mark['obtained_marks'];
+                    $pct = $total > 0 ? round(($obtained / $total) * 100, 2) : 0;
+                    [$grade, $remark] = $this->gradeLabel($pct);
+
                     ExamResult::create([
                         'exam_id' => $request->exam_id,
                         'student_id' => $request->student_id,
                         'subject_id' => $mark['subject_id'],
                         'class_id' => $request->class_id,
-                        'total_marks' => $mark['total_marks'],
-                        'obtained_marks' => $mark['obtained_marks'],
+                        'total_marks' => $total,
+                        'obtained_marks' => $obtained,
+                        'percentage' => $pct,
+                        'grade' => $grade,
+                        'teacher_remarks' => $remark,
                     ]);
                     $created++;
                 } else {
@@ -221,6 +237,19 @@ class ExamResultController extends Controller
 
         $rollNo = 'MS-' . str_pad((string) $student->id, 4, '0', STR_PAD_LEFT);
 
+        // Get attendance data for this student
+        $attendanceData = Attendance::where('student_id', $student->id)
+            ->where('class_room_id', $examResult->class_id)
+            ->selectRaw("COUNT(*) as total_days")
+            ->selectRaw("SUM(CASE WHEN attendance = '1' THEN 1 ELSE 0 END) as present_days")
+            ->selectRaw("SUM(CASE WHEN attendance = '3' THEN 1 ELSE 0 END) as absent_days")
+            ->selectRaw("SUM(CASE WHEN attendance = '2' THEN 1 ELSE 0 END) as leave_days")
+            ->first();
+
+        $totalDays = (int) ($attendanceData->total_days ?? 0);
+        $presentDays = (int) ($attendanceData->present_days ?? 0);
+        $absentDays = (int) ($attendanceData->absent_days ?? 0);
+
         return view('admin.pages.exam_result.show', compact(
             'student',
             'classRoom',
@@ -231,10 +260,11 @@ class ExamResultController extends Controller
             'percentage',
             'overallGrade',
             'overallRemark',
-            'rollNo'
+            'rollNo',
+            'totalDays',
+            'presentDays',
+            'absentDays'
         ));
-        
-        return view('admin.pages.exam_result.show', compact('examResult'));
     }
 
     /**
@@ -276,13 +306,21 @@ class ExamResultController extends Controller
                 ->withInput();
         }
 
+        $total = (float) $request->total_marks;
+        $obtained = (float) $request->obtained_marks;
+        $pct = $total > 0 ? round(($obtained / $total) * 100, 2) : 0;
+        [$grade, $remark] = $this->gradeLabel($pct);
+
         $examResult->update([
             'exam_id'        => $request->exam_id,
             'student_id'     => $request->student_id,
             'subject_id'     => $request->subject_id,
             'class_id'       => $request->class_id,
-            'total_marks'    => $request->total_marks,
-            'obtained_marks' => $request->obtained_marks,
+            'total_marks'    => $total,
+            'obtained_marks' => $obtained,
+            'percentage'     => $pct,
+            'grade'          => $grade,
+            'teacher_remarks' => $remark,
         ]);
 
         return redirect()

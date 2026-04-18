@@ -50,8 +50,8 @@ if (!function_exists('school_logo')) {
 
         // Fallback to default logo
         return $publicPath
-            ? public_path('img/logo/school_logo.ico')
-            : asset('img/logo/school_logo.ico');
+            ? public_path('img/logo/school_logo.jpg')
+            : asset('img/logo/school_logo.jpg');
     }
 }
 

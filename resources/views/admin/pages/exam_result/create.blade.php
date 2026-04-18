@@ -50,7 +50,7 @@
                             <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <label for="examSelect" class="col-form-label">Select Exam <span class="text-danger">*</span></label>
-                                    <select name="exam_id" id="examSelect" class="form-select" required>
+                                    <select name="exam_id" id="examSelect" class="form-select no-select2" required>
                                         <option value="" disabled selected>Choose an exam</option>
                                         @foreach ($exams as $exam)
                                         <option value="{{ $exam->id }}">{{ $exam->name }}</option>
@@ -66,10 +66,10 @@
                             <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <label for="classSelect" class="col-form-label">Select Class <span class="text-danger">*</span></label>
-                                    <select name="class_id" id="classSelect" class="form-select" required>
+                                    <select name="class_id" id="classSelect" class="form-select no-select2" required>
                                         <option value="" disabled selected>Choose a class</option>
                                         @foreach ($classRooms as $class)
-                                        <option value="{{ $class->id }}">{{ $class->class_name }}</option>
+                                        <option value="{{ $class->id }}">{{ $class->class_name }}{{ $class->section_name ? ' - ' . $class->section_name : '' }}</option>
                                         @endforeach
                                     </select>
                                     @error('class_id')
@@ -82,7 +82,7 @@
                             <div id="studentSection" class="row mb-3" style="display: none;">
                                 <div class="col-lg-6">
                                     <label for="studentSelect" class="col-form-label">Select Student <span class="text-danger">*</span></label>
-                                    <select name="student_id" id="studentSelect" class="form-select" required>
+                                    <select name="student_id" id="studentSelect" class="form-select no-select2" required>
                                         <option value="" disabled selected>Choose a student</option>
                                     </select>
                                     @error('student_id')
@@ -93,11 +93,13 @@
 
                             <!-- Step 4: Subjects Table (Hidden until class is selected) -->
                             <div id="subjectsSection" style="display: none;">
+                                <div id="ajaxAlert" class="alert alert-info d-none" role="alert"></div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-striped">
                                         <thead class="table-light">
                                             <tr>
-                                                <th style="width: 40%;">Subject Name</th>
+                                                <th style="width: 5%;">#</th>
+                                                <th style="width: 35%;">Subject Name</th>
                                                 <th style="width: 30%;">Total Marks <span class="text-danger">*</span></th>
                                                 <th style="width: 30%;">Obtained Marks <span class="text-danger">*</span></th>
                                             </tr>
@@ -118,7 +120,7 @@
                                     <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
                                         <i class="bi bi-check-lg me-1"></i>Save All Results
                                     </button>
-                                    <button type="reset" class="btn btn-outline-secondary"><i class="bi bi-x-lg me-1"></i>Clear Form</button>
+                                    <button type="reset" class="btn btn-outline-secondary" id="resetBtn"><i class="bi bi-x-lg me-1"></i>Clear Form</button>
                                 </div>
                             </div>
                         </form>
@@ -140,6 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const subjectsTableBody = document.getElementById('subjectsTableBody');
     const submitBtn = document.getElementById('submitBtn');
     const examResultForm = document.getElementById('examResultForm');
+    const ajaxAlert = document.getElementById('ajaxAlert');
 
     // Event: When class is selected
     classSelect.addEventListener('change', function() {
@@ -160,11 +163,28 @@ document.addEventListener('DOMContentLoaded', function() {
      * Fetch students and subjects for selected class
      */
     function fetchClassData(classId) {
-        const url = `/exam_result/ajax/class-data/${classId}`;
+        const url = `{{ url('exam_result/ajax/class-data') }}/${classId}`;
         
-        fetch(url)
+        // Show loading state
+        submitBtn.disabled = true;
+        subjectsTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-3"><span class="spinner-border spinner-border-sm me-2"></span>Loading subjects...</td></tr>';
+        subjectsSection.style.display = 'block';
+        ajaxAlert.classList.add('d-none');
+
+        fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                }
+            })
             .then(response => {
-                if (!response.ok) throw new Error('Failed to fetch class data');
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 419) {
+                        throw new Error('Session expired. Please refresh the page and try again.');
+                    }
+                    throw new Error('Server error (HTTP ' + response.status + '). Please try again.');
+                }
                 return response.json();
             })
             .then(data => {
@@ -174,13 +194,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     studentSection.style.display = 'block';
                     subjectsSection.style.display = 'block';
                 } else {
-                    alert('Error: ' + data.message);
+                    showAlert('danger', data.message || 'Failed to load class data.');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('Error loading class data. Please try again.');
+                console.error('AJAX Error:', error);
+                showAlert('danger', error.message || 'Error loading class data. Please try again.');
+                subjectsTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-3"><i class="bi bi-exclamation-triangle me-2"></i>' + (error.message || 'Error loading data') + '</td></tr>';
             });
+    }
+
+    function showAlert(type, message) {
+        ajaxAlert.className = 'alert alert-' + type;
+        ajaxAlert.innerHTML = message;
+        ajaxAlert.classList.remove('d-none');
     }
 
     /**
@@ -189,12 +216,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function populateStudents(students) {
         studentSelect.innerHTML = '<option value="" disabled selected>Choose a student</option>';
         
-        if (students.length === 0) {
-            studentSelect.innerHTML += '<option disabled>No students in this class</option>';
+        if (!students || students.length === 0) {
+            studentSelect.innerHTML += '<option disabled>No active students in this class</option>';
+            showAlert('warning', 'No active students found in this class. Please check student status.');
             return;
         }
 
-        students.forEach(student => {
+        students.forEach(function(student) {
             const option = document.createElement('option');
             option.value = student.id;
             option.textContent = student.student_name;
@@ -203,48 +231,52 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Populate subjects table
+     * Populate subjects table with input fields for marks
      */
     function populateSubjects(subjects) {
         subjectsTableBody.innerHTML = '';
 
-        if (subjects.length === 0) {
-            subjectsTableBody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No subjects assigned to this class</td></tr>';
+        if (!subjects || subjects.length === 0) {
+            subjectsTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">No subjects assigned to this class</td></tr>';
             submitBtn.disabled = true;
+            showAlert('warning', 'No subjects are assigned to this class. Please assign subjects first.');
             return;
         }
 
-        subjects.forEach(subject => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>
-                    <strong>${subject.name}</strong>
-                    <input type="hidden" name="marks[${subject.id}][subject_id]" value="${subject.id}">
-                </td>
-                <td>
-                    <input 
-                        type="number" 
-                        name="marks[${subject.id}][total_marks]" 
-                        class="form-control total-marks-input" 
-                        placeholder="0"
-                        min="0"
-                        step="0.5"
-                        required
-                    >
-                </td>
-                <td>
-                    <input 
-                        type="number" 
-                        name="marks[${subject.id}][obtained_marks]" 
-                        class="form-control obtained-marks-input" 
-                        placeholder="0"
-                        min="0"
-                        step="0.5"
-                        required
-                    >
-                </td>
-            `;
+        var srNo = 1;
+        subjects.forEach(function(subject) {
+            var row = document.createElement('tr');
+            row.innerHTML = 
+                '<td class="text-center">' + srNo + '</td>' +
+                '<td>' +
+                    '<strong>' + subject.name + '</strong>' +
+                    '<input type="hidden" name="marks[' + subject.id + '][subject_id]" value="' + subject.id + '">' +
+                '</td>' +
+                '<td>' +
+                    '<input type="number" name="marks[' + subject.id + '][total_marks]" ' +
+                        'class="form-control total-marks-input" placeholder="e.g. 100" min="0" max="1000" step="0.5" required>' +
+                '</td>' +
+                '<td>' +
+                    '<input type="number" name="marks[' + subject.id + '][obtained_marks]" ' +
+                        'class="form-control obtained-marks-input" placeholder="e.g. 85" min="0" max="1000" step="0.5" required>' +
+                '</td>';
             subjectsTableBody.appendChild(row);
+            srNo++;
+        });
+
+        // Add real-time validation on obtained marks
+        subjectsTableBody.querySelectorAll('.obtained-marks-input').forEach(function(input) {
+            input.addEventListener('input', function() {
+                var row = this.closest('tr');
+                var totalInput = row.querySelector('.total-marks-input');
+                var total = parseFloat(totalInput.value) || 0;
+                var obtained = parseFloat(this.value) || 0;
+                if (total > 0 && obtained > total) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
         });
 
         // Enable submit button
@@ -260,47 +292,68 @@ document.addEventListener('DOMContentLoaded', function() {
         // Validate that exam is selected
         if (!examSelect.value) {
             alert('Please select an exam');
+            examSelect.focus();
             return;
         }
 
         // Validate that class is selected
         if (!classSelect.value) {
             alert('Please select a class');
+            classSelect.focus();
             return;
         }
 
         // Validate that student is selected
         if (!studentSelect.value) {
             alert('Please select a student');
+            studentSelect.focus();
             return;
         }
 
         // Validate that all subject marks are filled
-        const inputs = subjectsTableBody.querySelectorAll('input[type="number"]');
-        for (let input of inputs) {
-            if (!input.value || input.value < 0) {
+        var inputs = subjectsTableBody.querySelectorAll('input[type="number"]');
+        for (var i = 0; i < inputs.length; i++) {
+            if (!inputs[i].value || parseFloat(inputs[i].value) < 0) {
                 alert('Please fill in all marks fields with valid values');
+                inputs[i].focus();
                 return;
             }
         }
 
         // Validate obtained marks <= total marks
-        const rows = subjectsTableBody.querySelectorAll('tr');
-        for (let row of rows) {
-            const totalMarksInput = row.querySelector('.total-marks-input');
-            const obtainedMarksInput = row.querySelector('.obtained-marks-input');
+        var rows = subjectsTableBody.querySelectorAll('tr');
+        for (var j = 0; j < rows.length; j++) {
+            var totalMarksInput = rows[j].querySelector('.total-marks-input');
+            var obtainedMarksInput = rows[j].querySelector('.obtained-marks-input');
             
-            const totalMarks = parseFloat(totalMarksInput.value) || 0;
-            const obtainedMarks = parseFloat(obtainedMarksInput.value) || 0;
+            if (!totalMarksInput || !obtainedMarksInput) continue;
+            
+            var totalMarks = parseFloat(totalMarksInput.value) || 0;
+            var obtainedMarks = parseFloat(obtainedMarksInput.value) || 0;
 
             if (obtainedMarks > totalMarks) {
-                alert('Obtained marks cannot be greater than total marks');
+                alert('Obtained marks cannot be greater than total marks for: ' + rows[j].querySelector('strong').textContent);
+                obtainedMarksInput.focus();
                 return;
             }
         }
 
+        // Disable submit button to prevent double-click
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
+
         // Form is valid, submit
         this.submit();
+    });
+
+    // Handle form reset
+    document.getElementById('resetBtn').addEventListener('click', function() {
+        studentSection.style.display = 'none';
+        subjectsSection.style.display = 'none';
+        subjectsTableBody.innerHTML = '';
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="bi bi-check-lg me-1"></i>Save All Results';
+        ajaxAlert.classList.add('d-none');
     });
 });
 </script>

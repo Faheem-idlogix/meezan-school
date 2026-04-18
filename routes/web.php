@@ -133,11 +133,12 @@ Route::middleware(['auth'])->group(function () {
     // ===================== EXAMS =====================
     Route::middleware('permission:exams.view')->group(function () {
         Route::resource('exam', ExamController::class);
-        Route::resource('exam_result', ExamResultController::class);
+        // Custom exam_result routes MUST come before the resource route
         Route::get('exam_result/student/{studentId}/exam/{examId}', [ExamResultController::class, 'studentDetail'])
             ->name('exam_result.student_detail');
         Route::get('exam_result/ajax/class-data/{classId}', [ExamResultController::class, 'getClassData'])
             ->name('exam_result.class_data');
+        Route::resource('exam_result', ExamResultController::class);
     });
 
     // ===================== REPORTS =====================

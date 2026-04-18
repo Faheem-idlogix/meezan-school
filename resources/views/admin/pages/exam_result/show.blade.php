@@ -83,9 +83,14 @@
 
 <div class="page">
     <div class="header">
-        <img src="{{ school_logo() }}" alt="School Logo" style="width:60px; height:60px; display:block; margin: 0 auto 10px auto;">
+        @php
+            $logoUrl = school_logo();
+            $schoolName = setting('school_name', 'School');
+            $schoolAddress = setting('school_address', '');
+        @endphp
+        <img src="{{ $logoUrl }}" alt="{{ $schoolName }}" style="width:60px; height:60px; display:block; margin: 0 auto 10px auto;" onerror="this.style.display='none'">
     </div>
-    <div class="school-name">{{ setting('school_name', 'School') }} {{ setting('school_address', '') }}</div>
+    <div class="school-name">{{ $schoolName }} {{ $schoolAddress }}</div>
     {{-- <div class="header">
         <img src="{{ school_logo() }}" alt="School Logo">
         <div class="school-name">
@@ -181,15 +186,15 @@
             </td>
             <td>
                 <span class="footer-label">Total Working Days</span>
-                <span class="footer-line"></span>
+                <span class="footer-line">{{ $totalDays ?? '' }}</span>
             </td>
             <td>
                 <span class="footer-label">Present Days</span>
-                <span class="footer-line"></span>
+                <span class="footer-line">{{ $presentDays ?? '' }}</span>
             </td>
             <td>
                 <span class="footer-label">Absent Days</span>
-                <span class="footer-line"></span>
+                <span class="footer-line">{{ $absentDays ?? '' }}</span>
             </td>
             
         </tr>

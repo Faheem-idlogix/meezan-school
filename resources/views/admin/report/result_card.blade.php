@@ -157,14 +157,14 @@
 
 <div class="page">
     <div class="header">
-        <img src="{{ school_logo(true) }}" alt="School Logo" style="width:60px; height:60px; display:block; margin: 0 auto 10px auto;">
+        <img src="{{ school_logo() }}" alt="School Logo" style="width:60px; height:60px; display:block; margin: 0 auto 10px auto;" onerror="this.style.display='none'">
     </div>
     <div class="school-name">
         {{ setting('school_name', 'School') }} {{ setting('school_address', '') }}
     </div>
 
     <div class="report-title">
-        Annual Exam Report Card 2024-2025
+        Annual Exam Report Card {{ date('Y') - 1 }}-{{ date('Y') }}
     </div>
 
     <!-- STUDENT INFO -->
