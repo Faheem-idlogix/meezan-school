@@ -81,6 +81,7 @@
                     </td>
                     <td>
                       <div class="d-flex gap-1">
+                        @if($item->student && $item->exam)
                         <a href="{{ route('exam_result.student_detail', ['studentId' => $item->student_id, 'examId' => $item->exam_id]) }}"
                            class="btn btn-sm btn-outline-info" title="View Details">
                           <i class="bi bi-eye-fill me-1"></i>Detail
@@ -89,6 +90,9 @@
                            class="btn btn-sm btn-outline-secondary" title="Print Result Card" target="_blank">
                           <i class="bi bi-printer me-1"></i>Print
                         </a>
+                        @else
+                        <span class="badge bg-danger">Missing student/exam</span>
+                        @endif
                       </div>
                     </td>
                     </tr>

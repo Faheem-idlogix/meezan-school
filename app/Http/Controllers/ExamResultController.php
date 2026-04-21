@@ -10,6 +10,7 @@ use App\Models\ClassRoom;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class ExamResultController extends Controller
 {
@@ -20,6 +21,10 @@ class ExamResultController extends Controller
     {
         // Group results by student — show unique student+exam+class combos
         $exam_results = ExamResult::with(['exam', 'student', 'classRoom'])
+            ->whereHas('student', function ($q) {
+                $q->whereNull('deleted_at')
+                    ->whereIn('student_status', ['active', '1']);
+            })
             ->select('student_id', 'exam_id', 'class_id')
             ->selectRaw('COUNT(*) as subject_count')
             ->selectRaw('SUM(total_marks) as total_marks_sum')
@@ -98,7 +103,13 @@ class ExamResultController extends Controller
         $request->validate([
             'exam_id'     => 'required|exists:exams,id',
             'class_id'    => 'required|exists:class_rooms,id',
-            'student_id'  => 'required|exists:students,id',
+            'student_id'  => [
+                'required',
+                Rule::exists('students', 'id')->where(function ($q) {
+                    $q->whereNull('deleted_at')
+                        ->whereIn('student_status', ['active', '1']);
+                }),
+            ],
             'marks'       => 'required|array',
             'marks.*.subject_id' => 'required|integer|exists:subjects,id',
             'marks.*.total_marks' => 'required|numeric|min:0',
@@ -202,18 +213,37 @@ class ExamResultController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ExamResult $examResult)
+    public function show($id)
     {
+        $examResult = ExamResult::find($id);
+
+        if (!$examResult) {
+            return redirect()->route('exam_result.index')
+                ->with('error', 'Selected exam result was not found.');
+        }
+
         // Gather the student + exam context for a full report card
-        $student   = $examResult->student()->with('classroom')->first();
-        $exam      = $examResult->exam;
-        $classRoom = $examResult->classRoom;
+        $student = Student::withTrashed()
+            ->with('classroom')
+            ->find($examResult->student_id);
+        $exam = Exam::withTrashed()->find($examResult->exam_id);
+        $classRoom = ClassRoom::withTrashed()->find($examResult->class_id);
+
+        if (!$student || !$exam || !$classRoom) {
+            return redirect()->route('exam_result.index')
+                ->with('error', 'Result record is incomplete (student, class, or exam missing).');
+        }
 
         // Pull all results for this student in this exam
         $results = ExamResult::with('subject')
             ->where('student_id', $examResult->student_id)
             ->where('exam_id', $examResult->exam_id)
             ->get();
+
+        if ($results->isEmpty()) {
+            return redirect()->route('exam_result.index')
+                ->with('error', 'No subject-wise marks found for this student and exam.');
+        }
 
         // Add computed fields: percentage, grade, remark
         $results = $results->map(function ($res) {
@@ -286,7 +316,13 @@ class ExamResultController extends Controller
         $request->validate([
             'exam_id'        => 'required|exists:exams,id',
             'class_id'       => 'required|exists:class_rooms,id',
-            'student_id'     => 'required|exists:students,id',
+            'student_id'     => [
+                'required',
+                Rule::exists('students', 'id')->where(function ($q) {
+                    $q->whereNull('deleted_at')
+                        ->whereIn('student_status', ['active', '1']);
+                }),
+            ],
             'subject_id'     => 'required|exists:subjects,id',
             'total_marks'    => 'required|numeric|min:0',
             'obtained_marks' => 'required|numeric|min:0',

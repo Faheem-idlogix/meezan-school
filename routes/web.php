@@ -331,7 +331,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ===================== REPORT CARDS =====================
-    Route::middleware('permission:report_cards.view')->group(function () {
+    Route::middleware('permission:report_cards.view,reports.view')->group(function () {
         Route::get('report-cards/config', [ReportCardController::class, 'config'])->name('report-cards.config');
         Route::post('report-cards/config', [ReportCardController::class, 'storeConfig'])->name('report-cards.store-config');
         Route::get('report-cards/generate', [ReportCardController::class, 'generate'])->name('report-cards.generate');

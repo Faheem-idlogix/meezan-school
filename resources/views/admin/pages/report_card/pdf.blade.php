@@ -4,35 +4,149 @@
 <meta charset="UTF-8">
 <title>{{ $student->student_name }} - {{ $exam->name }}</title>
 <style>
-    @page { size: A4; margin: 15mm; }
-    body { margin: 0; font-family: "DejaVu Sans", sans-serif; background: #fff; color: #000; font-size: 12px; }
+    @page { size: A4; margin: 10mm; }
+    body {
+        margin: 0;
+        font-family: "Times New Roman", serif;
+        color: #000;
+        background: #fff;
+        font-size: 13px;
+        line-height: 1.2;
+    }
     .page { width: 100%; }
+    table, tr, td, th, div { page-break-inside: avoid; }
     .header { text-align: center; margin-bottom: 5px; }
-    .school-name { text-align: center; font-weight: bold; font-size: 20px; }
-    .school-address { text-align: center; font-size: 11px; color: #555; margin-bottom: 4px; }
-    .report-title { text-align: center; font-weight: bold; font-size: 18px; text-decoration: underline; margin: 6px 0 20px; }
-    .info-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 12px; }
-    .info-table td { padding: 6px 4px; vertical-align: bottom; }
-    .line { display: inline-block; border-bottom: 1px solid #000; min-width: 160px; }
-    .line-small { min-width: 120px; border-bottom: 1px solid #000; display: inline-block; }
-    .marks-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
-    .marks-table th, .marks-table td { border: 1px solid #000; padding: 6px; text-align: center; }
-    .marks-table th { font-weight: bold; }
-    .subject { text-align: left !important; padding-left: 10px !important; }
-    .grading-title { margin-top: 12px; font-weight: bold; font-size: 14px; }
-    .grading-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 4px; }
-    .grading-table th, .grading-table td { border: 1px solid #000; padding: 4px; text-align: center; }
-    .summary-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
-    .summary-table td { border: 1px solid #000; padding: 6px; text-align: center; font-size: 13px; }
-    .footer-table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 20px; }
-    .footer-table td { width: 25%; padding: 12px 10px; vertical-align: top; }
-    .footer-label { display: block; font-size: 12px; margin-bottom: 6px; }
-    .footer-line { display: block; width: 100%; height: 18px; border-bottom: 1px solid #000; line-height: 18px; font-size: 12px; }
-    .signature-table { width: 100%; margin-top: 80px; text-align: center; font-size: 13px; }
+    .school-name { text-align: center; font-weight: 700; font-size: 19px; }
+    .school-address { text-align: center; font-size: 11px; margin-top: 2px; }
+    .report-title {
+        text-align: center;
+        font-size: 17px;
+        font-weight: 700;
+        text-decoration: underline;
+        margin: 6px 0 14px;
+    }
+
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        margin-bottom: 9px;
+    }
+    .info-table td { padding: 5px 4px; vertical-align: bottom; }
+    .line {
+        display: inline-block;
+        border-bottom: 1px solid #000;
+        min-width: 150px;
+    }
+    .line-small { min-width: 105px; }
+
+    .marks-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+    .marks-table th,
+    .marks-table td {
+        border: 1px solid #000;
+        padding: 5px;
+        text-align: center;
+    }
+    .marks-table th { font-weight: 700; }
+    .subject { text-align: left !important; padding-left: 8px !important; }
+
+    .summary-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        font-size: 13px;
+    }
+    .summary-table td {
+        border: 1px solid #000;
+        text-align: center;
+        padding: 6px 4px;
+    }
+
+    .grading-title {
+        margin-top: 9px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+    .grading-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+    .grading-table th,
+    .grading-table td {
+        border: 1px solid #000;
+        padding: 4px;
+        text-align: center;
+    }
+
+    .attendance {
+        margin-top: 8px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+    .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 2px;
+        font-size: 12px;
+    }
+    .attendance-table td {
+        border: 1px solid #000;
+        text-align: center;
+        height: 26px;
+    }
+
+    .footer-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin-top: 8px;
+    }
+    .footer-table td { padding: 5px 4px; vertical-align: bottom; }
+
+    .signature-table {
+        width: 100%;
+        margin-top: 22px;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .short-card .signature-table { margin-top: 34px; }
+
+    .compact-card .report-title { font-size: 16px; margin: 5px 0 12px; }
+    .compact-card .info-table { font-size: 13px; margin-bottom: 8px; }
+    .compact-card .info-table td { padding: 4px 3px; }
+    .compact-card .marks-table { font-size: 12px; }
+    .compact-card .marks-table th,
+    .compact-card .marks-table td { padding: 4px; }
+    .compact-card .summary-table { font-size: 12px; margin-top: 7px; }
+    .compact-card .summary-table td { padding: 5px 4px; }
+    .compact-card .grading-table { font-size: 11px; }
+    .compact-card .grading-table th,
+    .compact-card .grading-table td { padding: 3px; }
+    .compact-card .attendance-table { font-size: 11px; }
+    .compact-card .attendance-table td { height: 24px; }
+    .compact-card .footer-table { font-size: 12px; margin-top: 7px; }
+    .compact-card .footer-table td { padding: 4px 3px; }
+    .compact-card .signature-table { font-size: 12px; margin-top: 14px; }
+
+    .compact-card .line { min-width: 140px; }
+    .compact-card .line-small { min-width: 95px; }
 </style>
 </head>
 <body>
-<div class="page">
+@php
+    $subjectCount = $results->count();
+    $isShortCard = $subjectCount <= 8;
+    $isCompactCard = $subjectCount >= 12;
+@endphp
+<div class="page{{ $isShortCard ? ' short-card' : '' }}{{ $isCompactCard ? ' compact-card' : '' }}">
 
     {{-- Header with Logo + School Name --}}
     <div class="header">
@@ -46,7 +160,7 @@
     <div class="school-name">{{ setting('school_name', 'School') }}</div>
     <div class="school-address">{{ setting('school_address', '') }}</div>
 
-    <div class="report-title">{{ $exam->name }}</div>
+    <div class="report-title">{{ $exam->name }} Report Card</div>
 
     {{-- Student Info --}}
     <table class="info-table">
@@ -55,7 +169,7 @@
             <td>Father's Name: <span class="line">{{ $student->father_name }}</span></td>
         </tr>
         <tr>
-            <td>Class: <span class="line-small">{{ $classRoom->class_name ?? '—' }}</span></td>
+            <td>Class: <span class="line-small">{{ $classRoom->class_name ?? '-' }}</span></td>
             <td>Section: <span class="line-small">{{ $classRoom->section_name ?? '-' }}</span></td>
             <td>Roll No: <span class="line-small">{{ $rollNo }}</span></td>
         </tr>
@@ -74,7 +188,7 @@
         @foreach ($results as $index => $result)
         <tr>
             <td>{{ $index + 1 }}</td>
-            <td class="subject">{{ $result->subject->subject_name ?? '—' }}</td>
+            <td class="subject">{{ $result->subject->subject_name ?? '-' }}</td>
             <td>{{ $result->total_marks }}</td>
             <td>{{ $result->obtained_marks }}</td>
             <td>{{ number_format($result->percentage, 2) }}%</td>
@@ -122,19 +236,29 @@
         </tr>
     </table>
 
+    {{-- Attendance --}}
+    <div class="attendance">Attendance Record</div>
+    <table class="attendance-table">
+        <tr>
+            <td>Total Working Days</td>
+            <td>Present Days</td>
+            <td>Absent Days</td>
+            <td>Attendance %</td>
+        </tr>
+    </table>
+
     {{-- Footer --}}
     <table class="footer-table">
         <tr>
-            <td><span class="footer-label">Class Position</span><span class="footer-line"></span></td>
-            <td><span class="footer-label">Total Working Days</span><span class="footer-line"></span></td>
-            <td><span class="footer-label">Present Days</span><span class="footer-line"></span></td>
-            <td><span class="footer-label">Absent Days</span><span class="footer-line"></span></td>
+            <td>Neatness &amp; Behavior: <span class="line"></span></td>
+            <td>Grade: <span class="line-small">{{ $overallGrade }}</span></td>
         </tr>
         <tr>
-            <td><span class="footer-label">Neatness &amp; Behavior</span><span class="footer-line"></span></td>
-            <td><span class="footer-label">Grade</span><span class="footer-line">{{ $overallGrade }}</span></td>
-            <td><span class="footer-label">Remarks</span><span class="footer-line">{{ $overallRemark }}</span></td>
-            <td><span class="footer-label">Issue Date</span><span class="footer-line">{{ now()->format('d M Y') }}</span></td>
+            <td>Remarks: <span class="line">{{ $overallRemark }}</span></td>
+            <td>Class Position: <span class="line-small"></span></td>
+        </tr>
+        <tr>
+            <td>Issue Date: <span class="line-small">{{ now()->format('d M Y') }}</span></td>
         </tr>
     </table>
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>{{ $student->student_name }} - {{ $exam->name }}</title>
+<title>{{ $student->student_name ?? 'Student' }} - {{ $exam->name ?? 'Exam' }}</title>
 
 <style>
     @page { size: A4; margin: 15mm; }
@@ -99,7 +99,7 @@
     </div> --}}
 
 
-    <div class="report-title">{{ $exam->name }}</div>
+    <div class="report-title">{{ $exam->name ?? 'Exam Report' }}</div>
 
     <!-- STUDENT INFO -->
     <table class="info-table">

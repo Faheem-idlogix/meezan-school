@@ -10,6 +10,7 @@ use App\Models\ReportCardConfig;
 use App\Models\Student;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ReportCardController extends Controller
 {
@@ -64,7 +65,11 @@ class ReportCardController extends Controller
     {
         $exams = Exam::orderByDesc('date')->get();
         $classes = ClassRoom::all();
-        $students = Student::with('classroom')->whereNull('deleted_at')->orderBy('student_name')->get();
+        $students = Student::with('classroom')
+            ->whereNull('deleted_at')
+            ->whereIn('student_status', ['active', '1'])
+            ->orderBy('student_name')
+            ->get();
         return view('admin.pages.report_card.generate', compact('exams', 'classes', 'students'));
     }
 
@@ -74,12 +79,35 @@ class ReportCardController extends Controller
     public function pdf(Request $request)
     {
         $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'exam_id'    => 'required|exists:exams,id',
+            'student_id' => [
+                'required',
+                Rule::exists('students', 'id')->where(function ($q) {
+                    $q->whereNull('deleted_at')
+                        ->whereIn('student_status', ['active', '1']);
+                }),
+            ],
+            'exam_id' => [
+                'required',
+                Rule::exists('exams', 'id')->whereNull('deleted_at'),
+            ],
         ]);
 
-        $student   = Student::with('classroom')->findOrFail($request->student_id);
-        $exam      = Exam::findOrFail($request->exam_id);
+        $student = Student::with('classroom')
+            ->whereKey($request->student_id)
+            ->whereNull('deleted_at')
+            ->whereIn('student_status', ['active', '1'])
+            ->first();
+
+        $exam = Exam::query()
+            ->whereKey($request->exam_id)
+            ->whereNull('deleted_at')
+            ->first();
+
+        if (!$student || !$exam) {
+            return redirect()->route('report-cards.generate')
+                ->with('error', 'Selected student or exam is not available.');
+        }
+
         $classRoom = $student->classroom;
 
         // Pull all results for this student in this exam
@@ -87,6 +115,11 @@ class ReportCardController extends Controller
             ->where('student_id', $student->id)
             ->where('exam_id', $exam->id)
             ->get();
+
+        if ($results->isEmpty()) {
+            return redirect()->route('report-cards.generate')
+                ->with('error', 'No results found for the selected student and exam.');
+        }
 
         // Add computed fields: percentage, grade, remark
         $results = $results->map(function ($res) {

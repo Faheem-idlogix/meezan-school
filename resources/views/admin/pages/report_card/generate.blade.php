@@ -57,6 +57,15 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label">Select Class <span class="text-danger">*</span></label>
+                                <select name="class_room_id" class="form-select" required>
+                                    <option value="">-- Select Class --</option>
+                                    @foreach($classes as $class)
+                                    <option value="{{ $class->id }}">{{ $class->class_name }}{{ $class->section_name ? ' - ' . $class->section_name : '' }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="alert alert-info">
                                 <i class="bi bi-info-circle me-1"></i>This will calculate grades, percentages, and class/subject positions for all results in the selected exam.
                             </div>
@@ -74,6 +83,15 @@
                                     <option value="">-- Select Exam --</option>
                                     @foreach($exams as $exam)
                                     <option value="{{ $exam->id }}">{{ $exam->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Select Class <span class="text-danger">*</span></label>
+                                <select name="class_room_id" class="form-select" required>
+                                    <option value="">-- Select Class --</option>
+                                    @foreach($classes as $class)
+                                    <option value="{{ $class->id }}">{{ $class->class_name }}{{ $class->section_name ? ' - ' . $class->section_name : '' }}</option>
                                     @endforeach
                                 </select>
                             </div>
