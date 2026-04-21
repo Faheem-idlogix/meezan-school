@@ -301,6 +301,17 @@
   const datatables = select('.datatable', true)
   datatables.forEach(datatable => {
     new simpleDatatables.DataTable(datatable);
+
+    // Show a lightweight total-records badge on cards containing datatables.
+    const rowCount = datatable.querySelectorAll('tbody tr').length;
+    const card = datatable.closest('.card');
+    const title = card ? card.querySelector('.card-title') : null;
+    if (title && !title.querySelector('.js-record-count-badge')) {
+      const badge = document.createElement('span');
+      badge.className = 'badge bg-light text-dark border ms-2 js-record-count-badge';
+      badge.textContent = rowCount + ' records';
+      title.appendChild(badge);
+    }
   })
 
   /**

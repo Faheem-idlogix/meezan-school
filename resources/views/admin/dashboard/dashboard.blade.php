@@ -486,7 +486,7 @@
       {{-- ══════════ ROW 7 — FEE REPORT TABLE ══════════ --}}
       <div class="row g-3">
         <div class="col-lg-12">
-          <div class="card">
+          <div class="card" id="fee-report-card">
             <div class="card-header d-flex align-items-center justify-content-between">
               <h5 class="card-title mb-0"><i class="bi bi-table me-2 text-primary"></i>School Fee Report
                 <span class="text-muted fw-normal small ms-1">| {{ $periodLabel }}</span>
@@ -566,7 +566,7 @@
               </div>
               @if($students->hasPages())
               <div class="p-3 border-top">
-                {{ $students->appends(request()->except('fee_page'))->links() }}
+                {{ $students->appends(request()->except('fee_page'))->onEachSide(1)->links('pagination::bootstrap-5') }}
               </div>
               @endif
             </div>
@@ -581,6 +581,46 @@
 @section('script')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script>
+  function feeToast(type, message) {
+    if (typeof toastr === 'undefined') return;
+    toastr.options = {
+      closeButton: true,
+      progressBar: true,
+      positionClass: 'toast-top-right',
+      timeOut: 2500
+    };
+    toastr[type](message);
+  }
+
+  // ── Dashboard Fee Report Pagination (AJAX, no full refresh) ──
+  $(document).on('click', '#fee-report-card .pagination a', function(e) {
+      e.preventDefault();
+      var url = $(this).attr('href');
+      if (!url) return;
+
+      var $card = $('#fee-report-card');
+      var $body = $card.find('.card-body');
+      $body.css('opacity', '0.55');
+
+      $.get(url)
+        .done(function(html) {
+          var $doc = $('<div>').html(html);
+          var $newCard = $doc.find('#fee-report-card');
+          if ($newCard.length) {
+            $card.replaceWith($newCard);
+            window.history.replaceState({}, '', url);
+            feeToast('success', 'Fee report page updated');
+          } else {
+            feeToast('error', 'Could not load the selected page');
+            $body.css('opacity', '1');
+          }
+        })
+        .fail(function() {
+          feeToast('error', 'Pagination failed. Please try again');
+          $body.css('opacity', '1');
+        });
+  });
+
   // ── Monthly Chart (compact, fixed 220px via CSS wrapper) ──
   (function(){
     const data = @json($monthlyChart);
@@ -626,6 +666,10 @@
           success: function(response) {
             $('#row-' + studentId + ' .recieved_fee').text(response.student.received_payment_fee);
             $('#row-' + studentId + ' .fee-status').html(response.updatedStatusHTML);
+            feeToast('success', 'Fee reset successfully');
+          },
+          error: function() {
+            feeToast('error', 'Failed to reset fee');
           }
       });
   });
@@ -641,6 +685,10 @@
           success: function(response) {
             $('#row-' + studentId + ' .recieved_fee').text(response.student.received_payment_fee);
             $('#row-' + studentId + ' .fee-status').html(response.updatedStatusHTML);
+            feeToast('success', 'Partial payment updated');
+          },
+          error: function() {
+            feeToast('error', 'Failed to add partial payment');
           }
       });
   });
@@ -655,6 +703,10 @@
           success: function(response) {
             $('#row-' + studentId + ' .recieved_fee').text(response.student.received_payment_fee);
             $('#row-' + studentId + ' .fee-status').html(response.updatedStatusHTML);
+            feeToast('success', 'Marked as fully paid');
+          },
+          error: function() {
+            feeToast('error', 'Failed to mark fee as paid');
           }
       });
   });
