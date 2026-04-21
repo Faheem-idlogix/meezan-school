@@ -1,4 +1,40 @@
 @extends('admin.layout.master')
+@section('css')
+<style>
+  .cs-card {
+    border: 1px solid #e8edf7;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    box-shadow: 0 8px 20px rgba(33, 52, 98, 0.08);
+  }
+  .cs-card-header {
+    border-bottom: 1px solid #edf1fb;
+    padding-bottom: .6rem;
+    margin-bottom: .85rem;
+  }
+  .cs-chip {
+    border-radius: 999px;
+    border: 1px solid #dbe5ff;
+    background: #fff;
+    padding: .34rem .6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .82rem;
+    font-weight: 600;
+    color: #213462;
+  }
+  .cs-chip .btn {
+    padding: 0;
+    line-height: 1;
+  }
+  .cs-badge {
+    background: #eaf1ff;
+    color: #213462;
+    border: 1px solid #dbe5ff;
+  }
+</style>
+@endsection
 @section('content')
 <main id="main" class="main">
 
@@ -28,40 +64,50 @@
 
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Class Subjects</h5>
+              <h5 class="card-title">Class Subjects By Class</h5>
 
-              <!-- Table with stripped rows -->
-              <table class="table datatable">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Class Name</th>
-                    <th scope="col">Subject Name</th>
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                @php
-                $sr_no = 1;
-                @endphp
-                <tbody>
-                  @foreach ($classSubjects as $item)
-                  <tr>
-                    <th>{{ $sr_no++ }}</th>
-                    <td>{{ $item->classRoom->class_name }}</td>
-                    <td>{{ $item->subject->subject_name }}</td>
-                    <td>
-                      <div class="d-flex gap-1">
-                        <form action="{{ route('class_subject.destroy', $item) }}" method="POST" onsubmit="return confirm('Delete this class subject?')">
-                          @method('DELETE') @csrf
-                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash-fill"></i></button>
-                        </form>
+              @if($groupedClassSubjects->isEmpty())
+                <div class="alert alert-warning mb-0">
+                  No class-subject assignments found yet. Click <strong>Add Class Subject</strong> to assign subjects.
+                </div>
+              @else
+                <div class="row g-3">
+                  @foreach($groupedClassSubjects as $classId => $items)
+                    @php
+                      $classRoom = optional($items->first())->classRoom;
+                    @endphp
+                    <div class="col-lg-6 col-xl-4">
+                      <div class="cs-card p-3 h-100">
+                        <div class="cs-card-header d-flex align-items-center justify-content-between">
+                          <div>
+                            <h6 class="mb-0 text-primary fw-bold">{{ $classRoom->class_name ?? 'Unknown Class' }}</h6>
+                            <small class="text-muted">{{ $classRoom && $classRoom->section_name ? 'Section: ' . $classRoom->section_name : 'No section' }}</small>
+                          </div>
+                          <span class="badge cs-badge">{{ $items->count() }} subjects</span>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                          @foreach($items as $item)
+                            <span class="cs-chip">
+                              {{ $item->subject->subject_name ?? 'Unknown Subject' }}
+                              <a href="{{ route('class_subject.edit', $item) }}" class="btn btn-sm text-primary" title="Edit mapping">
+                                <i class="bi bi-pencil-square"></i>
+                              </a>
+                              <form action="{{ route('class_subject.destroy', $item) }}" method="POST" class="ms-2" onsubmit="return confirm('Remove this subject from class?')">
+                                @method('DELETE')
+                                @csrf
+                                <button type="submit" class="btn btn-sm p-0 border-0 bg-transparent text-danger" title="Remove" style="line-height:1;">
+                                  <i class="bi bi-x-circle-fill"></i>
+                                </button>
+                              </form>
+                            </span>
+                          @endforeach
+                        </div>
                       </div>
-                    </td>
-                  </tr>
+                    </div>
                   @endforeach
-                </tbody>
-              </table>
-              <!-- End Table with stripped rows -->
+                </div>
+              @endif
 
             </div>
           </div>

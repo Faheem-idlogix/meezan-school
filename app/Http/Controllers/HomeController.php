@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActivityLog;
 use App\Models\AdmissionEnquiry;
 use App\Models\Attendance;
 use App\Models\ClassRoom;
@@ -120,10 +119,12 @@ class HomeController extends Controller
         $feeReceived    = (clone $feeQuery)->sum('received_payment_fee');
         $feeOutstanding = $totalFee - $feeReceived;
         $students       = StudentFee::with(['student.classroom'])
-                            ->whereIn('fee_month', $feeMonths)
-                            ->whereHas('class_fee_voucher')
-                            ->whereHas('student')
-                            ->get();
+                    ->whereIn('fee_month', $feeMonths)
+                    ->whereHas('class_fee_voucher')
+                    ->whereHas('student')
+                    ->orderByDesc('created_at')
+                    ->paginate(15, ['*'], 'fee_page')
+                    ->withQueryString();
 
         // ── Voucher-based finance stats (filtered by period via voucher_date OR created_at) ──
         $financeAll = Voucher::where(function ($q) use ($dateFrom, $dateTo) {
@@ -204,12 +205,6 @@ class HomeController extends Controller
                             ->orderByDesc('created_at')
                             ->take(5)
                             ->get();
-
-        // ── Recent Activity Logs ──
-        $recentLogs = ActivityLog::with([])
-            ->latest()
-            ->take(15)
-            ->get();
 
         // ── Attendance Stats (within period, not just today) ──
         $attendanceRaw = Attendance::where(function ($q) use ($dateFrom, $dateTo) {
@@ -319,7 +314,7 @@ class HomeController extends Controller
             'totalIncome', 'totalExpense', 'totalVouchers', 'profitLoss',
             'monthIncome', 'monthExpense', 'monthVouchers',
             'monthlyChart', 'recentExpenses',
-            'totalExams', 'recentNotices', 'recentLogs',
+            'totalExams', 'recentNotices',
             'attendanceToday', 'attendanceUnmarked', 'classAttendance',
             'periodKey', 'periodLabel', 'dateFrom', 'dateTo',
             'admissionStats', 'behaviorStats', 'feeDefaulters', 'overdueInstallments',

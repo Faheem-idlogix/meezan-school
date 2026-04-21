@@ -31,19 +31,21 @@
                 <div class="row mb-3">
                 <div class="col-lg-6">
                   <label for="inputText" class="col-form-label">Select Class Name</label>
-                  <select name="class_id" class="form-select">
-                    <option selected disabled>Select Class</option>
-                    @foreach ($class as $item)
-                    <option value="{{ $item->id }}">{{ $item->class_name }}</option>
+                  <select name="class_id" class="form-select" required>
+                    <option value="" disabled>Select Class</option>
+                    @foreach ($classRooms as $item)
+                    <option value="{{ $item->id }}" {{ old('class_id', $classSubject->class_id) == $item->id ? 'selected' : '' }}>
+                      {{ $item->class_name }}{{ $item->section_name ? ' - ' . $item->section_name : '' }}
+                    </option>
                     @endforeach
                   </select>
                   </div>
                   <div class="col-lg-6">
                     <label for="inputText" class="col-form-label">Select Subject Name</label>
-                    <select name="subject_id" class="form-select">
-                      <option selected disabled>Select Subject</option>
-                      @foreach ($subject as $item)
-                      <option value="{{ $item->id }}">{{ $item->subject_name }}</option>
+                    <select name="subject_id" class="form-select" required>
+                      <option value="" disabled>Select Subject</option>
+                      @foreach ($subjects as $item)
+                      <option value="{{ $item->id }}" {{ old('subject_id', $classSubject->subject_id) == $item->id ? 'selected' : '' }}>{{ $item->subject_name }}</option>
                       @endforeach
                     </select>
                     </div>
