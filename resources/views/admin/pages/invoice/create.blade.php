@@ -51,15 +51,39 @@
 
 
                 <div class="row mb-3">
+                  <div class="col-lg-12">
+                    <label for="months" class="col-form-label">Voucher Month(s) <sup>*</sup>
+                      <small class="text-muted">— hold Ctrl / Cmd to pick multiple (e.g. summer voucher for June, July, August)</small>
+                    </label>
+                    <select name="months[]" id="months" class="form-select js-months-multi @error('months') is-invalid @enderror" multiple required>
+                      @php
+                        $monthOptions = [];
+                        $startMonth = \Carbon\Carbon::now()->subMonths(6)->startOfMonth();
+                        for ($i = 0; $i < 24; $i++) {
+                            $m = $startMonth->copy()->addMonths($i);
+                            $monthOptions[$m->format('F Y')] = $m->format('F Y');
+                        }
+                        $defaultMonth = \Carbon\Carbon::now()->format('F Y');
+                      @endphp
+                      @foreach($monthOptions as $val => $label)
+                        <option value="{{ $val }}" @selected($val === $defaultMonth)>{{ $label }}</option>
+                      @endforeach
+                    </select>
+                    @error('months')
+                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                    @enderror
+                  </div>
+                </div>
 
-                <div class="col-lg-6">
-                  <label for="inputText" class="col-form-label">Voucher Issue date Date</label>
-                    <input type="date" name="issue_date" class="form-control">
+                <div class="row mb-3">
+                  <div class="col-lg-6">
+                    <label for="inputText" class="col-form-label">Voucher Issue Date</label>
+                    <input type="date" name="issue_date" class="form-control" value="{{ now()->toDateString() }}">
                   </div>
                   <div class="col-lg-6">
                     <label for="inputText" class="col-form-label">Voucher Submit Date</label>
-                      <input type="date" name="submit_date"  class="form-control">
-                    </div>
+                    <input type="date" name="submit_date"  class="form-control">
+                  </div>
                 </div>
 
                 <div class="row mb-3">
@@ -134,6 +158,10 @@
 <script>
 $(document).ready(function() {
     $('.js-example-basic-multiple').select2();
+    $('.js-months-multi').select2({
+        placeholder: 'Select one or more months',
+        width: '100%'
+    });
 });
 
 
