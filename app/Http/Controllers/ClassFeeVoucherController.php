@@ -57,37 +57,14 @@ class ClassFeeVoucherController extends Controller
         ]);
 
         // Parse + sort selected months chronologically
-        $monthsRaw = array_values(array_unique($request->input('months', [])));
+        $monthsRaw    = array_values(array_unique($request->input('months', [])));
         $monthsParsed = collect($monthsRaw)
             ->map(fn ($m) => Carbon::createFromFormat('F Y', trim($m))->startOfMonth())
             ->sort()
             ->values();
-        $sortedMonths = $monthsParsed->map(fn ($d) => $d->format('F Y'))->all();
 
-        // Build the human-readable label shown on the voucher
-        if (count($sortedMonths) === 1) {
-            $fee_month = $sortedMonths[0];
-        } else {
-            // Detect a contiguous range in the same year for a compact label e.g. "Jun - Aug 2026"
-            $isContiguous = true;
-            for ($i = 1; $i < $monthsParsed->count(); $i++) {
-                if (! $monthsParsed[$i - 1]->copy()->addMonth()->equalTo($monthsParsed[$i])) {
-                    $isContiguous = false;
-                    break;
-                }
-            }
-            if ($isContiguous && $monthsParsed->first()->year === $monthsParsed->last()->year) {
-                $fee_month = $monthsParsed->first()->format('M') . ' - ' . $monthsParsed->last()->format('M Y');
-            } else {
-                $fee_month = implode(', ', $sortedMonths);
-            }
-        }
-
-        // Carry-forward arrears are based on the month BEFORE the earliest selected month
-        $lastMonthFormatted = $monthsParsed->first()->copy()->subMonth()->format('F Y');
-
-        $issueDate  = $request->issue_date ?: Carbon::now()->toDateString();
-        $submitDate = $request->submit_date;
+        $issueDate    = $request->issue_date ?: Carbon::now()->toDateString();
+        $submitDate   = $request->submit_date;
 
         $classroom    = ClassRoom::find($request->class_room_id);
         $class_name   = $classroom->class_name ?? '';
@@ -96,61 +73,93 @@ class ClassFeeVoucherController extends Controller
         $students = Student::where('class_room_id', $request->class_room_id)
             ->whereNull('deleted_at')->get();
 
-        $monthCount = count($sortedMonths);
+        // Per-month base charges (academic per month; one-time charges only on first month)
+        $academic_fee = (int) $request->academic_fee;
 
-        // Academic (tuition) fee is per-month, so multiply by selected month count.
-        // Other charges are treated as one-time totals entered by the admin.
-        $academic_fee_total = ((int) $request->academic_fee) * $monthCount;
+        $createdMonths = [];
+        $skippedMonths = [];
 
-        $total_fee = $academic_fee_total
-            + (int) $request->stationery_charges
-            + (int) $request->test_series_charges
-            + (int) $request->exam_charges
-            + (int) $request->notebook_charges
-            + (int) $request->book_charges
-            + (int) $request->fine
-            + (int) $request->arrears;
+        foreach ($monthsParsed as $idx => $monthDate) {
+            $fee_month = $monthDate->format('F Y');
 
-        $fee_voucher_name = trim($class_name . '-' . $section_name) . ' ' . $fee_month;
+            // Skip if a class voucher already exists for this class & month
+            $existing = ClassFeeVoucher::where('class_room_id', $request->class_room_id)
+                ->where('month', $fee_month)
+                ->first();
+            if ($existing) {
+                $skippedMonths[] = $fee_month;
+                continue;
+            }
 
-        $class_fee_voucher = new ClassFeeVoucher();
-        $class_fee_voucher->name          = $fee_voucher_name;
-        $class_fee_voucher->month         = $fee_month;
-        $class_fee_voucher->class_room_id = $request->class_room_id;
-        $class_fee_voucher->save();
-        $class_fee_voucher_id = $class_fee_voucher->class_fee_voucher_id;
+            // One-time charges only applied to the first selected month
+            $isFirst                 = ($idx === 0);
+            $stationery_charges      = $isFirst ? (int) $request->stationery_charges     : 0;
+            $test_series_charges     = $isFirst ? (int) $request->test_series_charges    : 0;
+            $exam_charges            = $isFirst ? (int) $request->exam_charges           : 0;
+            $notebook_charges        = $isFirst ? (int) $request->notebook_charges       : 0;
+            $book_charges            = $isFirst ? (int) $request->book_charges           : 0;
+            $fine_charge             = $isFirst ? (int) $request->fine                   : 0;
+            $admin_arrears           = $isFirst ? (int) $request->arrears                : 0;
 
-        foreach ($students as $student) {
-            $last_month_charges = StudentFee::where('student_id', $student->id)
-                ->where('fee_month', $lastMonthFormatted)
-                ->value('fee_charges_left') ?? 0;
+            $base_total = $academic_fee
+                        + $stationery_charges
+                        + $test_series_charges
+                        + $exam_charges
+                        + $notebook_charges
+                        + $book_charges
+                        + $fine_charge
+                        + $admin_arrears;
 
-            $student_fee = new StudentFee();
-            $student_fee->student_id           = $student->id;
-            $student_fee->class_fee_voucher_id = $class_fee_voucher_id;
-            $student_fee->voucher_no           = StudentFee::generateUniqueVoucherNumber();
-            $student_fee->fee_month            = $fee_month;
-            $student_fee->issue_date           = $issueDate;
-            $student_fee->submit_date          = $submitDate;
-            $student_fee->total_fee            = $total_fee + $last_month_charges;
-            $student_fee->fee_charges_left     = $total_fee + $last_month_charges;
-            $student_fee->stationery_charges   = $request->stationery_charges;
-            $student_fee->test_series_charges  = $request->test_series_charges;
-            $student_fee->exam_charges         = $request->exam_charges;
-            $student_fee->notebook_charges     = $request->notebook_charges;
-            $student_fee->book_charges         = $request->book_charges;
-            $student_fee->fine                 = $request->fine;
-            $student_fee->arrears              = ((int) $request->arrears) + $last_month_charges;
-            $student_fee->academic_fee         = $academic_fee_total;
-            $student_fee->note                 = $request->note;
-            $student_fee->status               = 'unpaid';
-            $student_fee->save();
+            $fee_voucher_name = trim($class_name . '-' . $section_name) . ' ' . $fee_month;
+
+            $class_fee_voucher = new ClassFeeVoucher();
+            $class_fee_voucher->name          = $fee_voucher_name;
+            $class_fee_voucher->month         = $fee_month;
+            $class_fee_voucher->class_room_id = $request->class_room_id;
+            $class_fee_voucher->save();
+            $class_fee_voucher_id = $class_fee_voucher->class_fee_voucher_id;
+
+            // Carry forward unpaid balance from the immediately previous month
+            $prevMonth = $monthDate->copy()->subMonth()->format('F Y');
+
+            foreach ($students as $student) {
+                $last_month_charges = StudentFee::where('student_id', $student->id)
+                    ->where('fee_month', $prevMonth)
+                    ->value('fee_charges_left') ?? 0;
+
+                $total_fee = $base_total + $last_month_charges;
+
+                $student_fee = new StudentFee();
+                $student_fee->student_id           = $student->id;
+                $student_fee->class_fee_voucher_id = $class_fee_voucher_id;
+                $student_fee->voucher_no           = StudentFee::generateUniqueVoucherNumber();
+                $student_fee->fee_month            = $fee_month;
+                $student_fee->issue_date           = $issueDate;
+                $student_fee->submit_date          = $submitDate;
+                $student_fee->total_fee            = $total_fee;
+                $student_fee->fee_charges_left     = $total_fee;
+                $student_fee->stationery_charges   = $stationery_charges;
+                $student_fee->test_series_charges  = $test_series_charges;
+                $student_fee->exam_charges         = $exam_charges;
+                $student_fee->notebook_charges     = $notebook_charges;
+                $student_fee->book_charges         = $book_charges;
+                $student_fee->fine                 = $fine_charge;
+                $student_fee->arrears              = $admin_arrears + $last_month_charges;
+                $student_fee->academic_fee         = $academic_fee;
+                $student_fee->note                 = $request->note;
+                $student_fee->status               = 'unpaid';
+                $student_fee->save();
+            }
+
+            $createdMonths[] = $fee_month;
         }
 
-        return redirect()->back()->with(
-            'success',
-            'Fee Voucher Created successfully for: ' . $fee_month
-        );
+        $msg = 'Voucher created for: ' . (empty($createdMonths) ? 'none' : implode(', ', $createdMonths));
+        if (!empty($skippedMonths)) {
+            $msg .= '. Skipped (already exists): ' . implode(', ', $skippedMonths);
+        }
+
+        return redirect()->back()->with('success', $msg);
     }
 
     /**
@@ -162,19 +171,216 @@ class ClassFeeVoucherController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Parse any stored fee_month / voucher.month label into an ordered list of
+     * Carbon month-starts. Handles:
+     *   • "May 2026"                — single month
+     *   • "May 2026, June 2026"     — comma list
+     *   • "May - Aug 2026"          — compact range, same year
      */
-    public function edit(ClassFeeVoucher $classFeeVoucher)
+    private function parseMonthLabel(?string $label): array
     {
-        //
+        if (!$label) return [];
+        $label = trim($label);
+        $out = [];
+
+        // Comma list
+        if (str_contains($label, ',')) {
+            foreach (explode(',', $label) as $part) {
+                try { $out[] = Carbon::createFromFormat('F Y', trim($part))->startOfMonth(); }
+                catch (\Throwable $e) {}
+            }
+        }
+        // Compact range "MMM - MMM YYYY" / "MMMM - MMMM YYYY"
+        elseif (preg_match('/^([A-Za-z]+)\s*-\s*([A-Za-z]+)\s+(\d{4})$/', $label, $m)) {
+            try {
+                $start = Carbon::createFromFormat('M Y', substr($m[1], 0, 3) . ' ' . $m[3])->startOfMonth();
+                $end   = Carbon::createFromFormat('M Y', substr($m[2], 0, 3) . ' ' . $m[3])->startOfMonth();
+                while ($start->lte($end)) {
+                    $out[] = $start->copy();
+                    $start->addMonth();
+                }
+            } catch (\Throwable $e) {}
+        }
+        // Single
+        else {
+            try { $out[] = Carbon::createFromFormat('F Y', $label)->startOfMonth(); }
+            catch (\Throwable $e) {}
+        }
+
+        // Sort & dedupe
+        $sorted = collect($out)->unique(fn($d) => $d->format('Y-m'))->sort()->values()->all();
+        return $sorted;
     }
 
     /**
-     * Update the specified resource in storage.
+     * Build a compact label for a list of Carbon month-starts:
+     *   1 month        → "May 2026"
+     *   contiguous     → "May - Jul 2026"
+     *   non-contiguous → "May 2026, July 2026"
      */
-    public function update(Request $request, ClassFeeVoucher $classFeeVoucher)
+    private function buildMonthLabel(array $months): string
     {
-        //
+        if (empty($months)) return '';
+        if (count($months) === 1) return $months[0]->format('F Y');
+
+        $contiguous = true;
+        for ($i = 1; $i < count($months); $i++) {
+            if (!$months[$i - 1]->copy()->addMonth()->equalTo($months[$i])) { $contiguous = false; break; }
+        }
+        if ($contiguous && $months[0]->year === end($months)->year) {
+            return $months[0]->format('M') . ' - ' . end($months)->format('M Y');
+        }
+        return collect($months)->map(fn($d) => $d->format('F Y'))->implode(', ');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        $classFeeVoucher = ClassFeeVoucher::with('classroom')->findOrFail($id);
+
+        // Use any one StudentFee row as a template for the shared charges
+        $template = StudentFee::where('class_fee_voucher_id', $id)->first();
+
+        // Currently selected months (parsed from the stored label)
+        $selectedMonths = collect($this->parseMonthLabel($classFeeVoucher->month))
+            ->map(fn($d) => $d->format('F Y'))->all();
+
+        // Build a 24-month option window centred on the current selection
+        $anchor = $selectedMonths
+            ? Carbon::createFromFormat('F Y', $selectedMonths[0])
+            : Carbon::now();
+        $startMonth = $anchor->copy()->subMonths(6)->startOfMonth();
+
+        $monthOptions = [];
+        for ($i = 0; $i < 24; $i++) {
+            $m = $startMonth->copy()->addMonths($i);
+            $monthOptions[$m->format('F Y')] = $m->format('F Y');
+        }
+        // Ensure currently-selected months are present in options
+        foreach ($selectedMonths as $sm) {
+            if (!isset($monthOptions[$sm])) $monthOptions[$sm] = $sm;
+        }
+
+        return view('admin.pages.invoice.edit', compact(
+            'classFeeVoucher', 'template', 'selectedMonths', 'monthOptions'
+        ));
+    }
+
+    /**
+     * Update the specified resource in storage. Applies the new charges
+     * to every StudentFee linked to this class voucher (preserving received
+     * payments and recalculating outstanding balance).
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'months'               => 'nullable|array',
+            'months.*'             => 'string',
+            'academic_fee'         => 'nullable|numeric',
+            'stationery_charges'   => 'nullable|numeric',
+            'test_series_charges'  => 'nullable|numeric',
+            'exam_charges'         => 'nullable|numeric',
+            'notebook_charges'     => 'nullable|numeric',
+            'book_charges'         => 'nullable|numeric',
+            'fine'                 => 'nullable|numeric',
+            'arrears'              => 'nullable|numeric',
+            'issue_date'           => 'nullable|date',
+            'submit_date'          => 'nullable|date',
+        ]);
+
+        $classFeeVoucher = ClassFeeVoucher::findOrFail($id);
+
+        // Resolve final month list (use submitted months; fallback to current)
+        $monthsParsed = collect($request->input('months', []))
+            ->map(function ($m) {
+                try { return Carbon::createFromFormat('F Y', trim($m))->startOfMonth(); }
+                catch (\Throwable $e) { return null; }
+            })
+            ->filter()
+            ->unique(fn($d) => $d->format('Y-m'))
+            ->sort()
+            ->values()
+            ->all();
+
+        if (empty($monthsParsed)) {
+            $monthsParsed = $this->parseMonthLabel($classFeeVoucher->month);
+        }
+
+        $newLabel = $this->buildMonthLabel($monthsParsed) ?: $classFeeVoucher->month;
+
+        // Update voucher header
+        $classroom    = $classFeeVoucher->classroom;
+        $class_name   = $classroom->class_name ?? '';
+        $section_name = $classroom->section_name ?? '';
+        $classFeeVoucher->name  = trim($class_name . '-' . $section_name) . ' ' . $newLabel;
+        $classFeeVoucher->month = $newLabel;
+        $classFeeVoucher->save();
+
+        $academic_fee         = (int) $request->academic_fee;
+        $stationery_charges   = (int) $request->stationery_charges;
+        $test_series_charges  = (int) $request->test_series_charges;
+        $exam_charges         = (int) $request->exam_charges;
+        $notebook_charges     = (int) $request->notebook_charges;
+        $book_charges         = (int) $request->book_charges;
+        $fine_charge          = (int) $request->fine;
+        $admin_arrears        = (int) $request->arrears;
+
+        $base_total = $academic_fee
+                    + $stationery_charges
+                    + $test_series_charges
+                    + $exam_charges
+                    + $notebook_charges
+                    + $book_charges
+                    + $fine_charge
+                    + $admin_arrears;
+
+        $studentFees = StudentFee::where('class_fee_voucher_id', $id)->get();
+
+        // Earliest month is used as the basis for previous-month carry-forward
+        $earliest = !empty($monthsParsed) ? $monthsParsed[0] : null;
+        $prevMonth = $earliest ? $earliest->copy()->subMonth()->format('F Y') : null;
+
+        foreach ($studentFees as $fee) {
+            $carry = $prevMonth
+                ? (StudentFee::where('student_id', $fee->student_id)
+                    ->where('fee_month', $prevMonth)
+                    ->value('fee_charges_left') ?? 0)
+                : 0;
+
+            $total_fee   = $base_total + $carry;
+            $received    = (int) ($fee->received_payment_fee ?? 0);
+            $left        = max(0, $total_fee - $received);
+
+            $fee->fee_month           = $newLabel;
+            $fee->academic_fee        = $academic_fee;
+            $fee->stationery_charges  = $stationery_charges;
+            $fee->test_series_charges = $test_series_charges;
+            $fee->exam_charges        = $exam_charges;
+            $fee->notebook_charges    = $notebook_charges;
+            $fee->book_charges        = $book_charges;
+            $fee->fine                = $fine_charge;
+            $fee->arrears             = $admin_arrears + $carry;
+            $fee->total_fee           = $total_fee;
+            $fee->fee_charges_left    = $left;
+            if ($request->filled('issue_date'))  $fee->issue_date  = $request->issue_date;
+            if ($request->filled('submit_date')) $fee->submit_date = $request->submit_date;
+            if ($request->filled('note'))        $fee->note        = $request->note;
+
+            if ($received <= 0) {
+                $fee->status = 'unpaid';
+            } elseif ($received >= $total_fee) {
+                $fee->status = 'paid';
+            } else {
+                $fee->status = 'pending';
+            }
+
+            $fee->save();
+        }
+
+        return redirect()->route('fee_voucher')
+            ->with('success', 'Voucher updated for ' . $studentFees->count() . ' student(s) — ' . $newLabel);
     }
 
     /**

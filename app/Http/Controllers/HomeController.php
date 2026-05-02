@@ -101,17 +101,72 @@ class HomeController extends Controller
         return $months;
     }
 
+    /**
+     * Resolve all distinct StudentFee.fee_month strings that overlap the
+     * given target months. Handles three legacy/current formats:
+     *   • "May 2026"                  (single month — exact match)
+     *   • "May 2026, June 2026"       (comma-separated list)
+     *   • "May - Aug 2026"            (compact range, same year)
+     */
+    private function resolveFeeMonthStrings(array $targetMonths): array
+    {
+        if (empty($targetMonths)) return [];
+
+        $targetSet = array_fill_keys($targetMonths, true);
+
+        // Map "F Y" → Carbon for range comparison
+        $targetCarbons = [];
+        foreach ($targetMonths as $m) {
+            try { $targetCarbons[$m] = Carbon::createFromFormat('F Y', $m)->startOfMonth(); }
+            catch (\Throwable $e) { /* skip malformed */ }
+        }
+
+        $allMonths = StudentFee::distinct()->pluck('fee_month')->filter()->all();
+        $matches   = [];
+
+        foreach ($allMonths as $stored) {
+            $stored = trim($stored);
+            if ($stored === '') continue;
+
+            // 1) Exact match
+            if (isset($targetSet[$stored])) { $matches[] = $stored; continue; }
+
+            // 2) Comma-separated list
+            if (str_contains($stored, ',')) {
+                foreach (explode(',', $stored) as $part) {
+                    if (isset($targetSet[trim($part)])) { $matches[] = $stored; continue 2; }
+                }
+            }
+
+            // 3) Compact range "MMM - MMM YYYY" or "MMMM - MMMM YYYY"
+            if (preg_match('/^([A-Za-z]+)\s*-\s*([A-Za-z]+)\s+(\d{4})$/', $stored, $m)) {
+                try {
+                    $start = Carbon::createFromFormat('M Y', substr($m[1], 0, 3) . ' ' . $m[3])->startOfMonth();
+                    $end   = Carbon::createFromFormat('M Y', substr($m[2], 0, 3) . ' ' . $m[3])->startOfMonth();
+                    foreach ($targetCarbons as $tc) {
+                        if ($tc->greaterThanOrEqualTo($start) && $tc->lessThanOrEqualTo($end)) {
+                            $matches[] = $stored; break;
+                        }
+                    }
+                } catch (\Throwable $e) { /* skip malformed */ }
+            }
+        }
+
+        return array_values(array_unique($matches));
+    }
+
     private function adminDashboard()
     {
         [$dateFrom, $dateTo, $periodKey, $periodLabel] = $this->resolvePeriod();
-        $feeMonths = $this->feeMonthsInRange($dateFrom, $dateTo);
+        $feeMonths        = $this->feeMonthsInRange($dateFrom, $dateTo);
+        $feeMonthMatches  = $this->resolveFeeMonthStrings($feeMonths);
 
         $totalStudents = Student::count();
         $totalTeachers = Teacher::count();
         $classrooms    = ClassRoom::count();
 
         // ── Fee stats (filtered by period months, exclude deleted students) ──
-        $feeQuery = StudentFee::whereIn('fee_month', $feeMonths)
+        $feeQuery = StudentFee::whereIn('fee_month', $feeMonthMatches ?: ['__none__'])
                         ->whereHas('class_fee_voucher')
                         ->whereHas('student');
 
@@ -119,7 +174,7 @@ class HomeController extends Controller
         $feeReceived    = (clone $feeQuery)->sum('received_payment_fee');
         $feeOutstanding = $totalFee - $feeReceived;
         $students       = StudentFee::with(['student.classroom'])
-                    ->whereIn('fee_month', $feeMonths)
+                    ->whereIn('fee_month', $feeMonthMatches ?: ['__none__'])
                     ->whereHas('class_fee_voucher')
                     ->whereHas('student')
                     ->orderByDesc('created_at')
@@ -170,8 +225,9 @@ class HomeController extends Controller
                     SUM(CASE WHEN type='expense' THEN amount ELSE 0 END) as expense
                 ")->first();
 
-            $feeLabel = $cursor->format('F Y');
-            $feeRow   = StudentFee::where('fee_month', $feeLabel)
+            $feeLabel    = $cursor->format('F Y');
+            $feeMatches  = $this->resolveFeeMonthStrings([$feeLabel]);
+            $feeRow      = StudentFee::whereIn('fee_month', $feeMatches ?: ['__none__'])
                 ->whereHas('student')
                 ->selectRaw('SUM(received_payment_fee) as collected, SUM(total_fee) as billed')
                 ->first();

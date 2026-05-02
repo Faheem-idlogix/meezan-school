@@ -10,10 +10,58 @@ use App\Models\Voucher;
 use App\Models\VoucherItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class FinanceController extends Controller
 {
     private int $schoolId = 1;
+
+    /**
+     * Resolve all distinct StudentFee.fee_month strings that overlap the
+     * given target months. Handles single, comma-list, and "MMM - MMM YYYY"
+     * range formats so dashboards catch legacy multi-month vouchers.
+     */
+    private function resolveFeeMonthStrings(array $targetMonths): array
+    {
+        if (empty($targetMonths)) return [];
+
+        $targetSet = array_fill_keys($targetMonths, true);
+        $targetCarbons = [];
+        foreach ($targetMonths as $m) {
+            try { $targetCarbons[$m] = Carbon::createFromFormat('F Y', $m)->startOfMonth(); }
+            catch (\Throwable $e) {}
+        }
+
+        $allMonths = StudentFee::distinct()->pluck('fee_month')->filter()->all();
+        $matches   = [];
+
+        foreach ($allMonths as $stored) {
+            $stored = trim($stored);
+            if ($stored === '') continue;
+
+            if (isset($targetSet[$stored])) { $matches[] = $stored; continue; }
+
+            if (str_contains($stored, ',')) {
+                foreach (explode(',', $stored) as $part) {
+                    if (isset($targetSet[trim($part)])) { $matches[] = $stored; continue 2; }
+                }
+            }
+
+            if (preg_match('/^([A-Za-z]+)\s*-\s*([A-Za-z]+)\s+(\d{4})$/', $stored, $m)) {
+                try {
+                    $start = Carbon::createFromFormat('M Y', substr($m[1], 0, 3) . ' ' . $m[3])->startOfMonth();
+                    $end   = Carbon::createFromFormat('M Y', substr($m[2], 0, 3) . ' ' . $m[3])->startOfMonth();
+                    foreach ($targetCarbons as $tc) {
+                        if ($tc->greaterThanOrEqualTo($start) && $tc->lessThanOrEqualTo($end)) {
+                            $matches[] = $stored; break;
+                        }
+                    }
+                } catch (\Throwable $e) {}
+            }
+        }
+
+        return array_values(array_unique($matches));
+    }
 
     // ── Finance Hub (Ledger + Fee Report + Expenses) ─────────────────
     public function index(Request $request)
@@ -44,13 +92,15 @@ class FinanceController extends Controller
 
         // ── Fee Report for selected month ─────────────────────────────
         $monthName  = \Carbon\Carbon::createFromDate($year, $mon, 1)->format('F Y');
+        $feeMonthMatches = $this->resolveFeeMonthStrings([$monthName]);
+
         $feeRecordsAll = StudentFee::with(['student.classroom'])
-            ->where('fee_month', $monthName)
+            ->whereIn('fee_month', $feeMonthMatches ?: ['__none__'])
             ->orderBy('student_id')
             ->get();
 
         $feeRecords = StudentFee::with(['student.classroom'])
-            ->where('fee_month', $monthName)
+            ->whereIn('fee_month', $feeMonthMatches ?: ['__none__'])
             ->orderBy('student_id')
             ->paginate(20)->withQueryString();
 

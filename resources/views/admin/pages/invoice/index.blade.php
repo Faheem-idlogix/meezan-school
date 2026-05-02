@@ -56,6 +56,7 @@
                     <td>
                       <div class="d-flex gap-1">
                         <a href="{{ route('class_fee', $item->class_fee_voucher_id) }}" class="btn btn-sm btn-outline-info" title="View"><i class="bi bi-eye-fill"></i></a>
+                        <a href="{{ route('class_fee_voucher.edit', $item->class_fee_voucher_id) }}" class="btn btn-sm btn-outline-warning" title="Edit (applies to whole class)"><i class="bi bi-pencil-square"></i></a>
                         <a href="{{ route('generate_fee_invoice', $item->class_fee_voucher_id) }}" class="btn btn-sm btn-outline-secondary" title="Print" target="_blank"><i class="bi bi-printer-fill"></i></a>
                         <form action="{{ route('voucher_destroy', $item->class_fee_voucher_id) }}" method="POST" onsubmit="return confirm('Delete this invoice?')">
                           @method('DELETE') @csrf
